@@ -15,11 +15,19 @@ function [t]=B_conv(rooot,mult)
 
 
 if mult==1
-    t=[-rooot,1-rooot];
+    t=[-rooot;1-rooot];
 else
     
-    q=[-rooot,1-rooot];
-    t=[-rooot,1-rooot];
+    q =...
+        [...
+        -rooot;
+        1-rooot
+        ];
+    t =...
+        [...
+        -rooot;
+        1-rooot
+        ];
     for k=2:1:mult
         t=conv(t,q);
     end

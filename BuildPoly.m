@@ -1,7 +1,7 @@
 function [f_bi] = BuildPoly(A)
 
 % Calculate the number of distinct roots of the polynomial.
-r = size(A,1);
+[r,c] = size(A);
 
 % Convolve each factor, which is defined by a row of A, separately.
 % A(k,1) stores the value of the root, and A(k,2) stores its multiplicity.

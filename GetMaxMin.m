@@ -13,7 +13,7 @@ function [max_mtrx,min_mtrx] = GetMaxMin(fxy,n1,n2,k1,k2)
 m1 = size(fxy,1)-1;
 m2 = size(fxy,2)-1;
 
-% take the absolute values of the coefficients
+% Take the absolute values of the coefficients
 fxy = abs(fxy);
 
 

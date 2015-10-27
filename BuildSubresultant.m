@@ -56,12 +56,15 @@ D = BuildD(k1,k2,m1,m2,n1,n2);
 
 
 switch bool_Q
-    case 1
+    case 'y'
         % Build the diagonal matrix Q such that Q * [v \\ u] gives the
         % coefficients of u and v in the scaled bernstein basis
         Q = BuildQ(k1,k2,m1,m2,n1,n2);
         Sk = D*[C_f,C_g]*Q;
-    case 0
+    case 'n'
         Sk = D*[C_f,C_g];
 end
+
+
+
 end
