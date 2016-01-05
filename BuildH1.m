@@ -1,17 +1,13 @@
-% Used in APF
 function H1 = BuildH1(m1,m2)
 % Build H1, the diagonal matrix of binomials coefficients.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                               Inputs.
-
-
+%
 % m1 :  Degree of polynomial f with respect to x
-
+%
 % m2 :  Degree of polynomial f with respect to y
+%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Initialise counter
 count =1 ;

@@ -1,15 +1,32 @@
-function [dxy_calc_mtrx] = GetGCD_Coefficients(uxy_calc_matrix,vxy_calc_matrix,...
-    fxy_matrix_working,gxy_matrix_working,...
+function [dxy_calc_matrix] = GetGCD_Coefficients(uxy_matrix,vxy_matrix,...
+    fxy_matrix,gxy_matrix,...
     t1,t2,...
-    opt_theta1,opt_theta2)
+    lambda,mu,...
+    opt_alpha, opt_theta_1,opt_theta_2)
+%% Given the two quotient polynomials u(x,y) and v(x,y) calculate the GCD d(x,y)
 
+% Inputs 
+
+% uxy_matrix  :
+% vxy_matrix  :
+% fxy_matrix  :
+% gxy_matrix  :
+% t1          :
+% t2          :
+% lambda      :
+% mu          :
+% opt_alpha   :
+% opt_theta_1 :
+% opt_theta_2 :
+
+%%
 % Get the degrees of polynomial f
-[r,c] = size(fxy_matrix_working);
+[r,c] = size(fxy_matrix);
 m1 = r - 1;
 m2 = c - 1;
 
 % Get the degrees of polynomial g
-[r,c] = size(gxy_matrix_working);
+[r,c] = size(gxy_matrix);
 n1 = r - 1;
 n2 = c - 1;
 
@@ -20,9 +37,9 @@ H = BuildH(m1,m2,n1,n2);
 
 % % Build Matrix C
 % Build Matrix C1
-C1_u = BuildC1(uxy_calc_matrix,t1,t2,m1,m2,opt_theta1,opt_theta2);
+C1_u = BuildC1(uxy_matrix,t1,t2,m1,m2,opt_theta_1,opt_theta_2);
 % Build Matrix C2
-C2_v = BuildC1(vxy_calc_matrix,t1,t2,n1,n2,opt_theta1,opt_theta2);
+C2_v = BuildC1(vxy_matrix,t1,t2,n1,n2,opt_theta_1,opt_theta_2);
 
 C = [ C1_u;
     C2_v ];
@@ -33,60 +50,59 @@ G = BuildG(t1,t2);
 % Build the Coefficient Matrix HCG 
 HCG = H*C*G;
 
-%% Include thetas in f(x,y) to obtain f(\theta_1, \theta_2)
-% Build Vector f
-% Get f with thetas included
-fxy_matrix_th = zeros(m1+1,m2+1);
-for i1 = 0:1:m1
-    fxy_matrix_th(i1+1,:) = fxy_matrix_working(i1+1,:) .* (opt_theta1^i1);
-end
-for i2 = 0:1:m2
-    fxy_matrix_th(:,i2+1) = fxy_matrix_th(:,i2+1) .* (opt_theta2^i2);
-end
+%% Preprocess f(x,y) and g(x,y)
 
-%% Get f(x,y) as a vector
+% Noramlise f(x,y) by geometric mean
+fxy_matrix_n = fxy_matrix./lambda;
 
-fxy_vec_th = getAsVector(fxy_matrix_th)
+% Noramlise g(x,y) by geometric mean
+gxy_matrix_n = gxy_matrix./mu;
 
-%% Include thetas in g(x,y) to obtain g(\theta_1, theta_2)
+% Build the theta matrices which will convert f(x,y) to f(w,w)
+pre_theta_mat = diag(opt_theta_1.^(0:1:m1));
+post_theta_mat = diag(opt_theta_2.^(0:1:m2));
+fww_matrix = pre_theta_mat * fxy_matrix_n * post_theta_mat;
 
-% Build Vector g of coefficients of polynomial g
-gxy_matrix_th = zeros(n1+1,n2+1);
-for i1 = 0:1:n1
-    gxy_matrix_th(i1+1,:) = gxy_matrix_working(i1+1,:) .* (opt_theta1^i1);
-end
-for i2 = 0:1:n2
-    gxy_matrix_th(:,i2+1) = gxy_matrix_th(:,i2+1) .* (opt_theta2^i2);
-end
+% Get f(x,y) as a vector
+fww_vec_th = getAsVector(fww_matrix);
 
-%% Get g(x,y) as a vector
+%% Include thetas in g(x,y) to obtain g(w,w)
 
-gxy_vec_th = getAsVector(gxy_matrix_th)
+% Build the theta matrices which will convert g(x,y) to g(w,w)
+pre_theta_mat   = diag(opt_theta_1.^(0:1:n1));
+post_theta_mat  = diag(opt_theta_2.^(0:1:n2));
+gww_matrix_th = pre_theta_mat * gxy_matrix_n * post_theta_mat;
+
+% Get g(x,y) as a vector
+gww_vec = getAsVector(gww_matrix_th);
 
 
 %% Create the right hand side vector
 rhs_vec = [...
-    fxy_vec_th;
-    gxy_vec_th];
+    fww_vec_th;
+    opt_alpha.*gww_vec];
 
 
 %% Obtain vector x
 x = pinv(HCG) * rhs_vec;
-dw_calc = x;
+dww_calc = x;
 
-residual = pinv(HCG)*rhs_vec - x
+residual = pinv(HCG)*rhs_vec - x;
 
 %%
 % Arrange dw into a matrix form based on its dimensions.
-dw_calc_mtrx = getAsMatrix(dw_calc,t1,t2)
+dww_calc_matrix = getAsMatrix(dww_calc,t1,t2);
 
 %%
-% remove thetas from dw
+% Remove thetas from dw
 % Divide the row i by theta1^i
-for i1 = 0:1:t1
-    dxy_calc_mtrx(i1+1,:) = dw_calc_mtrx(i1+1,:) ./ (opt_theta1^i1);
-end
-for i2 = 0:1:t2
-    dxy_calc_mtrx(:,i2+1) = dxy_calc_mtrx(:,i2+1) ./ (opt_theta2^i2);
+mat1 = diag(1./opt_theta_1.^(0:1:t1));
+mat2 = diag(1./opt_theta_2.^(0:1:t2));
+
+dxy_calc_matrix = mat1 * dww_calc_matrix * mat2;
+
+
+
+
 end
 

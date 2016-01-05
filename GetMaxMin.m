@@ -38,20 +38,42 @@ end
 
 end
 
-function [maximum,minimum] = GetMaxMin2(ai1i2,i1,i2,m1,m2,n1,n2,k1,k2)
+function [maximum,minimum] = GetMaxMin2(a_i1i2,i1,i2,m1,m2,n1,n2,k1,k2)
+% Note this function assumes the inclusion of Q in the coefficient matrix.
+
+global bool_Q
+
 
 % Build a 2 dimensional vector to store all occurences of the coefficient
 % a_{i_{1},i_{2}}
 A = zeros(n1-k1+1,n2-k2+1);
 
-% for each occurence of a_{i_{1},i_{2}} in each column
-for j1 = 0:1:n1-k1
-    for j2 = 0:1:n2-k2
-        A(j1+1,j2+1) = (ai1i2 .*  nchoosek(m1,i1) .* nchoosek(m2,i2) .*...
-                        nchoosek(n1,j1) .* nchoosek(n2,j2) )./ ...
-                        (nchoosek(m1+n1-k1,i1+j1) .* nchoosek(m2+n2-k2,i2+j2));
-    end
+
+
+switch bool_Q 
+    case 'y'
+        % With the inclusion of Q
+        % for each occurence of a_{i_{1},i_{2}} in each column
+        for j1 = 0:1:n1-k1
+            for j2 = 0:1:n2-k2
+                A(j1+1,j2+1) = (a_i1i2 .*  nchoosek(m1,i1) .* nchoosek(m2,i2) .*...
+                                nchoosek(n1,j1) .* nchoosek(n2,j2) )./ ...
+                                (nchoosek(m1+n1-k1,i1+j1) .* nchoosek(m2+n2-k2,i2+j2));
+            end
+        end    
+    case 'n'
+        % Without the inclusion of Q
+        % for each occurence of a_{i_{1},i_{2}} in each column
+        for j1 = 0:1:n1-k1
+            for j2 = 0:1:n2-k2
+                A(j1+1,j2+1) = (a_i1i2 .*  nchoosek(m1,i1) .* nchoosek(m2,i2)) ./ ...
+                                (nchoosek(m1+n1-k1,i1+j1) .* nchoosek(m2+n2-k2,i2+j2));
+            end
+        end
 end
+
+% take absolute values of A
+A = abs(A);
 
 [max_r,max_c] = find(A==max(A(:)));
 

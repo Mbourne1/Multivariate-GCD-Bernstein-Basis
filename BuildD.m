@@ -1,17 +1,23 @@
 function D = BuildD(k1,k2,m1,m2,n1,n2)
 
-count =1 ;
+% initialise the matrix whose entries will form the diagonal entries of D
+D_mat = ones(m1+n1-k1+1,m2+n2-k2+1);
 
-for tot = 0:1:m1+m2+n1+n2-k1-k2
-    for i_hat = tot:-1:0
-        j_hat = tot - i_hat;
-        if j_hat < m2+n2-k2+1 && i_hat < m1+n1-k1+1
-            [i_hat,j_hat];
-            temp_vec(count) = nchoosek(m1+n1-k1,i_hat) * nchoosek(m2+n2-k2,j_hat);
-            count = count+1;
-        end
-    end
+% Divide each row of d by the corresponding \binom{m1+n1-k1}{i}
+for i = 0:1:m1+n1-k1
+   D_mat(i+1,:) = D_mat(i+1,:) ./ nchoosek(m1+n1-k1,i); 
 end
-D = diag(1./temp_vec);
+
+% Divide each col of d by the corresponding \binom{m2+n2-k2}{j}
+for j = 0:1:m2+n2-k2
+   D_mat(:,j+1) = D_mat(:,j+1) ./ nchoosek(m2+n2-k2,j); 
+end
+
+% Get the D_matrix as a vector
+D_vec = getAsVector(D_mat);
+
+% Form a diagonal matrix from the vector D_vec
+D = diag(D_vec);
+
 end
 

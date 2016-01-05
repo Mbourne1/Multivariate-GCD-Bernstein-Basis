@@ -1,5 +1,5 @@
 function [alpha] = OptimalAlpha(max_mtrx_f,min_mtrx_f, max_mtrx_g,min_mtrx_g)
-
+% Obtain the optimal value of alpha
 
 % define vector f
 f = [1 -1 0];
@@ -46,12 +46,11 @@ count = 1;
 for i1 = 0:1:n1
     for i2 = 0:1:n2
         % Replace all of the 'count-th row'
-        PartFour(count,:) = [0 -1 -1];
+        PartFour(count,:) = [0 -1 1];
         count = count + 1;
     end
 end
 
-A =-[PartOne; PartTwo; PartThree; PartFour];
 
 
 % Now build the vector b
@@ -92,13 +91,40 @@ for i1 = 0:1:n1
     end
 end
 
-b = -[log10(lambda_vec); log10(mu_vec); -log10(rho_vec);-log10(tau_vec)];
+% Find any zeros in the lambda vector
+indeces = find(~lambda_vec);
+PartOne(indeces,:) = [];
+lambda_vec(indeces,:) = [];
+
+% Find any zeros in the mu vector
+indeces = find(~mu_vec);
+PartTwo(indeces,:) = [];
+mu_vec(indeces,:) = [];
+
+% Find any zeros in the rho vector
+indeces = find(~rho_vec);
+PartThree(indeces,:) = [];
+rho_vec(indeces,:) = [];
+
+% Find any zeros in the tau vector
+indeces = find(~tau_vec);
+PartFour(indeces,:) = [];
+tau_vec(indeces,:) = [];
 
 
-x = linprog(f,A,b);
+b = [log10(lambda_vec); log10(mu_vec); -log10(rho_vec);-log10(tau_vec)];
 
+A =[PartOne; PartTwo; PartThree; PartFour];
+
+
+
+x = linprog(f,-A,-b);
+try
 alpha  = 10^x(3);
-
+catch
+    alpha = 1;
+    return
+end
 
 
 end

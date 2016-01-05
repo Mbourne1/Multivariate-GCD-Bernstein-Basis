@@ -31,7 +31,7 @@ n2 = cols -1;
 colsA = (n1-k1+1) * (n2-k2+1);
 colsB = (m1-k1+1) * (m2-k2+1);
 
-Sk = BuildSubresultant(fxy_mtrx,gxy_mtrx,k1,k2,1,1);
+Sk = BuildSubresultant(fxy_mtrx,gxy_mtrx,k1,k2,1,1,1);
 
 C_f = Sk(:,1:colsA);
 C_g = Sk(:,colsA+1:end);

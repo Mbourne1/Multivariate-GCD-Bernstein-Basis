@@ -1,24 +1,21 @@
 function G = BuildG(t1,t2)
 
-count =1 ;
 
+G_mat = ones(t1+1,t2+1);
 
-
-for tot = 0:1:t1+t2+1
-
-    for i_hat = tot:-1:0
-        j_hat = tot - i_hat;
-    
-        
-        if j_hat <= t2 && i_hat <= t1
-            
-            temp_vec(count) = nchoosek(t1,i_hat) * nchoosek(t2,j_hat);
-            
-            count = count+1;
-        end
-    end
+% Multiply each row of G by corresponding binomial coefficient
+for i=0:1:t1
+   G_mat(i+1,:) =  G_mat(i+1,:) .* nchoosek(t1,i);
 end
 
-G = diag(temp_vec);
+% Multiply each column of G by corresponding binomial coefficient
+for j=0:1:t2
+    G_mat(:,j+1) = G_mat(:,j+1) .* nchoosek(t2,j);
+end
+
+G_vec = getAsVector(G_mat);
+
+G = diag(G_vec);
+
 
 end

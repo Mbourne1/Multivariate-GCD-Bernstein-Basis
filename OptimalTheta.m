@@ -1,5 +1,5 @@
 function [theta1,theta2] = OptimalTheta(max_mtrx_f,min_mtrx_f, max_mtrx_g,min_mtrx_g)
-
+% Obtain the optimal value of theta
 
 % define vector f
 f = [1 -1 0 0];
@@ -51,7 +51,7 @@ for i1 = 0:1:n1
     end
 end
 
-A =-[PartOne; PartTwo; PartThree; PartFour];
+A =[PartOne; PartTwo; PartThree; PartFour];
 
 
 % Now build the vector b
@@ -92,14 +92,17 @@ for i1 = 0:1:n1
     end
 end
 
-b = -[log10(abs(lambda_vec)); log10(abs(mu_vec)); -log10(abs(rho_vec));-log10(abs(tau_vec))];
+b = [log10(abs(lambda_vec)); log10(abs(mu_vec)); -log10(abs(rho_vec));-log10(abs(tau_vec))];
 
 
-x = linprog(f,A,b);
-
+x = linprog(f,-A,-b);
+try
 theta1 = 10^x(3);
 theta2 = 10^x(4);
-
+catch
+theta1 = 1;
+theta2 = 1;
+end
 
 
 end

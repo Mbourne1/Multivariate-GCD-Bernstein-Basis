@@ -1,4 +1,4 @@
-function [t1,t2,opt_theta_1_mtrx,opt_theta_2_mtrx] = GetDegree(fxy_matrix,gxy_matrix,m,n)
+function [t1,t2,opt_alpha, opt_theta_1_matrix,opt_theta_2_matrix] = GetDegree(fxy_matrix,gxy_matrix,m,n)
 
 % Get the degree of the two bivariate bernstein basis polynomials.
 
@@ -105,10 +105,10 @@ for k = 1:1:min(m,n)
                     %opt_alpha = OptimalAlpha(max_mtrx_f,min_mtrx_f,max_mtrx_g,min_mtrx_g)
                     
                     % Get optimal values of theta1 and theta2 alone
-                    [opt_theta_1, opt_theta_2] = OptimalTheta(max_mtrx_f,min_mtrx_f,max_mtrx_g,min_mtrx_g);
+                    %[opt_theta_1, opt_theta_2] = OptimalTheta(max_mtrx_f,min_mtrx_f,max_mtrx_g,min_mtrx_g);
                     
                     % Get optimal values of theta1 and theta2 and alpha
-                    % [opt_alpha, opt_theta_1, opt_theta_2] = OptimalAlphaTheta(max_mtrx_f,min_mtrx_f,max_mtrx_g,min_mtrx_g)
+                    [opt_alpha, opt_theta_1, opt_theta_2] = OptimalAlphaTheta(max_mtrx_f,min_mtrx_f,max_mtrx_g,min_mtrx_g)
                     
                     % Add the optimal values of theta 1 and theta 2 to a
                     % matrix defined by k1,k2
@@ -117,15 +117,18 @@ for k = 1:1:min(m,n)
                     % set values of theta to 1.
                     opt_theta_1 = 1;
                     opt_theta_2 = 1;
+                    opt_alpha = 1;
             end
             
-            opt_theta_1_mtrx(k1+1,k2+1) = opt_theta_1;
-            opt_theta_2_mtrx(k1+1,k2+1) = opt_theta_2;
+            opt_theta_1_matrix(k1+1,k2+1) = opt_theta_1;
+            opt_theta_2_matrix(k1+1,k2+1) = opt_theta_2;
+            opt_alpha_matrix(k1+1,k2+1) = opt_alpha;
             
             % Build the subresultant s_{k_{1},k_{2}}
             Sk = BuildSubresultant(...
                 fxy_matrix_n, gxy_matrix_n,...
                 k1, k2,...
+                opt_alpha,...
                 opt_theta_1,...
                 opt_theta_2);
             
@@ -202,8 +205,8 @@ for k = 1:1:min(m,n)
     end
 end
 
-opt_theta_1_mtrx;
-opt_theta_2_mtrx;
+opt_theta_1_matrix;
+opt_theta_2_matrix;
 
 % plot all the largest ratios for k = 1,...,min(m,n)
 figure()
@@ -239,7 +242,7 @@ fprintf('t2 = %i\n',t2)
 
 % Get the optimal values of alpha and theta used to build the subresultant
 % S_{t_{1},t_{2}}
-opt_theta1 = opt_theta_1_mtrx(t1+1,t2+1)
-opt_theta2 = opt_theta_2_mtrx(t1+1,t2+1)
+opt_theta1 = opt_theta_1_matrix(t1+1,t2+1)
+opt_theta2 = opt_theta_2_matrix(t1+1,t2+1)
 
 end
