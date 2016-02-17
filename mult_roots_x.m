@@ -1,4 +1,3 @@
-
 function cellArr = mult_roots_x(root_mult_mat)
 %%
 % Given the root and multiplicity matrix produce a cell array of the roots

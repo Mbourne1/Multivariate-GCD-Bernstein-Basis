@@ -3,39 +3,33 @@ function [uxy_calc_matrix, vxy_calc_matrix, dxy_calc_matrix,t1,t2] = o1(fxy_matr
 % Given two input polynomials, calculate the GCD and its degree structure
 %% Get the degree of the GCD
 
-% Get degree calculation method
-degree_calc_method = '1';
-switch degree_calc_method
-    % Get total degree
-    case '1'
-        % Get Degree by first finding the total degree, then obtain t1 and t2
-        
-        % Get total degreee
-        [t, opt_theta_1, opt_theta_2] = Get_t(fxy_matrix, gxy_matrix,m,n);
-        
-        fprintf('---------------------------------------------------------\n')
-        fprintf('\n')
-        fprintf('Total Degree of GCD as calculated by GetDegree_Total() : \n')
-        fprintf('Tota Degree = %i',t)
-        fprintf('\n')
-        fprintf('---------------------------------------------------------\n')
-        
-        
-        % Get degree t1 and t2
-        [t1,t2,lambda,mu,opt_alpha, opt_theta_1,opt_theta_2] = Get_t1_t2(fxy_matrix,gxy_matrix,m,n,t);
-        
-        fprintf('\n')
-        fprintf('Degree t1 : %i \n',t1);
-        fprintf('Degree t2 : %i \n',t2);
-        fprintf('\n')
-        fprintf('----------------------------------------------------------\n')
-    otherwise
-        error('no other degree calc method is defined')
-end
+degree_calc_method = 'respective';
+
+% Get Degree by first finding the total degree, then obtain t1 and t2
+% Get total degreee
+[t, opt_theta_1_tot, opt_theta_2_tot] = Get_t(fxy_matrix, gxy_matrix,m,n);
+
+fprintf('---------------------------------------------------------\n')
+fprintf('\n')
+fprintf('Total Degree of GCD as calculated by GetDegree_Total() : \n')
+fprintf('Tota Degree = %i',t)
+fprintf('\n')
+fprintf('---------------------------------------------------------\n')
+
+
+% Get degree t1 and t2
+[t1,t2,lambda,mu,opt_alpha, opt_theta_1,opt_theta_2] = Get_t1_t2(fxy_matrix,gxy_matrix,m,n,t);
+
+fprintf('\n')
+fprintf('Degree t1 : %i \n',t1);
+fprintf('Degree t2 : %i \n',t2);
+fprintf('\n')
+fprintf('----------------------------------------------------------\n')
+
 
 %% Get Optimal column for removal from S_{t_{1},t_{2}}
 
-opt_col = getOptimalColumn(fxy_matrix,gxy_matrix,t1,t2,lambda,mu,opt_alpha,opt_theta_1,opt_theta_2);
+opt_col = GetOptimalColumn(fxy_matrix,gxy_matrix,t1,t2,lambda,mu,opt_alpha,opt_theta_1,opt_theta_2);
 
 
 %% Perform iterative inprovements in SNTLN
@@ -62,22 +56,41 @@ switch bool_SNTLN
 end
 
 %% Get Quotients u(x,y) and v(x,y)
+% Calc method is either total or respective
 
-[uxy_calc_matrix, vxy_calc_matrix, lambda,mu, opt_alpha, opt_theta_1, opt_theta_2] ...
-    = GetQuotients(fxy_matrix, gxy_matrix,t1,t2);
-
+switch degree_calc_method
+    case 'respective'
+        [uxy_calc_matrix, vxy_calc_matrix, lambda,mu, opt_alpha, opt_theta_1, opt_theta_2] ...
+            = GetQuotients(fxy_matrix, gxy_matrix,t1,t2);
+    case 'total'
+        [uxy_calc_matrix, vxy_calc_matrix, lambda,mu, opt_alpha, opt_theta_1, opt_theta_2] ...
+            = GetQuotients_total(fxy_matrix, gxy_matrix,m,n,t);
+    otherwise
+        
+end
 
 
 
 
 %% Get the GCD
 % % Get d(x,y) from the polynomials u(x,y) and v(x,y).
-dxy_calc_matrix = GetGCD_Coefficients(uxy_calc_matrix,vxy_calc_matrix,...
-    fxy_matrix,gxy_matrix,...
-    t1,t2,...
-    lambda,mu,...
-    opt_alpha,opt_theta_1,opt_theta_2);
 
+switch degree_calc_method
+    case 'respective'
+        dxy_calc_matrix = GetGCD_Coefficients(uxy_calc_matrix,vxy_calc_matrix,...
+            fxy_matrix,gxy_matrix,...
+            t1,t2,...
+            lambda,mu,...
+            opt_alpha,opt_theta_1,opt_theta_2);
+    case 'total'
+        dxy_calc_matrix = GetGCD_Coefficients_total(uxy_calc_matrix,vxy_calc_matrix,...
+            fxy_matrix,gxy_matrix,...
+            m,n,t,...
+            lambda,mu,...
+            opt_alpha,opt_theta_1,opt_theta_2);
+    otherwise
+        error('error')
+end
 
 
 end

@@ -1,4 +1,5 @@
-function deg_elv_fxy_matrix = DegreeElevateToTotalDegree(fxy_matrix,m)
+function deg_elv_fxy_matrix = old_DegreeElevateToTotalDegree(fxy_matrix,m)
+
 
 [r,c] = size(fxy_matrix);
 m1 = r - 1;

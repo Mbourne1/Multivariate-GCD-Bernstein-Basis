@@ -1,5 +1,5 @@
 function [] = o_roots(ex_num,el,BOOL_PREPROC, BOOL_SNTLN,SEED)
-%%
+%
 % Given an example number and set of parameters, obtain the roots of the
 % example polynomial, where the polynomial is in the Bernstein form.
 % %                             Inputs 
@@ -51,7 +51,7 @@ bool_SNTLN = BOOL_SNTLN;
 %       y - plot graphs
 %       n - exclude plotting
 global bool_plotgraphs
-bool_plotgraphs = 'n';
+bool_plotgraphs = 'y';
 
 % seed - SEED Number for noise generation
 global seed
@@ -77,6 +77,7 @@ switch bool_plotgraphs
     case 'n'
         
     otherwise
+        error('bool_plotgraphs must be either y or n')
 end     
 
 % Add noise to the coefficients
@@ -88,18 +89,17 @@ switch bool_noise
     case 'n'
         % Dont add noise to coefficients of polynomial f(x,y)
     otherwise
-        error('Error o_roots.m Line 33')
+        error('bool_noise must be either y or n')
 end
 
 %%          
 %               Root Finding Algorithm
 
-% Take a copy of fxy_matrix for use in the differentiation with respect to
-% y
-fxy_matrix_copy = fxy_matrix;
+%% Obtain the series q_{x}{i} by series of GCD calculations
 
 % Set the first entry of q to be the input polynomial f(x,y)
 qx{1} = fxy_matrix;
+
 % Set the degree structure of qx{1}
 deg1_qx{1} = m1;
 deg2_qx{1} = m2;
@@ -114,8 +114,9 @@ iteration_condition = true;
 % zero. ie is not a constant, perform a gcd calculation on it and its
 % derivative.
 while iteration_condition
-    
-    fprintf('GCD Calculation Number :  %i  with respect to x. \n',ite_num)
+    str1 = iptnum2ordinal(ite_num);
+    str2 = sprintf(' GCD calculation with respect to x. \n',ite_num);
+    fprintf([str1 str2])
             
     % Get the degree structure of f(x,y)
     [r,c] = size(qx{ite_num});
@@ -135,20 +136,17 @@ while iteration_condition
     % scalar and set GCD to be g(x,y)
     if n1 == 0
         % GCD is only a scalar with respect to x so set equal to g(x,y).
-        [uxy,vxy,dxy_calc,t1,t2] = o1(qx{ite_num},qx_der,m,n);
-        
+        [~,~,dxy_matrix,t1,t2] = o1(qx{ite_num},qx_der,m,n);
     else
         % Get the GCD of f(x,y) and g(x,y)
-        [uxy,vxy,dxy_calc,t1,t2] = o1(qx{ite_num},qx_der,m,n);
-        dxy_calc
-        
+        [~,~,dxy_matrix,t1,t2] = o1(qx{ite_num},qx_der,m,n); 
     end
     
     % increment the iteration number
     ite_num = ite_num + 1;
     
     % Assign the GCD to be the newest member of the q array.
-    qx{ite_num} = dxy_calc;
+    qx{ite_num} = dxy_matrix;
     deg1_qx{ite_num} = t1;
     deg2_qx{ite_num} = t2;
     
@@ -166,13 +164,19 @@ while iteration_condition
 end
 
 
-% Obtain the series h_{i}
+%% Obtain the series h_{x}{i} by series of deconvolutions on q_{x}{i}
 
 % Get number of elements in the series of polynomials q_{i}
-[~,c] = size(qx);
+[~,num_entries_qx] = size(qx);
+
+% Pre assign the CellArray h_{x} to have one less element than the
+% CellArray q_{x}
+hx = cell(1,num_entries_qx-1);
+deg1_hx = cell(1,num_entries_qx-1);
+deg2_hx = cell(1,num_entries_qx-1);
 
 % For each pair of consecutive polynomials in qx perform deconvolution
-for i = 1:1:c-1
+for i = 1:1:num_entries_qx-1
     
     % Get the series h_{x,i}
     hx{i} = Bern_deconvolve_bivariate(qx{i},qx{i+1});
@@ -186,6 +190,15 @@ end
 
 % Get the number of entries in the array of h_{x}.
 [~,num_entries_hx] = size(hx);
+
+%% Obtain the series w_{x}{i} by series of deconvolutions on h_{x}{i}
+
+% Pre assign the CellArray w_{x}
+num_entries_wx = num_entries_hx -1;
+
+wx = cell(1,num_entries_wx);
+deg1_wx = cell(1,num_entries_wx);
+deg2_wx = cell(1,num_entries_wx);
 
 % For each pair, perform a deconvolution to obtain w_{x}
 if num_entries_hx > 1
@@ -215,35 +228,20 @@ else
     deg2_wx{1} = deg2_hx{1};
 end
 
-
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Now calculate w_{i} in terms of y
-
 fprintf('################################################################\n')
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Stage 2 - Perform GCD calculations for derivatives with respect to y
+%% Obtain series of q_{y}{i} by series of GCD calculations
 
 % Set the first entry of q to be the input polynomial f(x,y)
 qy{1} = fxy_matrix;
 deg1_qy{1} = m1;
 deg2_qy{1} = m2;
 
-% differentiate q_{y}(x,y) to obtain q_{y}^{'}(x,y)
-qy_der = Bern_Differentiate_wrt_y(qy{1});
-
 % Get dimensions of polynomial q_{y}(x,y)
 [r,c] = size(qy{1});
 m1 = r-1;
 m2 = c-1;
-
-% Get dimensions of polynomial g(x,y)
-[r,c] = size(qy_der);
-n1 = r-1;
-n2 = c-1;
-
 
 % Set the iteration number
 ite_num = 1;
@@ -263,7 +261,9 @@ end
 % derivative.
 while iteration_condition
     
-    fprintf('GCD Calculation Number :  %i  with respect to y. \n',ite_num)
+    str1 = iptnum2ordinal(ite_num);
+    str2 = sprintf(' GCD calculation with respect to y. %i \n',ite_num);
+    fprintf([str1 str2])
     
     % set dxy to be the input of the next loop
     fxy_matrix = qy{ite_num};
@@ -279,20 +279,14 @@ while iteration_condition
     n1 = r - 1;
     n2 = c - 1;
     n = n1 + n2;
-    
-    fprintf('Input Polynomials for GCD calculation : %i \n',ite_num)
-    qy{ite_num}
-    qy_der
-    
+       
     % if g(x,y) is a scalar with respect to y   
     if n2 == 0
         % GCD is only a scalar with respect to y so set equal to g(x,y).
-        [uxy,vxy,dxy_calc,t1,t2] = o1(qy{ite_num},qy_der,m,n);
-        dxy_calc
+        [uxy,vxy,dxy_matrix,t1,t2] = o1(qy{ite_num},qy_der,m,n);
     else
         % Get the GCD of f(x,y) and g(x,y)
-        [uxy,vxy,dxy_calc,t1,t2] = o1(qy{ite_num},qy_der,m,n);
-        dxy_calc
+        [uxy,vxy,dxy_matrix,t1,t2] = o1(qy{ite_num},qy_der,m,n);
     end
     
     
@@ -301,7 +295,7 @@ while iteration_condition
     ite_num = ite_num + 1;
     
     % Assign the GCD to be the newest member of the q array.
-    qy{ite_num} = dxy_calc;
+    qy{ite_num} = dxy_matrix;
     deg1_qy{ite_num} = t1;
     deg2_qy{ite_num} = t2;
 
@@ -314,14 +308,20 @@ while iteration_condition
     end
 end
 
-%% Obtain the series h_{y,i}
+%% Obtain the series h_{y}{i}
 
 % get number of elements in the series of polynomials q_{i}
-[~,c] = size(qy);
+[~,num_entries_qy] = size(qy);
 
+num_entries_hy = num_entries_qy - 1;
+
+% Preassign CellArray for hy
+hy = cell(1,num_entries_hy)
+deg1_hy = cell(1,num_entries_hy);
+deg2_hy = cell(1,num_entries_hy);
 
 % For every q_{y,i}, deconvolve with q_{y,i+1} to obtain h_{y,i}
-for i = 1:1:c-1
+for i = 1:1:num_entries_qy-1
     
     % Perform Deconvolution to obtain h_{y,i}
     hy{i} = Bern_deconvolve_bivariate(qy{i},qy{i+1});
@@ -364,9 +364,11 @@ if exist('wx') ~=0
     fprintf('----------------------------------------------------------------\n')
     fprintf('Printing the roots with respect to x\n')
     if exist('wx') ~=0
-        [r,c] = size(wx);
-        for i = 1:1:c
-            fprintf('The %i entry of wx: \n',i)
+        % For every entry in w_{x}
+        for i = 1:1:num_entries_wx
+            str1 = iptnum2ordinal(i);
+            str2 = sprintf(' entry in w_{x}. \n');
+            fprintf(['The ' str1 str2])
             wxi = cell2mat(wx(i));
             wxi./wxi(1,1)
         end
@@ -378,7 +380,9 @@ if exist('wy') ~= 0
     fprintf('Printing the roots with respect to y\n')
     [r,c] = size(wy);
     for i = 1:1:c
-        fprintf('The %i entry of wy: \n ',i)
+        str1 = iptnum2ordinal(i);
+        str2 = sprintf(' entry in w_{y}. \n');
+        fprintf(['The ' str1 str2])
         wyi = cell2mat(wy(i));
         wyi./wyi(1,1)
     end
@@ -391,17 +395,27 @@ end
 %   Perform a series of GCD calculations on the w_{x,i}s
 
 % get number of w_{x,i}
-[r,c] = size(wx);
-for i = 1:1:c
+for i = 1:1:num_entries_wx
+    
+    % Get the dimensions of the polynomial the ith polynomial in w_{x}
     [rows,cols] = size(wx{i});
-    if cols >1
+    m1 = rows - 1;
+    m2 = cols - 1;
+    
+    % If the polynomial has a y component (is Bivariate), then must 
+    % deconvolve with the equivalent polynomial w_{y}
+    
+    if m2 > 0
         
         [uxy_calc_matrix, vxy_calc_matrix, dxy_calc_matrix,t1,t2]  =...
             o1(wx{i},wy{i},deg1_wx{i},deg1_wy{i});
         
         % Overwrite wx and wy with new values
+        % Assign the GCD to the non-Separable part
         wxy{i} = dxy_calc_matrix;
+        % Divide w_{x} by the GCD to obtain w_{x} without y component
         wx{i} = Bern_deconvolve_bivariate(wx{i},dxy_calc_matrix);
+        % Divide w_{y} by the GCD to obtain w_{y} without x component
         wy{i} = Bern_deconvolve_bivariate(wy{i},dxy_calc_matrix);
         
     end
@@ -433,7 +447,7 @@ for i=1:1:c
         
         % Obtain the root in terms of y, and set multiplicity to one.
         fprintf('The root of multiplicity %i is given by:\n', i)
-        a_rt = [-a_pwr(1,:)./a_pwr(2,:) a_pwr(2,:)./a_pwr(2,:)]
+        [-a_pwr(1,:)./a_pwr(2,:) a_pwr(2,:)./a_pwr(2,:)]
     end
     
 end
@@ -463,7 +477,7 @@ if exist('wy') ~= 0
 
             % Obtain the root in terms of y, and set multiplicity to one.
             fprintf('The root of multiplicity %i is given by:\n', i)
-            a_rt = [-a_pwr(1,:)./a_pwr(2,:) a_pwr(2,:)./a_pwr(2,:)]
+            [-a_pwr(1,:)./a_pwr(2,:) a_pwr(2,:)./a_pwr(2,:)]
         end
 
     end

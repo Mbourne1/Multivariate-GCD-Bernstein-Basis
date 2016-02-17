@@ -4,6 +4,7 @@ function [t, opt_theta_1, opt_theta_2] = Get_t(fxy_matrix,gxy_matrix,m,n)
 % Initialise the global variables
 global bool_preproc
 global bool_Q
+global plot_graphs
 
 % Get degrees of polynomial f(x,y)
 [r,c] = size(fxy_matrix);
@@ -16,16 +17,18 @@ n1 = r - 1;
 n2 = c - 1;
 
 
-% Degree elevate fxy
-fxy_matrix_delv = DegreeElevateToTotalDegree(fxy_matrix,m);
-gxy_matrix_delv = DegreeElevateToTotalDegree(gxy_matrix,n);
-%fxy_matrix_delv = zeros(m+1,m+1)
-%gxy_matrix_delv = zeros(n+1,n+1)
+% Degree elevate f(x,y) so that its coefficients are contained in a square
+fxy_matrix_delv = DegreeElevate(fxy_matrix,m-m1,m-m2);
 
-%fxy_matrix_delv(1:m1+1,1:m2+1) = fxy_matrix
-%gxy_matrix_delv(1:n1+1,1:n2+1) = gxy_matrix
+% Degree elevate g(x,y) so that its coefficients are contained in a square
+% matrix.
+gxy_matrix_delv = DegreeElevate(gxy_matrix,n-n1,n-n2);
 
-
+% fxy_matrix_delv = zeros(m+1,m+1)
+% gxy_matrix_delv = zeros(n+1,n+1)
+% 
+% fxy_matrix_delv(1:m1+1,1:m2+1) = fxy_matrix
+% gxy_matrix_delv(1:n1+1,1:n2+1) = gxy_matrix
 
 % Get degrees of polynomial f(x,y)
 [r,c] = size(fxy_matrix_delv);
@@ -37,10 +40,13 @@ m2 = c - 1;
 n1 = r - 1;
 n2 = c - 1;
 
-min_sing_val_vec = [];
-cond_vec = [];
-opt_theta_1_vec = [];
-opt_theta_2_vec = [];
+% Initialise some vectors
+minmn = min(m,n) 
+
+vMinimumSingularVal = zeros(1,minmn);
+vCondition = zeros(1,minmn);
+vOptTheta1 = zeros(1,minmn);
+vOptTheta2 = zeros(1,minmn);
 Data_RowNorm = [];
 Data_DiagNorm = [];
 
@@ -48,7 +54,7 @@ Data_DiagNorm = [];
 % for each possible total degree
 for k=1:1:min(m,n)
     
-    %% Apply preprocessing
+    % Apply preprocessing
     switch bool_preproc
         case 'y'
             
@@ -89,8 +95,8 @@ for k=1:1:min(m,n)
             
     end
     
-    opt_theta_1_vec(k) = opt_theta_1;
-    opt_theta_2_vec(k) = opt_theta_2;
+    vOptTheta1(k) = opt_theta_1;
+    vOptTheta2(k) = opt_theta_2;
     opt_alpha_vec(k)   = opt_alpha;
     lambda_vec(k)      = lambda;
     mu_vec(k)          = mu;
@@ -100,8 +106,8 @@ for k=1:1:min(m,n)
     
     % Build two Cauchy matrices, the first for coefficients of fxy and the
     % second for the coefficients of gxy
-    Cf = BuildT1(fxy_matrix_n,n1,n2,k,k,opt_theta_1,opt_theta_2);
-    Cg = BuildT1(gxy_matrix_n,m1,m2,k,k,opt_theta_1,opt_theta_2);
+    C_fw = BuildT1(fxy_matrix_n,n1,n2,k,k,opt_theta_1,opt_theta_2);
+    C_gw = BuildT1(gxy_matrix_n,m1,m2,k,k,opt_theta_1,opt_theta_2);
     
     % Build the diagonal matrix D^{-1}
     D = BuildD(k,k,m1,m2,n1,n2);
@@ -115,41 +121,18 @@ for k=1:1:min(m,n)
             Q1 = BuildQ1(n1,n2,k,k);
             Q2 = BuildQ1(m1,m2,k,k);
 
-            Cf = D*Cf*Q1;
-            Cg = D*Cg*Q2;
+            C_fw = D*C_fw*Q1;
+            C_gw = D*C_gw*Q2;
             
+        otherwise
+            error('must includ  Q')
     end
     
-    removecols = 'n';
-    switch removecols
-        case 'y'
-            % Remove columns from T1 which we expect to be zero valued.
-            % Remove the last nchoosek(n-k+1,2) columns
-            [r,c] = size(Cf);
-            if n-k+1 == 1
-                new_num_cols = 1;
-            else
-                new_num_cols = c - nchoosek(n-k+1,2);
-            end
-            Cf = Cf(:,1:new_num_cols);
-            
-            % Remove columns from T2 which we expect to be zero valued.
-            % Remove the last nchoosek(m-k+1,2) columns
-            [r,c] = size(Cg);
-            new_num_cols = c - nchoosek(m-k+1,2);
-            Cg = Cg(:,1:new_num_cols);
-        case 'n'
-    end
-    
-    Sk = [Cf opt_alpha.* Cg];
-    
-    % Build S(f,g)
-    %Sk = BuildSubresultant(fxy_matrix_n,gxy_matrix_n,k,k,opt_alpha,opt_theta_1,opt_theta_2);
-    
-    %Sk_unproc = BuildSubresultant(fxy_matrix_delv,gxy_matrix_delv,k,k,1,1,1);
+    % Build the Sylvester matrix
+    Sk = [C_fw opt_alpha.* C_gw];
     
     ratio_max_min_entries_proc(k) = max(max(Sk))./min(min(Sk));
-    %ratio_max_min_entries_unproc(k) = max(max(Sk_unproc))./min(min(Sk_unproc));
+    
     
     %% Get QR Decomposition
     % Using QR Decomposition of the sylvester matrix
@@ -184,21 +167,23 @@ for k=1:1:min(m,n)
     %%
     
     % Get SVD of unproc and processed Sylvester Surbesultant S_{k,k}
-    min_sing_val_vec(k) = min(svd(Sk));
+    vMinimumSingularVal(k) = min(svd(Sk));
     %min_sing_val_vec_unproc(k) = min(svd(Sk_unproc));
     
     % Get the condition of Sk
-    cond_vec(k) = cond(Sk);
+    vCondition(k) = cond(Sk);
     %cond_vec_unproc(k) = cond(Sk_unproc);
     
 end
 
 
+switch plot_graphs
+    case 'y'
 %% plot the minimum singular values
 figure('name','Min Sing Val')
 title('minimum Singular Value for each subresultant matrix S_{k,k}')
 hold on
-plot(log10(min_sing_val_vec),'-s','DisplayName','Preprocessed');
+plot(log10(vMinimumSingularVal),'-s','DisplayName','Preprocessed');
 %plot(log10(min_sing_val_vec_unproc),'-s','DisplayName','Unprocessed');
 xlabel('k : index of subresultant')
 legend(gca,'show')
@@ -209,7 +194,7 @@ hold off
 figure('name','Condition S_{k}')
 title('Condition of each subresultant S_{k,k}')
 hold on
-plot(log10(cond_vec),'-s','DisplayName','Preprocessed');
+plot(log10(vCondition),'-s','DisplayName','Preprocessed');
 %plot(log10(cond_vec_unproc),'-s','DisplayName','Unprocessed');
 xlabel('k : index of subresultant S_{k}')
 ylabel('log_{10} Condition Number')
@@ -225,8 +210,12 @@ ylabel('Normalised Row Sums of R1 in S_{k}')
 title(['Normalised Row Sums of R1 fom the QR decomposition of each subresultant S_{k} \newline '...
     'm = ' int2str(m) ', n = ' int2str(n) '(Original)']);
 hold off
+    case 'n'
+    otherwise
+        error('error: plot_graphs must be either (y) or (n)')
+end
 %%
-[svd_val,svd_maxindex] = max(diff(log10(min_sing_val_vec)));
+[svd_val,svd_maxindex] = max(diff(log10(vMinimumSingularVal)));
 
 % [rowdiag_val,rowdiag_maxindex] = min(diff(log10(ratio_maxmin_diag_vec)));
 % fprintf('Total Degree Calculated By Max:Min Row Diags: %i \n',rowdiag_maxindex);
@@ -255,7 +244,7 @@ end
 
 
 % Set the optimal theta 1 and theta 2
-opt_theta_1 = opt_theta_1_vec(t);
-opt_theta_2 = opt_theta_2_vec(t);
+opt_theta_1 = vOptTheta1(t);
+opt_theta_2 = vOptTheta2(t);
 
 end

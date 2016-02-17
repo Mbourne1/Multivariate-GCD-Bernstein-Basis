@@ -16,13 +16,13 @@ function [] = plot_fxy(fxy_matrix_Brn)
 %% Plot 1
 
 % % Plot the control points of the surface in bernstein basis
-[rows,cols] = size(fxy_matrix_Brn)
+[rows,cols] = size(fxy_matrix_Brn);
 
 m1 = rows -1;
 m2 = cols -1;
 
 % Get number of control points
-num_cp = (m1+1) * (m2+1)
+num_cp = (m1+1) * (m2+1);
 
 % Store x y and z of each control point
 data = zeros(num_cp,3);
@@ -55,8 +55,8 @@ inc_x = 1/m1;
 inc_y = 1/m2;
 
 % Generate the mesh grid
-x = 0:inc_x:1
-y = 0:inc_y:1
+x = 0:inc_x:1;
+y = 0:inc_y:1;
 [x,y] = meshgrid(x,y);
 
 figure('name','surface')

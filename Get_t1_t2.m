@@ -2,35 +2,38 @@ function [t1,t2,lambda,mu,opt_alpha, opt_theta_1,opt_theta_2] = Get_t1_t2(fxy_ma
     m,n,t,...
     lambda,mu,...
     opt_alpha,opt_theta_1,opt_theta_2)
+% Get the degree structure of t1 and t2 of the gcd d(x,y) of the two 
+% polynomials f(x,y) and g(x,y)
+%
+%   Inputs.
+%
+%   fxy_matrix :
+%   gxy_matrix :
+%   m :
+%   n :
+%   t :
+%   lambda :
+%   mu :
+%   alpha :
+%   theta1 :
+%   theta2 :
 
+
+global plot_graphs
 global bool_preproc
 
+% Get the degree structure of polynomial f(x,y)
 [r,c] = size(fxy_matrix);
 m1 = r-1;
 m2 = c-1;
 
+% Get the degree structure of polynomial g(x,y)
 [r,c] = size(gxy_matrix);
 n1 = r-1;
 n2 = c-1;
 
-
-%%
-% given that we know t
-% it is possible that t1 and t2 take any values such that
-%   1.) t1 + t2 >= t
-%   2.) t1 + t2 <= 2t
-%   3.) t1 <= t
-%   4.) t2 <= t
-%   2.) t1 <= m1
-%   3.) t1 <= n1
-%   4.) t2 <= m2
-%   5.) t2 <= n2
-
-%    t1 <= min(m1,n1)
-%    t2 <= min(m2,n2)
-
-
 % Produce the set of all possible t1 and t2 values
+
 method = 'All';
 
 switch method
@@ -58,7 +61,7 @@ switch method
                 condC = t1 <= n1 && t1 <= m1;
                 condD = t2 <= n2 && t2 <= m2;
                 condE = n1 - t1 + n2 - t2 <= 2*(n-t);
-                condF = m1 - t1 + n1 - t1 <= 2*(m-t);
+                condF = m1 - t1 + m2 - t2 <= 2*(m-t);
                 condG = n1 - t1 <= n-t;
                 condH = n2 - t2 <= n-t;
                 condI = m1 - t1 <= m-t;
@@ -170,33 +173,42 @@ z = z2;
 
 %%
 % Plot 3d surface
-[x,y] = meshgrid(x,y);
-figure('name','surface')
-hold on
-s1 = surf(x,y,z');
-xlabel('t_{1}')
-ylabel('t_{2}')
-xlim([0,max_k1+3])
-ylim([0,max_k2+3])
-alpha(s1,0.5)
-xlabel('t_{1}')
-ylabel('t_{2}')
-hold off
-
+switch plot_graphs
+    case 'y'
+        [x,y] = meshgrid(x,y);
+        figure('name','Get Relative Degree - Surface')
+        hold on
+        s1 = surf(x,y,z');
+        xlabel('t_{1}')
+        ylabel('t_{2}')
+        xlim([0,max_k1+3])
+        ylim([0,max_k2+3])
+        alpha(s1,0.5)
+        xlabel('t_{1}')
+        ylabel('t_{2}')
+        hold off
+    case 'n'
+    otherwise
+        error('Error : plot_graphs is either (y) or (n)')
+end
 
 %%
-% Plot 3d data points
-figure('name','3dplot')
-hold on
-title('Minimum Singular Values in S_{t_{1},t_{2}}')
-xlabel('t_{1}')
-ylabel('t_{2}')
-
-
-scatter3(mymat(:,1),mymat(:,2),mymat(:,3),'filled')
-grid('on')
-hold off
-
+switch plot_graphs
+    case 'y'
+        % Plot 3d data points
+        figure('name','Plot Min Sing Val S(k1,k2)')
+        hold on
+        title('Minimum Singular Values in S_{t_{1},t_{2}}')
+        xlabel('t_{1}')
+        ylabel('t_{2}')
+        zlabel('log_{10} Min Sing Value')
+        scatter3(mymat(:,1),mymat(:,2),mymat(:,3),'filled')
+        grid('on')
+        hold off
+    case 'n'
+    otherwise
+        error('Error: plot_graphs is either y or n')
+end
 %%
 [r,c] = size(z);
 % take from (0,0)
@@ -250,11 +262,15 @@ end
 % Get the position of the maximum change in values of min singular value
 % for each t1 + t2 = tot
 
-
-figure('name','Separate Degree Calculation')
-plot(log10(mymat(:,2)));
-hold off
-
+switch plot_graphs
+    case 'y'
+        figure('name','Separate Degree Calculation')
+        plot(log10(mymat(:,2)));
+        hold off
+    case 'n'
+    otherwise
+        error('plot_graphs is either y or n')
+end
 
 
 

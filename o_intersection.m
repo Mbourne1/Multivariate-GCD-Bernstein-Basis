@@ -1,4 +1,4 @@
-function [] = o_intersection(ex_num,el,BOOL_PREPROC, BOOL_SNTLN,SEED)
+function [] = o_intersection(el,BOOL_PREPROC, BOOL_SNTLN,SEED)
 % Get some control parameters
 
 global bool_Q

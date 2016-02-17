@@ -35,31 +35,19 @@ m2_t2 = cols - 1;
 %% Build the matrix uxy_matrix_binoms
 
 % Build the matrix which premultiplies u_xy
-Pre_binoms = zeros(m1_t1+1,1);
-for i = 0:1:m1_t1
-    Pre_binoms(i+1) = nchoosek(m1_t1,i);
-end
+Pre_binoms = GetBinoms(m1_t1);
 Pre_binoms_mtrx = diag(Pre_binoms);
 
 % Build the matrix which post multiplies u_xy
-Post_binoms = zeros(m2_t2,1);
-for i = 0:1:m2_t2
-    Post_binoms(i+1) = nchoosek(m2_t2,i);
-end
+Post_binoms = GetBinoms(m2_t2);
 Post_binoms_mtrx = diag(Post_binoms);
 
 % Build the matrix which premultiplies u(x,y) by thetas
-Pre_thetas = zeros(m1_t1,1);
-for i = 0:1:m1_t1
-    Pre_thetas(i+1) = th1^i;
-end
+Pre_thetas = th1.^(0:1:m1_t1);
 Pre_thetas_mtrx = diag(Pre_thetas);
 
 % Build the matrix which post multiplies u(x,y) by thetas
-Post_thetas = zeros(m2_t2,1);
-for i = 0:1:m2_t2
-    Post_thetas(i+1) = th2^i;
-end
+Post_thetas = th2.^(0:1:m2_t2);
 Post_thetas_mtrx = diag(Post_thetas);
 
 % Create matrix uxy_binom which includes binomial coefficients

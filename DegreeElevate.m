@@ -1,11 +1,26 @@
 function deg_elv_fxy_matrix = DegreeElevate(fxy_matrix,ad_rows,ad_cols)
+% Degree elevate the polynomial f(x,y) so that f(x,y) is a polynomial with
+% basis elements
+% B_{m1 + ad_rows}(x) in x
+% B_{m2 + ad_cols}(y) in y
+%
+%   Inputs:
+%
+%
+%   fxy_matrix : Coefficients of polynomial f(x,y)
+%
+%   ad_rows : number of degree elevations with respect to x
+%
+%   ad_cols : number of degree elevations with respect to y.
 
+% Get the degree of input polynomial f(x,y)
 [r,c] = size(fxy_matrix);
 m1 = r - 1;
 m2 = c - 1;
 
 % let r_f be the number of rows being added
 r_f = ad_rows;
+
 % let s_f be the number of cols being added
 s_f = ad_cols;
 

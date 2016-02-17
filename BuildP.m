@@ -1,49 +1,44 @@
-function P = BuildP(m1,m2,n1,n2,theta1,theta2,opt_col,t1,t2)
+function P = BuildP(m1,m2,n1,n2,theta1,theta2,alpha,t1,t2,opt_col)
 
-% Build the matrix of thetas and binomial coefficients corresponding to the
-% polynomial f(w,w). such that f(x,y).* thetas matrix = f(w,w)
+num_cols_T1 = (n1 - t1 + 1) * (n2 - t2 + 1);
 
-% Pre_thetas * mat * Post_thetas = thetas_matrix
-pre_thetas = diag(theta1.^(0:1:m1));
-post_thetas = diag(theta2.^(0:1:m2));
-thetas_matrix = ones(m1+1,m2+1);
-thetas_matrix = pre_thetas * thetas_matrix * post_thetas;
+% Get the number of coefficients in the polynomial f(x,y)
+num_coeff_f = (m1+1) * (m2+1);
 
-% Produce a zero matrix to fill the space
-padd_mat = zeros(m1+n1-t1+1, m2+n2-t2+1);
+% Get the number of coefficients in the polynomial g(x,y)
+num_coeff_g = (n1+1) * (n2+1);
 
-% % Given the index of the optimal column, Get the number of multiplications
-% with respec to x and number with respect to y.
-[i,j] = GivenCol_getIndex2(n1-t1,n2-t2,opt_col);
+if opt_col <= num_cols_T1
+    
+    % Optimal column in first partition
+    fprintf('Optimal column in First partition\n')
+    
+    % % Build the Matrix P
+    % Build the matrix P1
+    P1 = BuildP1(m1,m2,n1,n2,theta1,theta2,opt_col,t1,t2);
+    
+    % Build the matrix P2
+    rows = (m1+n1-t1+1)*(m2+n2-t2+1);
+    P2 = zeros(rows,num_coeff_g);
+ 
 
-% initialise i hat and j hat.
-ihat = i+1;
-jhat = j+1;
+else
+    % Optimal column in second partition
+    fprintf('Optimal column in second partition\n')
+    % % Build the Matrix P
+    
+    % Build the matrix P1
+    rows = (m1+n1-t1+1)*(m2+n2-t2+1);
+    P1 = zeros(rows,num_coeff_f);
+    
+    % Build the matrix P2
+    % Get the position of the optimal column with respect to T(g)
+    opt_col_rel = opt_col - num_cols_T1;
+    P2 = BuildP1(n1,n2,m1,m2,theta1,theta2,opt_col_rel,t1,t2);
+    
 
-% Get the number of rows in f(x,y)
-num_rows_f = m1+1;
+end
 
-% Get the number of columns in f(x,y)
-num_cols_f = m2+1;
-
-% Place the thetas matrix (matrix of thetas corresponding to f(x,y)) into
-% the padded matrix.
-padd_mat(ihat:i+num_rows_f, jhat:j+num_cols_f) = thetas_matrix;
-
-% Get the matrix as a vector, starting in upper left corner, read down and
-% diagonally upwards.
-vec_padd_mat = getAsVector(padd_mat);
-
-% Form a diagonal matrix of the vector we just produced.
-diag_mat_vec_padd_mat = diag(vec_padd_mat);
-
-
-% Remove the zero columns
-diag_mat_vec_padd_mat( :, ~any(diag_mat_vec_padd_mat,1) ) = [];  %columns
-
-% Assign to P
-P = diag_mat_vec_padd_mat;
-
-P = nchoosek(n1-t1,i) * nchoosek(n2-t2,j) * P;
+P =  [P1 alpha.*P2];
 
 end

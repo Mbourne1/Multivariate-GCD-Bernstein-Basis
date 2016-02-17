@@ -6,6 +6,7 @@ function T1 = BuildT1(fxy_matrix,n1,n2,k1,k2,th1,th2)
 
 % Get degree of f with respect to x
 m1 = rows - 1;
+
 % Get degree of f with respect to y
 m2 = cols - 1;
 
@@ -14,17 +15,11 @@ m2 = cols - 1;
 % by two binomial matrices
 
 % Build the matrix which pre multiplies f_xy
-Pre_binoms = zeros(m1+1,1);
-for i = 0:1:m1
-    Pre_binoms(i+1) = nchoosek(m1,i);
-end
+Pre_binoms = GetBinoms(m1);
 Pre_binoms_mtrx = diag(Pre_binoms);
 
 % Build the matrix which post multiplies f_xy
-Post_binoms = zeros(m2+1,1);
-for i = 0:1:m2
-    Post_binoms(i+1) = nchoosek(m2,i);
-end
+Post_binoms = GetBinoms(m2);
 Post_binoms_mtrx = diag(Post_binoms);
 
 % Build the matrix which pre multiplies f_xy
@@ -42,8 +37,6 @@ fw1w2_matrix_bi = Pre_thetas_mtrx * fxy_matrix_bi * Post_thetas_mtrx;
 % Initalise a zero matrix 
 zero_matrix = zeros(m1 + n1 - k1 + 1, m2 +n2 - k2 + 1);
 fxy_matrix_bi_padded = zero_matrix;
-
-fxy_matrix_bi_padded(1:m1+1,1:m2+1) = fw1w2_matrix_bi;
 
 T1 = [];
 

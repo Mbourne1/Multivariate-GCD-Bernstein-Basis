@@ -1,37 +1,42 @@
 function [uxy_matrix_calc, vxy_matrix_calc,...
     lambda,mu,...
-    opt_alpha, opt_theta_1, opt_theta_2] = GetQuotients(fxy_matrix, gxy_matrix,...
-    t1,t2)
+    opt_alpha, opt_theta_1, opt_theta_2] = GetQuotients_total(fxy_matrix, gxy_matrix,...
+    m,n,t)
 % Given two input polynomials and the degree of the GCD return the quotient
 % polynomials u(x,y) and v(x,y)
 %
-%   Inputs.
-%
+%       Inputs.
 %
 %   fxy_matrix :
 %
 %   gxy_matrix :
 %
-%   t1 :
+%   m :
 %
-%   t2 :
+%   n :
 %
+%   t :
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 % Initialise Global Variables
 global bool_Q
-
 global bool_preproc
 
-%%
-% Get the degrees of polynomial f(x,y)
-[r,c] = size(fxy_matrix);
-m1 = r - 1;
-m2 = c - 1;
 
-% Get the degrees of polynomial g(x,y)
+% padd polynomials fxy and gxy
+[r,c] = size(fxy_matrix);
+fxy_padd = zeros(m+1,m+1);
+fxy_padd(1:r,1:c) = fxy_matrix;
+
 [r,c] = size(gxy_matrix);
-n1 = r - 1;
-n2 = c - 1;
+gxy_padd = zeros(m+1,m+1);
+gxy_padd(1:r,1:c) = gxy_matrix;
+
+fxy_matrix = fxy_padd;
+gxy_matrix = gxy_padd;
+
 
 
 %%
@@ -79,7 +84,7 @@ switch bool_preproc
 end
 
 % Build the (t1,t2)-th subresultant
-St1t2 = BuildSubresultant(fxy_matrix_n,gxy_matrix_n,t1,t2,opt_alpha, opt_theta_1, opt_theta_2);
+St1t2 = BuildSubresultant(fxy_matrix_n,gxy_matrix_n,t,t,opt_alpha, opt_theta_1, opt_theta_2);
 
 
 %% Find Optimal column for removal from St
@@ -90,7 +95,7 @@ St1t2 = BuildSubresultant(fxy_matrix_n,gxy_matrix_n,t1,t2,opt_alpha, opt_theta_1
 
 % QR Decomposition of the Sylvester Matrix S_{k}
 [Qk,Rk] = qr(St1t2);
-n = n1+n2;
+
 for j=1:1:cols
     
     ck = St1t2(:,j);
@@ -128,8 +133,8 @@ vecx =[
     x_ls(opt_col:end);
     ];
 
-num_coeff_v = (n1-t1+1) * (n2-t2+1);
-num_coeff_u = (m1-t1+1) * (m2-t2+1);
+num_coeff_v = (n-t+1) * (n-t+1);
+num_coeff_u = (m-t+1) * (m-t+1);
 
 
 % get coefficients of u and v
@@ -141,21 +146,20 @@ uw_calc = -vecx(num_coeff_v+1:end);
 norm(St1t2 * [vw_calc ;-uw_calc])
 
 
-
 %% Obtain u(x,y) in its matrix form
 % Arrange uw into a matrix form based on its dimensions.
-uw_calc_mat = getAsMatrix(uw_calc,m1-t1,m2-t2);
+uw_calc_mat = getAsMatrix(uw_calc,m-t,m-t);
 
 %% Obtain v(x,y) in its matrix form
 % Arrange vw into a matrix form based on their dimensions.
-vw_calc_mat = getAsMatrix(vw_calc,n1-t1,n2-t2);
+vw_calc_mat = getAsMatrix(vw_calc,n-t,n-t);
 
 %%
 % Remove the thetas from the matrix of coefficients of v(w,w) to obtain
 % coefficients of v(x,y)
 
-pre_theta = diag(1./(opt_theta_1.^(0:1:n1-t1)));
-post_theta = diag(1./(opt_theta_2.^(0:1:n2-t2)));
+pre_theta = diag(1./(opt_theta_1.^(0:1:n-t)));
+post_theta = diag(1./(opt_theta_2.^(0:1:n-t)));
 
 vxy_matrix_calc = pre_theta * vw_calc_mat * post_theta;
 
@@ -165,8 +169,8 @@ vxy_matrix_calc = pre_theta * vw_calc_mat * post_theta;
 
 % for each row, divide by theta2^i1
 
-pre_theta = diag(1./(opt_theta_1.^(0:1:m1-t1)));
-post_theta = diag(1./(opt_theta_2.^(0:1:m2-t2)));
+pre_theta = diag(1./(opt_theta_1.^(0:1:m-t)));
+post_theta = diag(1./(opt_theta_2.^(0:1:m-t)));
 
 uxy_matrix_calc = pre_theta * uw_calc_mat * post_theta;
 
@@ -180,16 +184,10 @@ switch bool_Q
         n1_t1 = r - 1;
         n2_t2 = c - 1;
         
-        bi_n1_t1 = zeros(n1_t1,1);
-        for i = 0:1:n1_t1
-            bi_n1_t1(i+1) = nchoosek(n1_t1,i);
-        end
+        bi_n1_t1 = getBinoms(n1_t1)
         mat1 = diag(1./bi_n1_t1);
         
-        bi_n2_t2 = zeros(n2_t2,1);
-        for i = 0:1:n2_t2
-            bi_n2_t2(i+1) = nchoosek(n2_t2,i);
-        end
+        bi_n2_t2 = getBinoms(n2_t2)
         mat2 = diag(1./bi_n2_t2);
         
         vxy_matrix_calc = mat1 * vxy_matrix_calc * mat2;
@@ -200,16 +198,11 @@ switch bool_Q
         m1_t1 = r - 1;
         m2_t2 = c - 1;
         
-        bi_m1_t1 = zeros(m1_t1,1);
-        for i = 0:1:m1_t1
-            bi_m1_t1(i+1) = nchoosek(m1_t1,i);
-        end
-        mat1 = diag(1./bi_m1_t1);
+        bi_m1_t1 = getBinoms(m1_t1)
+        bi_m2_t2 = getBinoms(m2_t2)
         
-        bi_m2_t2 = zeros(m2_t2,1);
-        for i = 0:1:m2_t2
-            bi_m2_t2(i+1) = nchoosek(m2_t2,i);
-        end
+        
+        mat1 = diag(1./bi_m1_t1);
         mat2 = diag(1./bi_m2_t2);
         
         uxy_matrix_calc = mat1 * uxy_matrix_calc * mat2;

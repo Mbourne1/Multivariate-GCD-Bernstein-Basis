@@ -47,15 +47,10 @@ function [ fxy_output,gxy_output,alpha_output,theta1_output,theta2_output,X_outp
 global max_error
 global max_iterations
 
-
-max_error = 1e-12;
+max_error = 1e-14;
 max_iterations = 100;
 
 
-% bool_plotgraphs (boolean)
-% 1 - Plot graphs for computations of calculating gcd
-% 0 - Avoid plotting graphs (Speed up)
-global bool_plotgraphs
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -77,11 +72,23 @@ m2 = c - 1;
 n1 = r - 1;
 n2 = c - 1;
 
+% Get the number of coefficients in the polynomial f(x,y)
 num_coeff_f = (m1+1) * (m2+1);
+
+% Get the number of coefficients in the polynomial g(x,y)
 num_coeff_g = (n1+1) * (n2+1);
+
+% Get the number of coefficients in both f(x,y) and g(x,y)
 num_coeff = num_coeff_f + num_coeff_g;
+
+% Get the number of coefficients in v(x,y)
 num_coeff_v = (n1-t1+1) * (n2-t2+1);
+
+% Get the number of coefficients in u(x,y)
 num_coeff_u = (m1-t1+1) * (m2-t2+1);
+
+% Get the number of coefficients in the unknown vector x, where A_{t}x =
+% c_{t}.
 num_coeff_x = num_coeff_u + num_coeff_v - 1;
 
 % Create the identity matrix I, the matrix M formed from I by removing the
@@ -89,15 +96,23 @@ num_coeff_x = num_coeff_u + num_coeff_v - 1;
 % subresultant matrix, so that S_{t}(f,g)*M = A_{t}, where A_{t} is the
 % Sylvester subresultant matrix with the column removed.
 
+% Get the number of columns in C_{t}(f), the first partition of the Sylvester
+% Matrix S_{t}(f,g)
 num_cols_in_f_partition = (n1-t1+1) * (n2-t2+1);
+
+% Get the number of columns in C_{t}(g), the second partition of the
+% Sylvester matrix S_{t}(f,g)
 num_cols_in_g_partition = (m1-t1+1) * (m2-t2+1);
 
+% Get the total number of columns in the Sylvester matrix S_{t}(f,g)
 num_cols = num_cols_in_f_partition + num_cols_in_g_partition;
 
+% Create the identity matrix
 I = eye(num_cols, num_cols);
 
+% Create the matrix M, such that S(f,g)*M gives A_{t}, the Sylvester Matrix
+% with the optimal column removed.
 M = I;
-
 M(:,opt_col) = [];
 
 % Let e be the column removed from the identity matrix, such that
@@ -213,6 +228,7 @@ gxy_vec = getAsVector(gxy_matrix_n);
 Ak = DTQ;
 ck = DTQ(:,opt_col);
 Ak(:,opt_col) = [];
+
 %%
 % % Build the matrix of binomials corresponding to polynomial f(x,y)
 binoms_f = ones(m1+1,m2+1);
@@ -241,60 +257,8 @@ binoms_g_vec = getAsVector(binoms_g);
 G = diag([binoms_f_vec;binoms_g_vec]);
 %%
 
-if opt_col <= num_cols_T1
-    % Optimal column in first partition
-    fprintf('Optimal column in First partition\n')
-    % % Build the Matrix P
-    
-    % Build the matrix P1
-    P1 = BuildP(m1,m2,n1,n2,theta1(ite),theta2(ite),opt_col,t1,t2);
-    
-    % Build the matrix P2
-    rows = (m1+n1-t1+1)*(m2+n2-t2+1);
-    P2 = zeros(rows,num_coeff_g);
- 
-    % Build the matrix P
-    P =  D*[P1 P2]* G;
-        
-    
-    
-    % Test that the column c_{k} calculated by P[f,g] is equal to the c_{k}
-    % removed from the Sylvester matrix
-%     fprintf('\n TEST \n')
-%     ck2 = P*[fxy_vec;gxy_vec]
-%     
-%     ck
-%     ck./ck2
-%     fprintf('End Test \n')
-   
-    
-else
-    % Optimal column in second partition
-    fprintf('Optimal column in second partition\n')
-    % % Build the Matrix P
-    
-    % Build the matrix P1
-    rows = (m1+n1-t1+1)*(m2+n2-t2+1);
-    P1 = zeros(rows,num_coeff_f);
-    
-    % Build the matrix P2
-    
-    % Get the position of the optimal column with respect to T(g)
-    opt_col_rel = opt_col - num_cols_T1;
-    P2 = BuildP(n1,n2,m1,m2,theta1(ite),theta2(ite),opt_col_rel,t1,t2);
-    
-    % Build the matrix P
-    P = D*[P1 alpha(ite)*P2]*G;
-    
-    % Test that the column c_{k} calculated by P[f,g] is equal to the c_{k}
-    % removed from the Sylvester matrix
-%     fprintf('\n TEST \n')
-%     ck2 = P*[fxy_vec ; gxy_vec]
-%     ck
-%     ck./ck2
-%     fprintf('\n End Test \n')
-end
-
+P = BuildP(m1,m2,n1,n2,theta1(ite),theta2(ite),alpha(ite),t1,t2,opt_col);
+P = D*P*G;
 
 %%
 % Calculate the derivatives wrt alpha and theta of the removed column.
@@ -320,10 +284,9 @@ x = [first_part ; 0 ; second_part];
 Y = BuildY(m1,m2,n1,n2,t1,t2,opt_col,x_ls,alpha(ite),theta1(ite),theta2(ite));
 DYG = D*Y*G;
 
-% test1 = DYG * [fxy_vec;gxy_vec]
-% test2 = DTQ * x
-% 
-% test1./test2;
+test1 = DYG * [fxy_vec;gxy_vec];
+test2 = DTQ * x;
+test1./test2;
 
 % Calculate the initial residual r = ck - (Ak*x)
 res_vec = ck - (DTQ*M*x_ls);
@@ -409,7 +372,6 @@ yy              =   start_point;
 %condition(ite) = norm(res_vec)/norm(ck);
 % Edit 17/11/2015
 condition(ite) = norm(res_vec);
-residual(ite) = norm(res_vec);
 xk = x_ls;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -421,8 +383,9 @@ while condition(ite) >(max_error) &&  ite < max_iterations
     
     % Use the QR decomposition to solve the LSE problem
     % min |y-p| subject to Cy=q
-    y = LSE(E,p,C,res_vec);
     
+    y = LSE(E,p,C,res_vec);
+    y_old = y;
     % Increment the iteration number
     ite = ite + 1;
     
@@ -435,11 +398,13 @@ while condition(ite) >(max_error) &&  ite < max_iterations
     
     % get the coefficients corresponding to f and g
     delta_zk        = y(1:num_coeff_f + num_coeff_g ,1);
+    
     % Remove the zk coefficients from the list of coefficients
     y(1:num_coeff_f + num_coeff_g) = [];
     
     % Get the coefficients corresponding to x
     delta_xk        = y(1:num_coeff_x,1);
+    
     % Remove them from the list of coefficients
     y(1:num_coeff_x) = [];
     
@@ -477,24 +442,19 @@ while condition(ite) >(max_error) &&  ite < max_iterations
     % Obtain polynomials in modified bersntein basis a_{i}\theta^{i}
     
     % Obtain new f(w,w) with improved theta1, and theta2
-    pre_theta1 = diag(theta1(ite).^(0:1:m1));
-    post_theta2 = diag(theta2(ite).^(0:1:m2));
-    fw1w2_matrix = pre_theta1 * fxy_matrix_n * post_theta2;
+    pre_theta1      = diag(theta1(ite).^(0:1:m1));
+    post_theta2     = diag(theta2(ite).^(0:1:m2));
+    fw1w2_matrix    = pre_theta1 * fxy_matrix_n * post_theta2;
     
     % Obtain new g(w,w) with improved theta1 and theta2
-    pre_theta1 = diag(theta1(ite).^(0:1:n1));
-    post_theta2 = diag(theta2(ite).^(0:1:n2));
-    gw1w2_matrix = pre_theta1 * gxy_matrix_n * post_theta2;
+    pre_theta1      = diag(theta1(ite).^(0:1:n1));
+    post_theta2     = diag(theta2(ite).^(0:1:n2));
+    gw1w2_matrix    = pre_theta1 * gxy_matrix_n * post_theta2;
     
     
-    % Construct the Sylvester subresultant matrix S.
-    % Edit 17/11/2015
-    %T1 = BuildT1(fxy_matrix_n,n1,n2,t1,t2,1,1);
-    %T2 = BuildT1(gxy_matrix_n,m1,m2,t1,t2,1,1);
-    
+    % Construct the Sylvester subresultant matrix DTQ.   
     T1 = BuildT1(fw1w2_matrix,n1,n2,t1,t2,1,1);
     T2 = BuildT1(gw1w2_matrix,m1,m2,t1,t2,1,1);
-    
     DTQ = D*[T1 alpha(ite).*T2]*Q;
     
     % Calculate the partial derivatives of fw and gw with respect to alpha
@@ -505,45 +465,42 @@ while condition(ite) >(max_error) &&  ite < max_iterations
     % Calculate the partial derivatives of fw and gw with respect to theta1
     % divide the rows by theta1 and multiply by the old power
     
-    % Get the partial derivative of f with respect to theta 1
+    % Get the partial derivative of f(w1,w2) with respect to theta_{1}
     temp_mat = diag((0:1:m1)./theta1(ite));
     Partial_fw_wrt_theta1 = temp_mat * fw1w2_matrix;
     
-    % Get the partial derivative of g with respect to theta1
+    % Get the partial derivative of g(w1,w2) with respect to theta_{1}
     temp_mat = diag((0:1:n1)./theta1(ite));
     Partial_gw_wrt_theta1 = temp_mat * gw1w2_matrix;
     
-    % Get the partial derivative of f with respect to theta2
+    % Get the partial derivative of f with respect to theta_{2}
     temp_mat = diag((0:1:m2)./theta2(ite));
     Partial_fw_wrt_theta2 =  fw1w2_matrix * temp_mat;
     
-    % Get the partial derivative of g with respect too theta2
+    % Get the partial derivative of g with respect to theta_{2}
     temp_mat = diag((0:1:n2)./theta2(ite));
     Partial_gw_wrt_theta2 =  gw1w2_matrix * temp_mat;
-    
     
     % Calculate the Partial derivative of T with respect to alpha.
     T1_wrt_alpha = BuildT1(Partial_fw_wrt_alpha,n1,n2,t1,t2,1,1);
     T2_wrt_alpha = BuildT1(Partial_alpha_gw_wrt_alpha,m1,m2,t1,t2,1,1);
     Partial_DTQ_wrt_alpha = D*[T1_wrt_alpha T2_wrt_alpha]*Q;
     
-    
-    % Calculate the partial derivative of T with respect to theta1
+    % Calculate the partial derivative of DTQ with respect to theta_{1}
     T1_wrt_theta1 = BuildT1(Partial_fw_wrt_theta1,n1,n2,t1,t2,1,1);
     T2_wrt_theta1 = BuildT1(Partial_gw_wrt_theta1,m1,m2,t1,t2,1,1);
-    
     Partial_DTQ_wrt_theta1 = D*[T1_wrt_theta1 alpha(ite)*T2_wrt_theta1]*Q;
     
-    % Calculate the partial derivative of T with respect to theta2
+    % Calculate the partial derivative of DTQ with respect to theta_{2}
     T1_wrt_theta2 = BuildT1(Partial_fw_wrt_theta2,n1,n2,t1,t2,1,1);
     T2_wrt_theta2 = BuildT1(Partial_gw_wrt_theta2,m1,m2,t1,t2,1,1);
-    
     Partial_DTQ_wrt_theta2 = D*[T1_wrt_theta2 alpha(ite)*T2_wrt_theta2]*Q;
     
     % Calculate the column c_{k} of DTQ that is moved to the right hand side
     ck = DTQ*e;
     
-    % Calculate the derivatives of c_{k} with respect to \alpha and \theta
+    % Calculate the derivatives of c_{k} with respect to \alpha, \theta_{1}
+    % and \theta_{2}
     Partial_ck_wrt_alpha        = Partial_DTQ_wrt_alpha*e;
     Partial_ck_wrt_theta1       = Partial_DTQ_wrt_theta1*e;
     Partial_ck_wrt_theta2       = Partial_DTQ_wrt_theta2*e;
@@ -553,23 +510,25 @@ while condition(ite) >(max_error) &&  ite < max_iterations
     z_fx      = zk(1:num_coeff_f);
     z_gx      = zk(num_coeff_f + 1 :end);
     
-    % Calculate the entries of z_fw and z_gw
+    % Get the vectors z_fx and z_gx as matrices, which match the shape of
+    % f(x) and g(x).
     z_fx_mat = getAsMatrix(z_fx,m1,m2);
     z_gx_mat = getAsMatrix(z_gx,n1,n2);
     
-    % Get z_fw_mat, by multiplying by thetas
+    % Get matrices z_fw_mat and z_gw_mat, by multiplying rows by
+    % theta_{1}^{i} and columns by theta_{2}^{j}
     z_fw_mat = diag(theta1(ite).^(0:1:m1)) * z_fx_mat * diag(theta2(ite).^(0:1:m2));
     z_gw_mat = diag(theta1(ite).^(0:1:n1)) * z_gx_mat * diag(theta2(ite).^(0:1:n2));
     
-    % Calculate the derivatives of z_fw and z_gw with repect to alpha.
+    % Calculate the derivatives of z_fw and z_gw with repect to \alpha.
     Partial_zfw_wrt_alpha    = zeros(m1+1,m2+1);
     Partial_zgw_wrt_alpha    = z_gw_mat;
     
-    % Calculate the derivative of z_fw with respect to theta1.
+    % Calculate the derivative of z_fw with respect to \theta_{1}.
     temp_mat = diag((0:1:m1)./theta1(ite));
     Partial_zfw_wrt_theta1 = temp_mat * z_fw_mat;
     
-    % Calculate the derivative of z_fw with respect to theta2
+    % Calculate the derivative of z_fw with respect to \theta_{2}
     temp_mat = diag((0:1:m2)./theta2(ite));
     Partial_zfw_wrt_theta2 = z_fw_mat * temp_mat;
     
@@ -584,10 +543,6 @@ while condition(ite) >(max_error) &&  ite < max_iterations
     
     % Build the coefficient Matrix N = [T(z1) T(z2)], of structured perturbations, with
     % same structure as DTQ.
-    %N1 = BuildT1(z_fx_mat,n1,n2,t1,t2,1,1);
-    %N2 = BuildT1(z_gx_mat,m1,m2,t1,t2,1,1);
-    
-    % EDIT - 15:03:00
     N1 = BuildT1(z_fw_mat,n1,n2,t1,t2,1,1);
     N2 = BuildT1(z_gw_mat,m1,m2,t1,t2,1,1);
     DNQ = [N1 alpha(ite).*N2];
@@ -596,7 +551,6 @@ while condition(ite) >(max_error) &&  ite < max_iterations
     N1_wrt_alpha = BuildT1(Partial_zfw_wrt_alpha, n1,n2,t1,t2,1,1);
     N2_wrt_alpha = BuildT1(Partial_zgw_wrt_alpha, m1,m2,t1,t2,1,1);
     Partial_DNQ_wrt_alpha = D*[N1_wrt_alpha N2_wrt_alpha]*Q;
-    
     
     % Calculate the derivatives of DNQ with respect to theta
     N1_wrt_theta1 = BuildT1(Partial_zfw_wrt_theta1,n1,n2,t1,t2,1,1);
@@ -621,32 +575,24 @@ while condition(ite) >(max_error) &&  ite < max_iterations
     % Calculate the derivative of h with respect to theta2
     h_theta2 = Partial_DNQ_wrt_theta2*e;
     
-    % Build the matrix (T+N)
-    %TN1 = BuildT1(fxy_matrix_n + z_fx_mat,n1,n2,t1,t2,1,1);
-    %TN2 = BuildT1(gxy_matrix_n + z_gx_mat,m1,m2,t1,t2,1,1);
-    % Edit - 17/11/2015 - 15:02
+    % Build the matrix (T+N)  
     TN1 = BuildT1(fw1w2_matrix + z_fw_mat,n1,n2,t1,t2,1,1);
     TN2 = BuildT1(gw1w2_matrix + z_gw_mat,m1,m2,t1,t2,1,1);
     DTNQ = D*[TN1 alpha(ite).*TN2]*Q;
     
     % Calculate the paritial derivative of (T+N) with respect to
     % alpha
-    
     TN1_wrt_alpha = BuildT1(Partial_fw_wrt_alpha + Partial_zfw_wrt_alpha, n1,n2,t1,t2,1,1);
     TN2_wrt_alpha = BuildT1(Partial_alpha_gw_wrt_alpha + Partial_zgw_wrt_alpha, m1,m2,t1,t2,1,1);
     DTNQ_alpha = D*[TN1_wrt_alpha TN2_wrt_alpha]*Q;
     
     
-    % Calculate the paritial derivative of (T+N) with respect to
-    % theta1
-    
+    % Calculate the paritial derivative of (T+N) with respect to theta1
     TN1_wrt_theta1 = BuildT1(Partial_fw_wrt_theta1 + Partial_zfw_wrt_theta1,n1,n2,t1,t2,1,1);
     TN2_wrt_theta1 = BuildT1(Partial_gw_wrt_theta1 + Partial_zgw_wrt_theta1,m1,m2,t1,t2,1,1);
     DTNQ_theta1 = D*[TN1_wrt_theta1 alpha(ite).*TN2_wrt_theta1]*Q;
     
-    % Calculate the paritial derivative of (T+N) with respect to
-    % theta2
-    
+    % Calculate the paritial derivative of (T+N) with respect to theta2    
     TN1_wrt_theta2 = BuildT1(Partial_fw_wrt_theta2 + Partial_zfw_wrt_theta2,n1,n2,t1,t2,1,1);
     TN2_wrt_theta2 = BuildT1(Partial_gw_wrt_theta2 + Partial_zgw_wrt_theta2,m1,m2,t1,t2,1,1);
     DTNQ_theta2 = D*[TN1_wrt_theta2 alpha(ite).*TN2_wrt_theta2]*Q;
@@ -654,63 +600,23 @@ while condition(ite) >(max_error) &&  ite < max_iterations
     
     % Calculate the matrix DY where Y is the Matrix such that E_{k}x = Y_{k}z.
     Y = BuildY(m1,m2,n1,n2,t1,t2,opt_col,xk,alpha(ite),theta1(ite),theta2(ite));
+    
     DYG = D*Y*G; 
     
+    test1 = DYG * [fxy_vec;gxy_vec];
+    first_part = xk(1:(opt_col-1));
+    second_part = xk(opt_col:end);
+    x = [first_part ; 0 ; second_part];
+    test2 = DTQ * x;
+    
+    
     % Calculate the matrix DP where P is the matrix such that c = P[f;g]
-    %%
-    if opt_col <= num_cols_T1
-        % Optimal column in first partition
-        
-        % % Build the matrix P
-        
-        % Build the matrix P1
-        
-        P1 = BuildP(m1,m2,n1,n2,theta1(ite),theta2(ite),opt_col,t1,t2);
+    P = BuildP(m1,m2,n1,n2,theta1(ite),theta2(ite),alpha(ite),t1,t2,opt_col);
+    P = D*P*G;
+    
+    % Get residual as a vector
+    rk = (ck+h) - DTNQ*M*xk ;
 
-        % Build the matrix P2
-        rows = (m1+n1-t1+1)*(m2+n2-t2+1);
-        P2 = zeros(rows,num_coeff_g);
-        
-        % Build the matrix P
-        
-        P = D*[P1 P2]*G;
-    else
-        % Optimal column in second partition
-        
-        % Build the matrix P1
-        rows = (m1+n1-t1+1)*(m2+n2-t2+1);
-        P1 = zeros(rows,num_coeff_f);
-        
-        % Build the matrix P2
-        % Get the position of the optimal column with respect to T(g)
-        opt_col_rel = opt_col - num_cols_T1;
-        P2 = BuildP(n1,n2,m1,m2,theta1(ite),theta2(ite),opt_col_rel,t1,t2);
-        
-        
-        theta1(ite);
-        theta2(ite);
-        alpha(ite);
-        
-        % Build the matrix P.
-        P = D*[P1 alpha(ite)*P2]*G;
-    end
-    %%
-    % Build the matrix T
-
-    %T1 = BuildT1(fxy_matrix_n + z_fx_mat,n1,n2,t1,t2,1,1);
-    %T2 = BuildT1(gxy_matrix_n + z_gx_mat,m1,m2,t1,t2,1,1);
-    
-    % EDIT 17/11/2015 15:04
-    T1 = BuildT1(fw1w2_matrix + z_fw_mat,n1,n2,t1,t2,1,1);
-    T2 = BuildT1(gw1w2_matrix + z_gw_mat,m1,m2,t1,t2,1,1);
-
-    DTQ = D*[T1 alpha(ite) * T2]*Q;
-    
-    rk = (ck+h) - DTQ*M*xk ;
-    
-    residual(ite) = norm(rk);
-    
-    
     % Create the matrix C. This is made up of five submatrices, HZ, Hx,
     % H_alpha and H_theta1 and H_theta2.
     
@@ -729,20 +635,15 @@ while condition(ite) >(max_error) &&  ite < max_iterations
     % Calculate the new right hand vector
     ek = ck + h;
     
-    % update gnew - used in LSE Problem.
+    % Update gnew - used in lse problem
     res_vec = rk;
-    
+        
     % Calculate the normalised residual of the solution.
-    %condition(ite) = norm(rk) / norm(ek);
-    condition(ite) = norm(rk);
+    condition(ite) = norm(rk) / norm(ek);
 
     % Update fnew - used in LSE Problem.
     p = -(yy-start_point);
-    
-    
-    
-    
-    
+
     
 end
 
@@ -752,7 +653,7 @@ hold on
 title('Residuals in SNTLN')
 xlabel('Iterations')
 ylabel('log_{10} Residuals')
-plot((1:1:ite),log10(residual),'-s')
+plot((1:1:ite),log10(condition),'-s')
 hold off
 
 figure('name','Theta Variation over Newton Raphson Iterations')

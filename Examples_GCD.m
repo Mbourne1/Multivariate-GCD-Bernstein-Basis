@@ -3,7 +3,7 @@ function [fxy_mtrx_exct,gxy_mtrx_exct,...
     dxy_mtrx_exct,...
     m,m1,m2,...
     n,n1,n2,...
-    t,t1,t2] = Examples_NonSeparableWithSolutions(ex)
+    t,t1,t2] = Examples_GCD(ex)
 
 
 f_roots_x = [];
@@ -324,21 +324,21 @@ switch ex
         t = 3;
         
         
-    case '4s'
+    case '4'
         
         % Roots of f with respect to x
         f_roots_x = ...
             [
-            1.4   1
-            0.5   2
-            0.9   3
+            2.4   1
+            1.5   2
+            1.9   3
             ];
         % Roots of f with respect to y
         f_roots_y = ...
             [
             0.3   1
-            0.1   2
-            0.7   2
+            1.1   2
+            1.7   2
             ];
         % Roots of f with respect to xy
         f_roots_xy{1,1} = ...
@@ -360,16 +360,16 @@ switch ex
         % Roots of g with respect to x
         g_roots_x = ...
             [
-            1.4   1
-            0.5   2
-            0.4   3
+            2.4   1
+            1.5   2
+            2.9   3
             ];
         
         % Roots of g with respect to y
         g_roots_y = ...
             [
-            0.9   1
-            0.1   2
+            1.9   1
+            1.1   2
             ];
         
         % Roots of f with respect to xy
@@ -398,13 +398,13 @@ switch ex
         % Roots of d with respect to x
         d_roots_x = ...
             [
-            1.4   1
-            0.5   2
+            2.4   1
+            1.5   2
             ];
         % Roots of d with respect to y
         d_roots_y = ...
             [
-            0.1   2;
+            1.1   2;
             ];
         
         % Roots of d with respect to xy
@@ -428,27 +428,27 @@ switch ex
         % Roots of u with respect to x
         u_roots_x = ...
             [
-            0.9   3
+            1.9   3
             ];
         
         % Roots of u with respect to y
         u_roots_y = ...
             [
             0.3   1;
-            0.7   2;
+            1.7   2;
             ];
         
         
         % Roots of v with respect to x
         v_roots_x = ...
             [
-            0.4   3
+            2.9   3
             ];
         
         % Roots of v with respect to y
         v_roots_y = ...
             [
-            0.9   1
+            1.9   1
             ];
         
         % Roots of v with respect to xy
@@ -463,7 +463,7 @@ switch ex
         n = 17;
         t = 11;
         
-    case '4s2'
+    case '5'
         
         % Roots of f with respect to x
         f_roots_x = ...
@@ -588,7 +588,7 @@ switch ex
         m = 8;
         n = 7;
         t = 5;
-    case '5'
+    case '6'
         % Example with factorisation
         % (x+y+0.1) (x-0.2) (y-0.3)
         
@@ -663,7 +663,7 @@ switch ex
         n = 3;
         t = 1;
         %
-    case '6'
+    case '7'
         % Example 18 in Power File
         
         % Roots of f with respect to x
@@ -732,7 +732,7 @@ switch ex
         n = 7;
         t = 4;
         
-    case '7'
+    case '8'
         % Examle 19 in power file
         
         % Roots of f with respect to x
@@ -797,7 +797,7 @@ switch ex
         n = 9;
         t = 8;
         
-    case '8'
+    case '9'
         % Roots of f with respect to x
         f_roots_x = ...
             [
@@ -859,7 +859,7 @@ switch ex
         n = 11;
         t = 8;
         % Corresponds to case 20 in power basis examples
-    case '9'
+    case '10'
         
         % Roots of f with respect to x
         f_roots_x = ...
@@ -923,7 +923,7 @@ switch ex
         t = 8;
         
         
-    case '10'
+    case '11'
         % From winkler - Two methods...
         
         f_roots_x = ...
@@ -963,7 +963,7 @@ switch ex
         t = 10;
         
         
-    case '11'
+    case '12'
         % From winkler - Two methods...
         % With added roots in y
         
@@ -1025,7 +1025,8 @@ switch ex
         m = 16;
         n = 27;
         t = 13;
-        
+        otherwise 
+error('not a valid example number')
         
         
 end
