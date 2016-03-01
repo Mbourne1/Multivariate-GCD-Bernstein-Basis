@@ -15,12 +15,14 @@ function [] = plot_fxy_gxy(fxy_matrix_Brn, gxy_matrix_Brn)
 
 %%  Get the dimensions of f(x,y)
 [rows,cols] = size(fxy_matrix_Brn);
+
 % Set the degrees m1 and m2
 m1 = rows -1;
 m2 = cols -1;
 
 %% Get the dimensions of g(x,y)
 [rows,cols] = size(gxy_matrix_Brn);
+
 % Set the degrees m1 and m2
 n1 = rows -1;
 n2 = cols -1;
@@ -46,7 +48,7 @@ hold off
 %% Plot 3
 % % Plot the Bézier surface by evaluating at a series of points
 
-% Get the sur
+% Get the surface coordinates
 fxy_Surf_coord = get_Coordinates_Curve(fxy_matrix_Brn);
 gxy_Surf_coord = get_Coordinates_Curve(gxy_matrix_Brn);
 

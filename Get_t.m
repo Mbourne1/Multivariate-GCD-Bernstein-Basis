@@ -2,9 +2,9 @@ function [t, opt_theta_1, opt_theta_2] = Get_t(fxy_matrix,gxy_matrix,m,n)
 % Get the total degree t of the two input polynomials f(x,y) and g(x,y)
 
 % Initialise the global variables
-global bool_preproc
-global bool_Q
-global plot_graphs
+global BOOL_PREPROC
+global BOOL_Q
+global PLOT_GRAPHS
 
 % Get degrees of polynomial f(x,y)
 [r,c] = size(fxy_matrix);
@@ -26,7 +26,7 @@ gxy_matrix_delv = DegreeElevate(gxy_matrix,n-n1,n-n2);
 
 % fxy_matrix_delv = zeros(m+1,m+1)
 % gxy_matrix_delv = zeros(n+1,n+1)
-% 
+%
 % fxy_matrix_delv(1:m1+1,1:m2+1) = fxy_matrix
 % gxy_matrix_delv(1:n1+1,1:n2+1) = gxy_matrix
 
@@ -41,7 +41,7 @@ n1 = r - 1;
 n2 = c - 1;
 
 % Initialise some vectors
-minmn = min(m,n) 
+minmn = min(m,n)
 
 vMinimumSingularVal = zeros(1,minmn);
 vCondition = zeros(1,minmn);
@@ -55,7 +55,7 @@ Data_DiagNorm = [];
 for k=1:1:min(m,n)
     
     % Apply preprocessing
-    switch bool_preproc
+    switch BOOL_PREPROC
         case 'y'
             
             % Preproecessor One - Normalise by geometric mean
@@ -92,7 +92,8 @@ for k=1:1:min(m,n)
             opt_theta_2 = 1;
             lambda = 1;
             mu = 1;
-            
+        otherwise
+            error('err')
     end
     
     vOptTheta1(k) = opt_theta_1;
@@ -112,18 +113,18 @@ for k=1:1:min(m,n)
     % Build the diagonal matrix D^{-1}
     D = BuildD(k,k,m1,m2,n1,n2);
     
- 
+    
     % Include Q / Exclude Q from Sylvester Matrix
-    switch bool_Q
+    switch BOOL_Q
         case 'y'
             % Build the diagonal matrix Q such that Q * [v \\ u] gives the
             % coefficients of u and v in the scaled bernstein basis
             Q1 = BuildQ1(n1,n2,k,k);
             Q2 = BuildQ1(m1,m2,k,k);
-
+            
             C_fw = D*C_fw*Q1;
             C_gw = D*C_gw*Q2;
-            
+        case 'n'
         otherwise
             error('must includ  Q')
     end
@@ -177,39 +178,39 @@ for k=1:1:min(m,n)
 end
 
 
-switch plot_graphs
+switch PLOT_GRAPHS
     case 'y'
-%% plot the minimum singular values
-figure('name','Min Sing Val')
-title('minimum Singular Value for each subresultant matrix S_{k,k}')
-hold on
-plot(log10(vMinimumSingularVal),'-s','DisplayName','Preprocessed');
-%plot(log10(min_sing_val_vec_unproc),'-s','DisplayName','Unprocessed');
-xlabel('k : index of subresultant')
-legend(gca,'show')
-ylabel('log_{10} Minimum Singular Value')
-
-hold off
-%% Plot the condition numbers of each subresultant
-figure('name','Condition S_{k}')
-title('Condition of each subresultant S_{k,k}')
-hold on
-plot(log10(vCondition),'-s','DisplayName','Preprocessed');
-%plot(log10(cond_vec_unproc),'-s','DisplayName','Unprocessed');
-xlabel('k : index of subresultant S_{k}')
-ylabel('log_{10} Condition Number')
-legend(gca,'show')
-hold off
-
-%%
-figure('name','Diag Norms')
-plot(Data_DiagNorm(:,1),(log10(Data_DiagNorm(:,2))),'*')
-axis([0.9,min(m,n),-inf,+inf])
-xlabel('k')
-ylabel('Normalised Row Sums of R1 in S_{k}')
-title(['Normalised Row Sums of R1 fom the QR decomposition of each subresultant S_{k} \newline '...
-    'm = ' int2str(m) ', n = ' int2str(n) '(Original)']);
-hold off
+        %% plot the minimum singular values
+        figure('name','Min Sing Val')
+        title('minimum Singular Value for each subresultant matrix S_{k,k}')
+        hold on
+        plot(log10(vMinimumSingularVal),'-s','DisplayName','Preprocessed');
+        %plot(log10(min_sing_val_vec_unproc),'-s','DisplayName','Unprocessed');
+        xlabel('k : index of subresultant')
+        legend(gca,'show')
+        ylabel('log_{10} Minimum Singular Value')
+        
+        hold off
+        %% Plot the condition numbers of each subresultant
+        figure('name','Condition S_{k}')
+        title('Condition of each subresultant S_{k,k}')
+        hold on
+        plot(log10(vCondition),'-s','DisplayName','Preprocessed');
+        %plot(log10(cond_vec_unproc),'-s','DisplayName','Unprocessed');
+        xlabel('k : index of subresultant S_{k}')
+        ylabel('log_{10} Condition Number')
+        legend(gca,'show')
+        hold off
+        
+        %%
+        figure('name','Diag Norms')
+        plot(Data_DiagNorm(:,1),(log10(Data_DiagNorm(:,2))),'*')
+        axis([0.9,min(m,n),-inf,+inf])
+        xlabel('k')
+        ylabel('Normalised Row Sums of R1 in S_{k}')
+        title(['Normalised Row Sums of R1 fom the QR decomposition of each subresultant S_{k} \newline '...
+            'm = ' int2str(m) ', n = ' int2str(n) '(Original)']);
+        hold off
     case 'n'
     otherwise
         error('error: plot_graphs must be either (y) or (n)')

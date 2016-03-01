@@ -7,7 +7,6 @@ function [uxy_matrix_calc, vxy_matrix_calc,...
 %
 %   Inputs.
 %
-%
 %   fxy_matrix :
 %
 %   gxy_matrix :
@@ -18,9 +17,9 @@ function [uxy_matrix_calc, vxy_matrix_calc,...
 %
 
 % Initialise Global Variables
-global bool_Q
+global BOOL_Q
 
-global bool_preproc
+global BOOL_PREPROC
 
 %%
 % Get the degrees of polynomial f(x,y)
@@ -35,7 +34,7 @@ n2 = c - 1;
 
 
 %%
-switch bool_preproc
+switch BOOL_PREPROC
     case 'y'
         
         % Preproecessor One - Normalise by geometric mean
@@ -75,7 +74,8 @@ switch bool_preproc
         
         fxy_matrix_n = fxy_matrix./lambda;
         gxy_matrix_n = gxy_matrix./mu;
-        
+    otherwise
+        error('err')
 end
 
 % Build the (t1,t2)-th subresultant
@@ -144,11 +144,11 @@ norm(St1t2 * [vw_calc ;-uw_calc])
 
 %% Obtain u(x,y) in its matrix form
 % Arrange uw into a matrix form based on its dimensions.
-uw_calc_mat = getAsMatrix(uw_calc,m1-t1,m2-t2);
+uw_calc_mat = GetAsMatrix(uw_calc,m1-t1,m2-t2);
 
 %% Obtain v(x,y) in its matrix form
 % Arrange vw into a matrix form based on their dimensions.
-vw_calc_mat = getAsMatrix(vw_calc,n1-t1,n2-t2);
+vw_calc_mat = GetAsMatrix(vw_calc,n1-t1,n2-t2);
 
 %%
 % Remove the thetas from the matrix of coefficients of v(w,w) to obtain
@@ -172,7 +172,8 @@ uxy_matrix_calc = pre_theta * uw_calc_mat * post_theta;
 
 %% If we excluded Q from the coefficient matrix, then remove the binomial 
 % coefficients from v(x,y) and u(x,y)
-switch bool_Q
+switch BOOL_Q
+    case 'y'
     case 'n'
                 %%
         % Remove binomial coefficients from v(w,w)_bi
@@ -180,16 +181,10 @@ switch bool_Q
         n1_t1 = r - 1;
         n2_t2 = c - 1;
         
-        bi_n1_t1 = zeros(n1_t1,1);
-        for i = 0:1:n1_t1
-            bi_n1_t1(i+1) = nchoosek(n1_t1,i);
-        end
+        bi_n1_t1 = GetBinomials(n1_t1)
         mat1 = diag(1./bi_n1_t1);
         
-        bi_n2_t2 = zeros(n2_t2,1);
-        for i = 0:1:n2_t2
-            bi_n2_t2(i+1) = nchoosek(n2_t2,i);
-        end
+        bi_n2_t2 = GetBinomials(n2_t2)
         mat2 = diag(1./bi_n2_t2);
         
         vxy_matrix_calc = mat1 * vxy_matrix_calc * mat2;
@@ -200,21 +195,16 @@ switch bool_Q
         m1_t1 = r - 1;
         m2_t2 = c - 1;
         
-        bi_m1_t1 = zeros(m1_t1,1);
-        for i = 0:1:m1_t1
-            bi_m1_t1(i+1) = nchoosek(m1_t1,i);
-        end
+        bi_m1_t1 = GetBinomials(m1_t1)
         mat1 = diag(1./bi_m1_t1);
         
-        bi_m2_t2 = zeros(m2_t2,1);
-        for i = 0:1:m2_t2
-            bi_m2_t2(i+1) = nchoosek(m2_t2,i);
-        end
+        bi_m2_t2 = GetBinomials(m2_t2)
         mat2 = diag(1./bi_m2_t2);
         
         uxy_matrix_calc = mat1 * uxy_matrix_calc * mat2;
 
-
+    otherwise
+        error('err')
 end
 
 end

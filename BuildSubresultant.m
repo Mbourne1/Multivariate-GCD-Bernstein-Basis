@@ -24,11 +24,11 @@ function Sk = BuildSubresultant(fxy_matrix_n,gxy_matrix_n,k1,k2,alpha,th1,th2)
 % %                     Global Variables
 
 
-% bool_Q : Global boolean value Q,
+% BOOL_Q : Global boolean value Q,
 %   1 - Include Q in the Sylvester Subresultant matrix D^{-1}T(f,g)Q
 %   0 - Exclude Q from the Sylvester Subresultant matrix D^{-1}T(f,g)
 
-global bool_Q
+global BOOL_Q
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -55,7 +55,7 @@ D = BuildD(k1,k2,m1,m2,n1,n2);
 
 
 
-switch bool_Q
+switch BOOL_Q
     case 'y'
         % Build the diagonal matrix Q such that Q * [v \\ u] gives the
         % coefficients of u and v in the scaled bernstein basis

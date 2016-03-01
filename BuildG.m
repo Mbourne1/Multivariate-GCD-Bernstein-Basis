@@ -1,20 +1,19 @@
 function G = BuildG(t1,t2)
+% Build the matrix G.
 
-
+% Initialise matrix G
 G_mat = ones(t1+1,t2+1);
 
-% Multiply each row of G by corresponding binomial coefficient
-for i=0:1:t1
-   G_mat(i+1,:) =  G_mat(i+1,:) .* nchoosek(t1,i);
-end
+% Multiply rows by nchoosek(t1,i)
+% Multiply columns by nchoosek(t2,j)
+Bi_t1 = GetBinomials(t1);
+Bi_t2 = GetBinomials(t2);
+G_mat = diag(Bi_t1) * G_mat * diag(Bi_t2);
 
-% Multiply each column of G by corresponding binomial coefficient
-for j=0:1:t2
-    G_mat(:,j+1) = G_mat(:,j+1) .* nchoosek(t2,j);
-end
+% Get matrix G as a vector
+G_vec = GetAsVector(G_mat);
 
-G_vec = getAsVector(G_mat);
-
+% Diagonalise G
 G = diag(G_vec);
 
 

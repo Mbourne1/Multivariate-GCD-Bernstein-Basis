@@ -31,20 +31,12 @@ o2 = m2 + n2;
 % It is necessary to multiply fxy_matrix by the binomials
 
 % Initialise a vector which multiplies by the rows
-bi_m1 = zeros(m1+1,1);
-for i = 0:1:m1
-    bi_m1(i+1) = nchoosek(m1,i);
-end
+bi_m1 = GetBinomials(m1);
 bi_m1_mtrx = diag(bi_m1);
 
 
 % Initialise a vector which multiplies by the columns
-bi_m2 = zeros(m2+1,1);
-% for each column, multiply by \binom{m2}{i}
-for i=0:1:m2
-    bi_m2(i+1) = nchoosek(m2,i);
-end
-% form a diagonal matrix
+bi_m2 = GetBinomials(m2);
 bi_m2_mtrx = diag(bi_m2);
 
 % Since we are multiplying the columns by binomial coefficients 
@@ -80,8 +72,7 @@ for tot = 0:1:num_diags
         else
             % multiply by the bernstein basis coefficients
             f = mult(fxy_matrix_bi,i,n1,j,n2);
-            f_vec = getAsVector(f);
-            
+            f_vec = GetAsVector(f);
             T(:,count) = f_vec;
             count = count + 1;
         end
@@ -92,63 +83,32 @@ end
 
 
 % % Build the matrix D
-
-count = 1;
-num_diags = (m1+n1+1) + (m2+n2+1) - 1;
-for tot = 0:1:num_diags
-    for i = tot:-1:0
-        j = tot - i;
-        % check i is within bounds 0,...,n_{1}
-        % check j is within bounds 0,...,
-        if i > m1+n1 || j > m2+n2 
-        else
-            % 
-            d = nchoosek(m1+n1,i) * nchoosek(m2+n2,j);
-            D(count) = d;
-            count = count + 1;
-        end
-    end
-end
-D_matrix = diag(1./D);
+Pre_matrix = diag(GetBinomials(m1+n1));
+Post_matrix =  diag(GetBinomials(m2+n2));
+D = Pre_matrix * ones(m1+n1+1,m2+n2+1) * Post_matrix;
+D = diag(GetAsVector(1./D));
 
 % % Build the matrix Q
+Pre_matrix = diag(GetBinomials(n1));
+Post_matrix = diag(GetBinomials(n2));
+temp =  Pre_matrix * ones(n1+1,n2+1) * Post_matrix;
+Q = diag(GetAsVector(temp));
 
-% Initialise the counter
-count = 1;
 
-% Get number of diagonals in the matrix gxy_matrix
-num_diags = (n1+1) + (n2+1) - 1;
-
-% for each diagonal, read coefficients from left to right, highest power of
-% x to minimum power of x.
-for tot = 0:1:num_diags
-    for i = tot:-1:0
-        j = tot - i;
-        if i > n1 || j > n2
-        else
-            %
-            q = nchoosek(n1,i) * nchoosek(n2,j);
-            Q(count) = q;
-            count = count + 1;
-        end
-    end
-    
-end
-Q_matrix = diag(Q);
 
 % % Build the coefficient matrix DTQ
 
-DTQ = D_matrix * T * Q_matrix;
+DTQ = D * T * Q;
 
 % % Build the vector of the coefficients of gxy
-g_vec = getAsVector(gxy_matrix);
+g_vec = GetAsVector(gxy_matrix);
 
 % % Perform multiplication to obtain hxy in vector form
 
 h_vec = DTQ * g_vec;
 
 % % Convert hxy to matrix form
-hxy_matrix = getAsMatrix(h_vec,o1,o2);
+hxy_matrix = GetAsMatrix(h_vec,o1,o2);
 end
 
 

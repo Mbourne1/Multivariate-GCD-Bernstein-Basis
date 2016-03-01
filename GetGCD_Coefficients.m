@@ -75,7 +75,7 @@ post_theta_mat = diag(opt_theta_2.^(0:1:m2));
 fww_matrix = pre_theta_mat * fxy_matrix_n * post_theta_mat;
 
 % Get f(x,y) as a vector
-fww_vec_th = getAsVector(fww_matrix);
+fww_vec_th = GetAsVector(fww_matrix);
 
 %% Include thetas in g(x,y) to obtain g(w,w)
 
@@ -85,7 +85,7 @@ post_theta_mat  = diag(opt_theta_2.^(0:1:n2));
 gww_matrix_th = pre_theta_mat * gxy_matrix_n * post_theta_mat;
 
 % Get g(x,y) as a vector
-gww_vec = getAsVector(gww_matrix_th);
+gww_vec = GetAsVector(gww_matrix_th);
 
 
 %% Create the right hand side vector
@@ -102,7 +102,7 @@ residual = pinv(HCG)*rhs_vec - x;
 
 %%
 % Arrange dw into a matrix form based on its dimensions.
-dww_calc_matrix = getAsMatrix(dww_calc,t1,t2);
+dww_calc_matrix = GetAsMatrix(dww_calc,t1,t2);
 
 %%
 % Remove thetas from dw

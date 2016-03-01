@@ -14,14 +14,8 @@ n2 = c - 1;
 
 % include the binomial coefficients in g
 % Pre multiply gxy by the diagonal matrix nchoosek(n1,i)
-Bi_n1 = zeros(1,n1+1);
-for i = 0:1:n1
-    Bi_n1(i+1) = nchoosek(n1,i);
-end
-Bi_n2 = zeros(1,n2+1);
-for i = 0:1:n2
-    Bi_n2(i+1) = nchoosek(n2,i);
-end
+Bi_n1 = GetBinomials(n1);
+Bi_n2 = GetBinomials(n2);
 
 % get g(x,y) including binomials
 gxy_matrix_bi = diag(Bi_n1) * gxy_matrix * diag(Bi_n2);
@@ -51,7 +45,7 @@ for tot = 0:1:num_diags
                 gxy_matrix_bi;
             
                         
-            temp_vec = getAsVector(gxy_matrix_padded);
+            temp_vec = GetAsVector(gxy_matrix_padded);
             
             C1 = [C1 temp_vec];
         end
@@ -60,7 +54,7 @@ for tot = 0:1:num_diags
 end
 
 %% Get the polynomial f in vector form
-f = getAsVector(fxy_matrix);
+f = GetAsVector(fxy_matrix);
 
 D = BuildD(0,0,m1,m2,0,0);
 G = BuildG(m1-n1,m2-n2);
@@ -81,7 +75,7 @@ x_ls = R1\c;
 % set h1 to the least squares solution.
 h1 = x_ls;
 
-hxy_matrix = getAsMatrix(h,m1-n1,m2-n2);
-h1_matrix = getAsMatrix(h1,m1-n1,m2-n2);
+hxy_matrix = GetAsMatrix(h,m1-n1,m2-n2);
+h1_matrix = GetAsMatrix(h1,m1-n1,m2-n2);
 hxy_matrix;
 end

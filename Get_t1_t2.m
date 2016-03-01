@@ -8,19 +8,28 @@ function [t1,t2,lambda,mu,opt_alpha, opt_theta_1,opt_theta_2] = Get_t1_t2(fxy_ma
 %   Inputs.
 %
 %   fxy_matrix :
+%
 %   gxy_matrix :
+%
 %   m :
+%
 %   n :
+%
 %   t :
+%
 %   lambda :
+%
 %   mu :
+%
 %   alpha :
+%
 %   theta1 :
+%
 %   theta2 :
 
 
-global plot_graphs
-global bool_preproc
+global PLOT_GRAPHS
+global BOOL_PREPROC
 
 % Get the degree structure of polynomial f(x,y)
 [r,c] = size(fxy_matrix);
@@ -93,7 +102,7 @@ for i = 1:1:r
     k2 = mat(i,2);
     
     %% Apply preprocessing
-    switch bool_preproc
+    switch BOOL_PREPROC
         case 'y'
             
             % Preproecessor One - Normalise by geometric mean
@@ -173,7 +182,7 @@ z = z2;
 
 %%
 % Plot 3d surface
-switch plot_graphs
+switch PLOT_GRAPHS
     case 'y'
         [x,y] = meshgrid(x,y);
         figure('name','Get Relative Degree - Surface')
@@ -193,7 +202,7 @@ switch plot_graphs
 end
 
 %%
-switch plot_graphs
+switch PLOT_GRAPHS
     case 'y'
         % Plot 3d data points
         figure('name','Plot Min Sing Val S(k1,k2)')
@@ -231,8 +240,8 @@ delta_zz = delta_z_x + delta_z_y;
 
 criterion = max(log10(abs(delta_zz(:))));
 
-global threshold
-if criterion < threshold
+global THRESHOLD
+if criterion < THRESHOLD
     fprintf('Value below threshold \n')
     t1 = min(m1,n1)
     t2 = min(m2,n2)
@@ -262,7 +271,7 @@ end
 % Get the position of the maximum change in values of min singular value
 % for each t1 + t2 = tot
 
-switch plot_graphs
+switch PLOT_GRAPHS
     case 'y'
         figure('name','Separate Degree Calculation')
         plot(log10(mymat(:,2)));

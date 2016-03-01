@@ -35,12 +35,10 @@ m2_t2 = cols - 1;
 %% Build the matrix uxy_matrix_binoms
 
 % Build the matrix which premultiplies u_xy
-Pre_binoms = GetBinoms(m1_t1);
-Pre_binoms_mtrx = diag(Pre_binoms);
+Pre_binoms_matrix = diag(GetBinomials(m1_t1));
 
 % Build the matrix which post multiplies u_xy
-Post_binoms = GetBinoms(m2_t2);
-Post_binoms_mtrx = diag(Post_binoms);
+Post_binoms_matrix = diag(GetBinomials(m2_t2));
 
 % Build the matrix which premultiplies u(x,y) by thetas
 Pre_thetas = th1.^(0:1:m1_t1);
@@ -51,7 +49,7 @@ Post_thetas = th2.^(0:1:m2_t2);
 Post_thetas_mtrx = diag(Post_thetas);
 
 % Create matrix uxy_binom which includes binomial coefficients
-uxy_matrix_bi = Pre_binoms_mtrx * uxy_matrix * Post_binoms_mtrx;
+uxy_matrix_bi = Pre_binoms_matrix * uxy_matrix * Post_binoms_matrix;
 
 % Include thetas
 uw1w2_matrix_bi = Pre_thetas_mtrx * uxy_matrix_bi * Post_thetas_mtrx;
@@ -84,7 +82,7 @@ for tot = 0:1:num_diags
                 uw1w2_matrix_bi;
             
             % Get u(x,y)* basis element, as a vector.
-            temp_vec = getAsVector(uxy_matrix_bi_padded);
+            temp_vec = GetAsVector(uxy_matrix_bi_padded);
             
             C1 = [C1 temp_vec];
         end

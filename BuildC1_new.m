@@ -1,23 +1,14 @@
-
-function T1 = BuildC1_new(uww_matrix,m1,m2,n1,n2,t1,t2,th1,th2)
-
-
+function T1 = BuildC1_new(uww_matrix,m1,m2,n1,n2,t1,t2,~,~)
 % % Build the matrix u_xy_binoms by pre and post multiplying 'uxy_matrix'
 % by two binomial matrices
 
-% Build the matrix which pre multiplies f_xy
-Pre_binoms = zeros(m1-t1+1,1);
-for i = 0:1:m1-t1
-    Pre_binoms(i+1) = nchoosek(m1-t1,i);
-end
-Pre_binoms_mtrx = diag(Pre_binoms);
+% Build the matrix which pre multiplies u(x,y)
+Bi_m1_t1 = GetBinomials(m1-t1);
+Pre_binoms_mtrx = diag(Bi_m1_t1);
 
-% Build the matrix which post multiplies f_xy
-Post_binoms = zeros(m2-t2+1,1);
-for i = 0:1:m2-t2
-    Post_binoms(i+1) = nchoosek(m2-t2,i);
-end
-Post_binoms_mtrx = diag(Post_binoms);
+% Build the matrix which post multiplies u(x,y)
+Bi_m2_t2 = GetBinomials(m2-t2);
+Post_binoms_mtrx = diag(Bi_m2_t2);
 
 % Create matrix fxy_bi which includes the binomial coefficients
 uww_matrix_bi = Pre_binoms_mtrx *  uww_matrix * Post_binoms_mtrx;
@@ -31,11 +22,14 @@ uww_matrix_bi_padded(1:m1-t1+1,1:m2-t2+1) = uww_matrix_bi;
 
 T1 = [];
 
-num_basis_elements_gxy = (n1+1) * (n2+1);
-num_diags_gxy = (n1+1) + (n2+1) -1;
+% Get the number of diagonals in g(x,y)
+nDiags_gxy = (n1+1) + (n2+1) -1;
 
-% get number of basis elements of f(x,y) 
-for tot = 0:1: num_diags_gxy - 1
+
+% Build the matrix C1(u) by multiplying the coefficients by each of the
+% basis elements of g(x,y), in order.
+
+for tot = 0:1: nDiags_gxy - 1
     for i = tot:-1:0
         j = tot-i;
         % if j1 is within the number of columns of vxy_mtrx.
@@ -46,7 +40,8 @@ for tot = 0:1: num_diags_gxy - 1
             
             uww_matrix_bi_padded_new((i+1):(m1-t1)+(i+1),(j+1):(m2-t2)+(j+1)) = uww_matrix_bi;
             
-            temp_vec = getAsVector(uww_matrix_bi_padded_new);
+            temp_vec = GetAsVector(uww_matrix_bi_padded_new);
+            
             T1 = [T1 temp_vec];
         end
         %

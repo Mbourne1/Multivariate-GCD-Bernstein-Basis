@@ -1,7 +1,7 @@
 
 function T1 = BuildT1(fxy_matrix,n1,n2,k1,k2,th1,th2)
 
-% get size of fxy
+% get size of f(x,y)
 [rows,cols] = size(fxy_matrix);
 
 % Get degree of f with respect to x
@@ -15,11 +15,11 @@ m2 = cols - 1;
 % by two binomial matrices
 
 % Build the matrix which pre multiplies f_xy
-Pre_binoms = GetBinoms(m1);
+Pre_binoms = GetBinomials(m1);
 Pre_binoms_mtrx = diag(Pre_binoms);
 
 % Build the matrix which post multiplies f_xy
-Post_binoms = GetBinoms(m2);
+Post_binoms = GetBinomials(m2);
 Post_binoms_mtrx = diag(Post_binoms);
 
 % Build the matrix which pre multiplies f_xy
@@ -54,7 +54,7 @@ for tot0 = 0:1:num_diags_vxy - 1;
             fxy_matrix_bi_padded_new = zero_matrix;
             fxy_matrix_bi_padded_new((i+1):(m1)+(i+1),(j+1):(m2)+(j+1)) = fw1w2_matrix_bi;
             
-            temp_vec = getAsVector(fxy_matrix_bi_padded_new);
+            temp_vec = GetAsVector(fxy_matrix_bi_padded_new);
             
             T1 = [T1 temp_vec];
         end

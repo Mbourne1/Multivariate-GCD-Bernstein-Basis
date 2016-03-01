@@ -1,4 +1,4 @@
-function [dxy_matrix_calc] = o_gcd(ex_num,el,BOOL_PREPROC,BOOL_SNTLN,SEED)
+function [dxy_matrix_calc] = o_gcd(ex_num,el,bool_preproc,bool_sntln,seed)
 % Given an example number and set of parameters, obtain GCD of the two
 % polynomials fxy and gxy in the given example file. 
 % Where the polynomials f(x,y) and g(x,y) are defined as polynomails in 
@@ -25,22 +25,26 @@ function [dxy_matrix_calc] = o_gcd(ex_num,el,BOOL_PREPROC,BOOL_SNTLN,SEED)
 %                           Set Variables
 
 
-global bool_Q
-global bool_preproc
-global bool_noise
-global bool_SNTLN
-global plot_graphs
-global seed
-global threshold
+global BOOL_Q
+global BOOL_PREPROC
+global BOOL_NOISE
+global BOOL_SNTLN
+global PLOT_GRAPHS
+global SEED
+global THRESHOLD
+global MAX_ERROR_SNTLN
+global MAX_ITERATIONS_SNTLN
 
-bool_preproc = BOOL_PREPROC;
-bool_Q = 'y'
-bool_noise = 'y';
-bool_SNTLN = BOOL_SNTLN;
-plot_graphs = 'n';
-seed = SEED;
-threshold = 1;
+BOOL_PREPROC = bool_preproc;
+BOOL_Q = 'y';
+BOOL_NOISE = 'y';
+BOOL_SNTLN = bool_sntln;
+PLOT_GRAPHS = 'y';
+SEED = seed;
+THRESHOLD = 1;
 
+MAX_ERROR_SNTLN = 1e-10;
+MAX_ITERATIONS_SNTLN = 50;
 % seed - SEED Number for noise generation
 %%
 %                   Get Example
@@ -53,9 +57,9 @@ threshold = 1;
     n,n1,n2,...
     t_exact,t1_exact,t2_exact] = Examples_GCD(ex_num);
 
-fxy_matrix_exact
-gxy_matrix_exact
-dxy_matrix_exact
+display(fxy_matrix_exact)
+display(gxy_matrix_exact)
+display(dxy_matrix_exact)
 
 
 
@@ -77,7 +81,7 @@ fprintf('\n')
 
 
 % Add Noise to the coefficients
-switch bool_noise
+switch BOOL_NOISE
     case 'y'
         % Add noise to the coefficients of f and g
         [fxy_matrix, noise_mat_f] = Noise2(fxy_matrix_exact,el);
@@ -89,7 +93,7 @@ end
 
 
 % Plot the surfaces of the two polynomials fxy and gxy
-if plot_graphs == 'y'
+if PLOT_GRAPHS == 'y'
     plot_fxy_gxy(fxy_matrix,gxy_matrix);
 end
 

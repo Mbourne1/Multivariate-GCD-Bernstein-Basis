@@ -23,9 +23,9 @@ vww_vec = x(1:num_coeff_v);
 % Get the vector of coefficients of u(w,w)
 uww_vec = - x(num_coeff_v+1:end);
 
-
-v_mat = getAsMatrix(vww_vec,n1-t1,n2-t2);
-u_mat = getAsMatrix(uww_vec,m1-t1,m2-t2);
+% Get the vector v(w,w) and u(w,w) as a matrix
+v_mat = GetAsMatrix(vww_vec,n1-t1,n2-t2);
+u_mat = GetAsMatrix(uww_vec,m1-t1,m2-t2);
 
 T2 = BuildC1_new(-u_mat,m1,m2,n1,n2,t1,t2,theta1,theta2);
 T1 = BuildC1_new(v_mat,n1,n2,m1,m2,t1,t2,theta1,theta2);
@@ -37,40 +37,17 @@ T1 = BuildC1_new(v_mat,n1,n2,m1,m2,t1,t2,theta1,theta2);
 th1_mat = diag(theta1.^(0:1:m1));
 th2_mat = diag(theta2.^(0:1:m2));
 fww_thetas_mat = th1_mat * ones(m1+1,m2+1) * th2_mat;
-fww_thetas_vec = getAsVector(fww_thetas_mat);
+fww_thetas_vec = GetAsVector(fww_thetas_mat);
 
 th1_mat = diag(theta1.^(0:1:n1));
 th2_mat = diag(theta2.^(0:1:n2));
 gww_thetas_mat = th1_mat * ones(n1+1,n2+1) * th2_mat;
-gww_thetas_vec = getAsVector(gww_thetas_mat);
+gww_thetas_vec = GetAsVector(gww_thetas_mat);
 
 % multiply
 
 vec = [fww_thetas_vec ; gww_thetas_vec];
 thetas_mat = diag(vec);
-
-
-% % Build the diagonals of binomial coefficients corresponding to f and g
-% fxy_binoms = ones(m1+1,m2+1);
-% for i = 0:1:m1
-%     fxy_binoms(i+1,:) = fxy_binoms(i+1,:) .* nchoosek(m1,i);
-% end
-% for j = 0:1:m2
-%     fxy_binoms(:,j+1) = fxy_binoms(:,j+1) .* nchoosek(m2,j);
-% end
-% gxy_binoms = ones(m1+1,m2+1)
-% for i = 0:1:m1
-%     gxy_binoms(i+1,:) = gxy_binoms(i+1,:) .* nchoosek(m1,i);
-% end
-% for j = 0:1:m2
-%     gxy_binoms(:,j+1) = gxy_binoms(:,j+1) .* nchoosek(m2,j);
-% end
-% 
-% fxy_binoms_vec = getAsVector(fxy_binoms)
-% gxy_binoms_vec = getAsVector(gxy_binoms)
-% 
-% fg_binoms = [fxy_binoms_vec ; gxy_binoms_vec]
-% fg_binoms_mat = diag(fg_binoms);
 
 
 %%

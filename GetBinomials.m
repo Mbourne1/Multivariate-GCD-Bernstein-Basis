@@ -1,4 +1,4 @@
-function [bi_m] = GetBinoms(m)
+function [bi_m] = GetBinomials(m)
 % Calculate the binomial coefficients mC0,...,mCm and return as a 
 % column vector
 

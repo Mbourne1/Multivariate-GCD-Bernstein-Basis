@@ -33,9 +33,9 @@ opt_col = GetOptimalColumn(fxy_matrix,gxy_matrix,t1,t2,lambda,mu,opt_alpha,opt_t
 
 
 %% Perform iterative inprovements in SNTLN
-global bool_SNTLN
+global BOOL_SNTLN
 
-switch bool_SNTLN
+switch BOOL_SNTLN
     case 'y'
         % Apply SNTLN improvements
         [ fxy_output,gxy_output,alpha_output,theta1_output,theta2_output,X_output] = ...

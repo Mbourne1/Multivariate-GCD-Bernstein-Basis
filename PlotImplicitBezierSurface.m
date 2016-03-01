@@ -1,5 +1,6 @@
-function [] = plot_fxy(fxy_matrix_Brn)
-
+function [] = PlotImplicitBezierSurface(fxy_matrix_Brn)
+% Plot the Bezier surfaces whose control points are uniformly distributed
+% over the x and y axes.
 % Given a bivariate polynomial, plot the surfaces
 
 % % Inputs
@@ -59,7 +60,7 @@ x = 0:inc_x:1;
 y = 0:inc_y:1;
 [x,y] = meshgrid(x,y);
 
-figure('name','surface')
+figure('name','Surface Plot')
 hold on
 s1 = surf(x,y,z');
 xlabel('t_{1}')

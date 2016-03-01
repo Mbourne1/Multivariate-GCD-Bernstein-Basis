@@ -1,7 +1,7 @@
 function [fxy_noisy, noise_matrix] = Noise2(fxy_matrix,el)
 
-        global seed
-        rng(seed)
+        global SEED
+        rng(SEED)
 
         % Get the degrees of polynomial f(x,y)
         [r,c] = size(fxy_matrix);
