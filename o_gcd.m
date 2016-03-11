@@ -1,6 +1,6 @@
-function [dxy_matrix_calc] = o_gcd(ex_num,el,bool_preproc,bool_sntln,seed)
+function [dxy_matrix_calc] = o_gcd(ex_num,el,bool_preproc,bool_sntln)
 % Given an example number and set of parameters, obtain GCD of the two
-% polynomials fxy and gxy in the given example file. 
+% polynomials f(x,y) and g(x,y) in the given example file. 
 % Where the polynomials f(x,y) and g(x,y) are defined as polynomails in 
 % the Bernstein Basis.
 %
@@ -40,11 +40,12 @@ BOOL_Q = 'y';
 BOOL_NOISE = 'y';
 BOOL_SNTLN = bool_sntln;
 PLOT_GRAPHS = 'y';
-SEED = seed;
+SEED = 1024;
 THRESHOLD = 1;
 
 MAX_ERROR_SNTLN = 1e-10;
 MAX_ITERATIONS_SNTLN = 50;
+
 % seed - SEED Number for noise generation
 %%
 %                   Get Example
@@ -84,8 +85,8 @@ fprintf('\n')
 switch BOOL_NOISE
     case 'y'
         % Add noise to the coefficients of f and g
-        [fxy_matrix, noise_mat_f] = Noise2(fxy_matrix_exact,el);
-        [gxy_matrix, noise_mat_g] = Noise2(gxy_matrix_exact,el);
+        [fxy_matrix, ~] = Noise2(fxy_matrix_exact,el);
+        [gxy_matrix, ~] = Noise2(gxy_matrix_exact,el);
     case 'n'
     otherwise 
         error('noise value either y or n')

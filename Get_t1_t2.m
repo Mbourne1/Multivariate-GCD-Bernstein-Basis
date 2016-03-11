@@ -243,8 +243,12 @@ criterion = max(log10(abs(delta_zz(:))));
 global THRESHOLD
 if criterion < THRESHOLD
     fprintf('Value below threshold \n')
-    t1 = min(m1,n1)
-    t2 = min(m2,n2)
+    
+    t1 = min(m1,n1);
+    t2 = min(m2,n2);
+    
+    display(t1)
+    display(t2)
     
     return
 end

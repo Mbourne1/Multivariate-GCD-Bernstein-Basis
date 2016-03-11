@@ -1,4 +1,4 @@
-function [dxy_calc_matrix] = GetGCD_Coefficients(uxy_matrix,vxy_matrix,...
+function [dxy_calc_matrix] = GetGCD_Coefficients_total(uxy_matrix,vxy_matrix,...
     fxy_matrix,gxy_matrix,...
     m,n,t,...
     lambda,mu,...
@@ -25,7 +25,7 @@ function [dxy_calc_matrix] = GetGCD_Coefficients(uxy_matrix,vxy_matrix,...
 m1 = r - 1;
 m2 = c - 1;
 
-fxy_padd = zeros(m+1,m+1)
+fxy_padd = zeros(m+1,m+1);
 fxy_padd(1:m1+1,1:m2+1) = fxy_matrix;
 fxy_matrix = fxy_padd;
 
@@ -35,7 +35,7 @@ fxy_matrix = fxy_padd;
 n1 = r - 1;
 n2 = c - 1;
 
-gxy_padd = zeros(m+1,m+1)
+gxy_padd = zeros(m+1,m+1);
 gxy_padd(1:n1+1,1:n2+1) = gxy_matrix;
 gxy_matrix = gxy_padd;
 
@@ -98,7 +98,7 @@ rhs_vec = [...
 x = pinv(HCG) * rhs_vec;
 dww_calc = x;
 
-residual = pinv(HCG)*rhs_vec - x;
+%residual = pinv(HCG)*rhs_vec - x;
 
 %%
 % Arrange dw into a matrix form based on its dimensions.

@@ -62,6 +62,6 @@ for tot0 = 0:1:num_diags_vxy - 1;
     end
 end
 
-T1 = T1;
+
 
 end

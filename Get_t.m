@@ -96,11 +96,11 @@ for k=1:1:min(m,n)
             error('err')
     end
     
-    vOptTheta1(k) = opt_theta_1;
-    vOptTheta2(k) = opt_theta_2;
-    opt_alpha_vec(k)   = opt_alpha;
-    lambda_vec(k)      = lambda;
-    mu_vec(k)          = mu;
+    vOptTheta1(k)       = opt_theta_1;
+    vOptTheta2(k)       = opt_theta_2;
+    opt_alpha_vec(k)    = opt_alpha;
+    lambda_vec(k)       = lambda;
+    mu_vec(k)           = mu;
     
     
     %% Build the Sylvester matrix S_{k,k}

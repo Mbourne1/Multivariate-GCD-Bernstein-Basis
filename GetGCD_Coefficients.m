@@ -98,7 +98,7 @@ rhs_vec = [...
 x = pinv(HCG) * rhs_vec;
 dww_calc = x;
 
-residual = pinv(HCG)*rhs_vec - x;
+%residual = pinv(HCG)*rhs_vec - x;
 
 %%
 % Arrange dw into a matrix form based on its dimensions.

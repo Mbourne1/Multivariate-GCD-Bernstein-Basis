@@ -73,7 +73,7 @@ m2 = c-1;
 % Plot the surface of the bivariate polynomial f(x,y)
 switch PLOT_GRAPHS
     case 'y'
-        PlotBezier(fxy_matrix)
+        PlotImplicitBezierSurface(fxy_matrix)
     case 'n'
         
     otherwise
@@ -85,12 +85,13 @@ switch BOOL_NOISE
     case 'y'
         % Add noise to the coefficients of polynomial f(x,y)
         [fxy_matrix,~] = Noise2(fxy_matrix,el);
-        
     case 'n'
         % Dont add noise to coefficients of polynomial f(x,y)
     otherwise
         error('bool_noise must be either y or n')
 end
+
+GetRoots(fxy_matrix)
 
 
 end
