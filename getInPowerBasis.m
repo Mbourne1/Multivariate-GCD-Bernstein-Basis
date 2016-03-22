@@ -3,15 +3,8 @@ function exp3 = getInPowerBasis(fxy_matrix_bi)
 % fxy_matrix_bi(i+1,j+1) = a_{i,j} \binom{m1}{i}\binom{m2}{j} 
 % get the polynomial in the power basis.
 
-%% Get the degree of fxy wrt x and y
-
-[rows,cols] = size(fxy_matrix_bi);
-
-% Get degree m1 of f (in terms of x)
-m1 = rows-1;
-
-% Get degree m2 of f (in terms of y)
-m2 = cols-1;
+% Get the degree of fxy wrt x and y
+[m1,m2] = GetDegree(fxy_matrix_bi);
 
 %%
 % Initialise some symbolic variables

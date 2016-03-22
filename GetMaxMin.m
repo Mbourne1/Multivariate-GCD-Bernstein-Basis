@@ -1,17 +1,24 @@
 function [max_mtrx,min_mtrx] = GetMaxMin(fxy,n1,n2,k1,k2)
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% Get the maximum and minimum of each entry of f(x,y) in the Sylvester
+% matrix.
+%
 %                               Inputs
-
+%
 % fxy : The Coefficients of polynomial fxy in standard bernstein basis.
 %       Given in matrix form so that the rows are in terms of x basis
 %       elements and the columns are y basis elements.
+%
+% n1 : Degree of g(x,y) with respect to x
+%
+% n2 : Degree of g(x,y) with respect to y
+%
+% k1 : Degree of d(x,y) with respect to x
+%
+% k2 : Degree of d(x,y) with respect to y
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-m1 = size(fxy,1)-1;
-m2 = size(fxy,2)-1;
+% Get the degree of polynomial f(x,y)
+[m1,m2] = GetDegree(fxy);
 
 % Take the absolute values of the coefficients
 fxy = abs(fxy);

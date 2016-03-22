@@ -1,17 +1,19 @@
 function cellArr = mult_roots_x(root_mult_mat)
-%%
-% Given the root and multiplicity matrix produce a cell array of the roots
-% where multiple roots r_{i} are repeated m_{i} times, where m_{i} is the 
-% multiplicity of r_{i}.
-
+% mult_roots_x(root_mult_mat)
+%
+% Given a matrix containing roots and their multiplicity produce a cell 
+% array of the roots where multiple roots r_{i} are repeated m_{i} times,
+% where m_{i} is the multiplicity of r_{i}.
+%
 % Inputs:
-
+%
 %                    _______________
 % root_mult_mat =   | root  |  mult |
 %                   |       |       |
 %                   |_______|_______|
 
-%%
+
+%
 % Initialise a count
 count = 1;
 

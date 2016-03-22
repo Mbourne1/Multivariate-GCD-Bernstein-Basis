@@ -1,45 +1,40 @@
-function [t1,t2,lambda,mu,opt_alpha, opt_theta_1,opt_theta_2] = Get_t1_t2(fxy_matrix,gxy_matrix,...
-    m,n,t,...
-    lambda,mu,...
-    opt_alpha,opt_theta_1,opt_theta_2)
-% Get the degree structure of t1 and t2 of the gcd d(x,y) of the two 
+function [t1,t2,lambda,mu,alpha,th1,th2] = Get_t1_t2(fxy_matrix,gxy_matrix,...
+    m,n,t,lambda,mu,alpha,th1,th2)
+% Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two 
 % polynomials f(x,y) and g(x,y)
 %
 %   Inputs.
 %
-%   fxy_matrix :
+%   fxy_matrix : Coefficient matrix of polynomial f(x,y)
 %
-%   gxy_matrix :
+%   gxy_matrix : Coefficient matrix of polynomial g(x,y)
 %
-%   m :
+%   m : Total degree of polynomial f(x,y)
 %
-%   n :
+%   n : Total degree of polynomial g(x,y)
 %
-%   t :
+%   t : Total degree of GCD d(x,y)
 %
-%   lambda :
+%   lambda : Geometric mean of entries in first partition of Syvlester
+%   matrix
 %
-%   mu :
+%   mu : Geometric mean of Entries in second partition of Sylvester matrix
 %
-%   alpha :
+%   alpha : Optimal value of alpha
 %
-%   theta1 :
+%   th1 : Optimal value of theta_{1}
 %
-%   theta2 :
+%   th2 : Optimal value of theta_{2}
 
 
 global PLOT_GRAPHS
 global BOOL_PREPROC
 
 % Get the degree structure of polynomial f(x,y)
-[r,c] = size(fxy_matrix);
-m1 = r-1;
-m2 = c-1;
+[m1,m2] = GetDegree(fxy_matrix);
 
 % Get the degree structure of polynomial g(x,y)
-[r,c] = size(gxy_matrix);
-n1 = r-1;
-n2 = c-1;
+[n1,n2] = GetDegree(gxy_matrix);
 
 % Produce the set of all possible t1 and t2 values
 
@@ -106,7 +101,7 @@ for i = 1:1:r
         case 'y'
             
             % Preproecessor One - Normalise by geometric mean
-            [lambda, mu] = getGeometricMean(fxy_matrix,gxy_matrix,k1,k2);
+            [lambda, mu] = GetGeometricMean(fxy_matrix,gxy_matrix,k1,k2);
             
             % Normalise f(x,y)
             fxy_matrix_n = fxy_matrix./lambda;
@@ -126,14 +121,14 @@ for i = 1:1:r
             [max_mtrx_g, min_mtrx_g] = GetMaxMin(gxy_matrix_n,m1,m2,k1,k2);
             
             % Get optimal values of alpha and theta
-            [opt_alpha, opt_theta_1, opt_theta_2] = OptimalAlphaTheta(max_mtrx_f,min_mtrx_f,max_mtrx_g,min_mtrx_g);
+            [alpha, th1, th2] = OptimalAlphaTheta(max_mtrx_f,min_mtrx_f,max_mtrx_g,min_mtrx_g);
             
         case 'n'
             fxy_matrix_n = fxy_matrix;
             gxy_matrix_n = gxy_matrix;
-            opt_alpha = 1;
-            opt_theta_1 = 1;
-            opt_theta_2 = 1;
+            alpha = 1;
+            th1 = 1;
+            th2 = 1;
             lambda = 1;
             mu = 1;
             
@@ -141,14 +136,14 @@ for i = 1:1:r
     
     % Build the k1,k2 subresultant
     Sk1k2 = ...
-        BuildSubresultant(fxy_matrix_n,gxy_matrix_n,k1,k2,opt_alpha,opt_theta_1,opt_theta_2);
+        BuildSubresultant(fxy_matrix_n,gxy_matrix_n,k1,k2,alpha,th1,th2);
     
     % Get the minimum singular value
     min_sing_val = min(svd(Sk1k2));
     
     
     try
-        mymat = [mymat ; k1 k2 log10(min_sing_val) opt_alpha opt_theta_1 opt_theta_2 lambda mu ];
+        mymat = [mymat ; k1 k2 log10(min_sing_val) alpha th1 th2 lambda mu ];
         z(k1+1,k2+1) = log10(min_sing_val);
     catch
         mymat = [mymat ; k1 k2 0];
@@ -192,7 +187,7 @@ switch PLOT_GRAPHS
         ylabel('t_{2}')
         xlim([0,max_k1+3])
         ylim([0,max_k2+3])
-        alpha(s1,0.5)
+        
         xlabel('t_{1}')
         ylabel('t_{2}')
         hold off
@@ -286,7 +281,14 @@ switch PLOT_GRAPHS
 end
 
 
+fprintf('\n')
+fprintf('Degree t1 : %i \n',t1);
+fprintf('Degree t2 : %i \n',t2);
+fprintf('\n')
+fprintf('----------------------------------------------------------\n')
 
+
+end
 
 
 

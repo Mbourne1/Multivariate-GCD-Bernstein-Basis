@@ -38,9 +38,8 @@ fxy_matrix_bi = GetWithBinomials(fxy_matrix);
 
 
 T = BuildT1(fxy_matrix,n1,n2);
-
 % % Build the matrix D
-D = BuildD(0,0,m1,m2,n1,n2);
+D = BuildD(0,0,m1,m2,n1,n2)
 
 
 % % Build the matrix Q
@@ -50,7 +49,12 @@ Post_matrix = diag(GetBinomials(n2));
 temp =  Pre_matrix * ones(n1+1,n2+1) * Post_matrix;
 Q = diag(GetAsVector(temp));
 
+Q = BuildQ(
+
+
+
 % % Build the coefficient matrix DTQ
+
 DTQ = D * T * Q;
 
 % % Build the vector of the coefficients of gxy

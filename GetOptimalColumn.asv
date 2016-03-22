@@ -33,10 +33,14 @@ fxy_matrix_n = fxy_matrix./lambda;
 gxy_matrix_n = gxy_matrix./mu;
 
 % Get the degree of polynomial f(x,y)
-[m1,m2] = GetDegree(fxy_matrix);
+[] = GetDegree(fxy_matrix);
+m1 = r - 1;
+m2 = c - 1;
 
 % Get the degree of polynomial g(x,y)
-[n1,n2] = GetDegree(gxy_matrix);
+[r,c] = size(gxy_matrix);
+n1 = r - 1;
+n2 = c - 1;
 
 % Build the (t_{1},t_{2})-th subresultant
 St1t2 = BuildSubresultant(fxy_matrix_n,gxy_matrix_n,t1,t2,opt_alpha, opt_theta_1, opt_theta_2);

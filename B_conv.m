@@ -1,12 +1,20 @@
-function [t]=B_conv(rooot,mult)
-%% This function convolves the vector [-r 1-r] with itself m times.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function [t] = B_conv(rooot,mult)
+% B_conv(rooot,mult)
+% This function convolves the vector [-r 1-r] with itself m times, where r
+% is the root.
+%
 % Inputs:
+%
+%
 % r : root
+%
 % m : multiplicity of root
+%
 % Outputs:
-% t : vector which stores the result from this convolution.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+% t : Vector which stores the result from this convolution.
+%
 
 
 % Note that (y-r) = -r(1-y) + (1-r)y and thus the polynomial y-r in the

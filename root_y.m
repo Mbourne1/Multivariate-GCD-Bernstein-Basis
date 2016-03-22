@@ -1,19 +1,22 @@
-function mat = root_y(r)
-% Given a simple root r, get the matrix of its coefficients of the factor 
-% (x-r) in Bernstein form : -rB_{0} + (1-r)B_{1} 
+function fy = root_y(r)
+% Given a simple root r, get the vector of the polynomial f(y) whose root 
+% is at r, where f(y) is a polynomial in Bernstein form.
 %
-%                
-%   B_{0}^{1}(y) B_{1}^{1}(y) 
-%   _________________________
-%  | ___________|____________|
-%
-%
+%  
 % Inputs.
 % 
 % r : root
 %
-%%
+% Outpus.
+%
+% fx :   B_{0}^{1}(y) B_{1}^{1}(y) 
+%        ____________ ____________
+%       | ___________|____________|
+%
 
-mat = [-r 1-r];
+
+
+
+fy = [-r 1-r];
 
 end

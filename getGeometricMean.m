@@ -1,33 +1,31 @@
-function [GM_f,GM_g] = getGeometricMean(fxy_mtrx,gxy_mtrx,k1,k2)
+function [lambda,mu] = GetGeometricMean(fxy_mtrx,gxy_mtrx,k1,k2)
+% Given teh polynomial f(x,y) and g(x,y), get the geometric mean of their
+% entries in the Sylvester matrix S_{k_{1},k_{2})(f,g).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % %                     Inputs
+%
+%
+% fxy_mtrx : Coefficients of the polynomial f(x,y)
+%
+% gxy_mtrx : Coefficients of the polynomial g(x,y)
+%
+% k1 : Degree of common divisor d(x,y)
+%
+% k2 : Degree of common divisor d(x,y)
+%
+%
+%
+%                     Outputs
+%
+% lambda : Geometric mean of entries in T(f)
+%
+% mu : Geometric mean of entries in T(g)
 
-
-% fxy_mtrx_bi
-
-% gxy_mtrx_bi
-
-% k1
-
-% k2
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% %                     Outputs
-
-
-
-% Get degree of polynomial f(x,y)
-%[rows,cols] = size(fxy_mtrx);
-%m1 = rows -1;
-%m2 = cols -1;
 
 % Get degree of polynomial g(x,y)
-[rows,cols] = size(gxy_mtrx);
-n1 = rows -1;
-n2 = cols -1;
+[n1,n2] = GetDegree(gxy_mtrx);
 
 % Get number of columns in first partition
 colsA = (n1-k1+1) * (n2-k2+1);
@@ -41,8 +39,7 @@ C_f = Sk(:,1:colsA);
 C_g = Sk(:,colsA+1:end);
 
 
+lambda = geomean(reshape(abs(C_f(C_f~=0)),1,[]));
+mu = geomean(reshape(abs(C_g(C_g~=0)),1,[]));
 
-GM_f = geomean(reshape(abs(C_f(C_f~=0)),1,[]));
-
-GM_g = geomean(reshape(abs(C_g(C_g~=0)),1,[]));
 end

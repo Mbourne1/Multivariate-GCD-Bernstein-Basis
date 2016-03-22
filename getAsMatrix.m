@@ -1,12 +1,9 @@
-function fxy_matrix = getAsMatrix (f_vec,m1,m2)
-% Given the vector of coefficients of fxy, format the coefficients as a
-% matrix.
+function fxy_matrix = GetAsMatrix(f_vec,m1,m2)
+% Given the vector of coefficients of the polynomial f(x,y), 
+% format the coefficients as a matrix.
 
 % Initialise an empty matrix fxy
 fxy_matrix = zeros(m1+1,m2+1);
-
-% Get number of coefficients in the vector
-[r,c] = size(f_vec);
 
 % Intialise a counter which will go through each entry of f_vec (The vector
 % of coefficients of of f).

@@ -1,9 +1,18 @@
-function [] = GetRoots(fxy_matrix)
+function [] = o_roots_mymethod(fxy_matrix)
+% o_roots_mymethod(fxy_matrix)
+%
+% Get the roots of the input polynomial f(x,y)
+%
+% Inputs.
+%
+%
+% fxy_matrix : Matrix of coefficients of polynomial f(x,y)
 
-%%          
+
+%
 %               Root Finding Algorithm
 
-%% Obtain the series q_{x}{i} by series of GCD calculations
+% Obtain the series q_{x}{i} by series of GCD calculations
 
 % Set the first entry of q to be the input polynomial f(x,y)
 qx{1} = fxy_matrix;
@@ -28,7 +37,7 @@ iteration_condition = true;
 % derivative.
 while iteration_condition
     str1 = iptnum2ordinal(ite_num);
-    str2 = sprintf(' GCD calculation with respect to x. \n',ite_num);
+    str2 = sprintf('GCD calculation with respect to x. \n',ite_num);
     fprintf([str1 str2])
             
     % Get the degree structure of f(x,y)
@@ -92,7 +101,7 @@ deg2_hx = cell(1,num_entries_qx-1);
 for i = 1:1:num_entries_qx-1
     
     % Get the series h_{x,i}
-    hx{i} = Bern_deconvolve_bivariate(qx{i},qx{i+1});
+    hx{i} = Bernstein_Deconvolve_Bivariate(qx{i},qx{i+1});
     
     % Set the degree of h with respect to x
     deg1_hx{i} = deg1_qx{i} - deg1_qx{i+1};
@@ -118,7 +127,7 @@ deg2_wx = cell(1,num_entries_wx);
 if num_entries_hx > 1
     for i = 1:1: num_entries_hx - 1
          
-        wx{i} = Bern_deconvolve_bivariate(hx{i},hx{i+1});
+        wx{i} = Bernstein_Deconvolve_Bivariate(hx{i},hx{i+1});
         % Set the degree of w with respect to x
         deg1_wx{i} = deg1_hx{i} - deg1_hx{i+1};
         % Set the degree of w with respect to y
@@ -238,7 +247,7 @@ deg2_hy = cell(1,num_entries_hy);
 for i = 1:1:num_entries_qy-1
     
     % Perform Deconvolution to obtain h_{y,i}
-    hy{i} = Bern_deconvolve_bivariate(qy{i},qy{i+1});
+    hy{i} = Bernstein_Deconvolve_Bivariate(qy{i},qy{i+1});
     
     % Get the degree of h_{y,i} with respect to x
     deg1_hy{i} = deg1_qy{i} - deg1_qy{i+1};
@@ -257,7 +266,7 @@ if exist('hy') ~= 0
     
     if c > 1
         for i = 1:1:c-1
-            wy{i}    = Bern_deconvolve_bivariate(hy{i},hy{i+1});
+            wy{i}    = Bernstein_Deconvolve_Bivariate(hy{i},hy{i+1});
             deg1_wy{i} = deg1_hy{i} - deg1_hy{i+1};
             deg2_wy{i} = deg2_hy{i} - deg2_hy{i+1};
         end
@@ -328,9 +337,9 @@ for i = 1:1:num_entries_wx
         % Assign the GCD to the non-Separable part
         wxy{i} = dxy_calc_matrix;
         % Divide w_{x} by the GCD to obtain w_{x} without y component
-        wx{i} = Bern_deconvolve_bivariate(wx{i},dxy_calc_matrix);
+        wx{i} = Bernstein_Deconvolve_Bivariate(wx{i},dxy_calc_matrix);
         % Divide w_{y} by the GCD to obtain w_{y} without x component
-        wy{i} = Bern_deconvolve_bivariate(wy{i},dxy_calc_matrix);
+        wy{i} = Bernstein_Deconvolve_Bivariate(wy{i},dxy_calc_matrix);
         
     end
     

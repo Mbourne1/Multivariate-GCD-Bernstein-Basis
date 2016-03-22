@@ -1,13 +1,9 @@
-function P = BuildP1(m1,m2,n1,n2,theta1,theta2,opt_col,t1,t2)
-% Build the matrix of thetas and binomial coefficients corresponding to the
-% polynomial f(w,w). such that f(x,y).* thetas matrix = f(w,w)
+function P = BuildP1(m1,m2,n1,n2,th1,th2,opt_col,t1,t2)
+% Build the matrix P such that P*[f;g] = c_{t}, where c_{t} is an optimal
+% column removed from the Sylvester matrix.
 
-% Pre_thetas * mat * Post_thetas = thetas_matrix
-pre_thetas = diag(theta1.^(0:1:m1));
-post_thetas = diag(theta2.^(0:1:m2));
-
-thetas_matrix = ones(m1+1,m2+1);
-thetas_matrix = pre_thetas * thetas_matrix * post_thetas;
+% Get a matrix of thetas corresponding to polynomial f(x,y)
+thetas_matrix = GetWithThetas(ones(m1+1,m2+1),th1,th2)
 
 % Produce a zero matrix to fill the space
 padd_mat = zeros(m1+n1-t1+1, m2+n2-t2+1);

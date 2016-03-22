@@ -1,4 +1,4 @@
-function [t, opt_theta_1, opt_theta_2] = Get_t(fxy_matrix,gxy_matrix,m,n)
+function [t, th1, th2] = Get_t(fxy_matrix,gxy_matrix,m,n)
 % Get the total degree t of the two input polynomials f(x,y) and g(x,y)
 
 % Initialise the global variables
@@ -7,15 +7,10 @@ global BOOL_Q
 global PLOT_GRAPHS
 
 % Get degrees of polynomial f(x,y)
-[r,c] = size(fxy_matrix);
-m1 = r - 1;
-m2 = c - 1;
+[m1,m2] = GetDegree(fxy_matrix);
 
 % Get degrees of polynomial g(x,y)
-[r,c] = size(gxy_matrix);
-n1 = r - 1;
-n2 = c - 1;
-
+[n1,n2] = GetDegree(gxy_matrix);
 
 % Degree elevate f(x,y) so that its coefficients are contained in a square
 fxy_matrix_delv = DegreeElevate(fxy_matrix,m-m1,m-m2);
@@ -24,24 +19,14 @@ fxy_matrix_delv = DegreeElevate(fxy_matrix,m-m1,m-m2);
 % matrix.
 gxy_matrix_delv = DegreeElevate(gxy_matrix,n-n1,n-n2);
 
-% fxy_matrix_delv = zeros(m+1,m+1)
-% gxy_matrix_delv = zeros(n+1,n+1)
-%
-% fxy_matrix_delv(1:m1+1,1:m2+1) = fxy_matrix
-% gxy_matrix_delv(1:n1+1,1:n2+1) = gxy_matrix
-
 % Get degrees of polynomial f(x,y)
-[r,c] = size(fxy_matrix_delv);
-m1 = r - 1;
-m2 = c - 1;
+[m1,m2] = GetDegree(fxy_matrix_delv);
 
 % Get degrees of polynomial g(x,y)
-[r,c] = size(gxy_matrix_delv);
-n1 = r - 1;
-n2 = c - 1;
+[n1,n2] = GetDegree(gxy_matrix_delv);
 
 % Initialise some vectors
-minmn = min(m,n)
+minmn = min(m,n);
 
 vMinimumSingularVal = zeros(1,minmn);
 vCondition = zeros(1,minmn);
@@ -59,7 +44,7 @@ for k=1:1:min(m,n)
         case 'y'
             
             % Preproecessor One - Normalise by geometric mean
-            [lambda, mu] = getGeometricMean(fxy_matrix_delv,gxy_matrix_delv,k,k);
+            [lambda, mu] = GetGeometricMean(fxy_matrix_delv,gxy_matrix_delv,k,k);
             
             % Normalise f(x,y)
             fxy_matrix_n = fxy_matrix_delv./lambda;
@@ -79,7 +64,7 @@ for k=1:1:min(m,n)
             [max_mtrx_g, min_mtrx_g] = GetMaxMin(gxy_matrix_n,m1,m2,k,k);
             
             % Get optimal values of alpha and theta
-            [opt_alpha, opt_theta_1, opt_theta_2] = OptimalAlphaTheta(max_mtrx_f,min_mtrx_f,max_mtrx_g,min_mtrx_g);
+            [alpha, th1, th2] = OptimalAlphaTheta(max_mtrx_f,min_mtrx_f,max_mtrx_g,min_mtrx_g);
             
             
         case 'n'
@@ -87,28 +72,31 @@ for k=1:1:min(m,n)
             fxy_matrix_n = fxy_matrix_delv;
             gxy_matrix_n = gxy_matrix_delv;
             
-            opt_alpha = 1;
-            opt_theta_1 = 1;
-            opt_theta_2 = 1;
+            alpha = 1;
+            th1 = 1;
+            th2 = 1;
             lambda = 1;
             mu = 1;
         otherwise
             error('err')
     end
     
-    vOptTheta1(k)       = opt_theta_1;
-    vOptTheta2(k)       = opt_theta_2;
-    opt_alpha_vec(k)    = opt_alpha;
+    vOptTheta1(k)       = th1;
+    vOptTheta2(k)       = th2;
+    opt_alpha_vec(k)    = alpha;
     lambda_vec(k)       = lambda;
     mu_vec(k)           = mu;
     
     
     %% Build the Sylvester matrix S_{k,k}
     
+    fww_matrix = GetWithThetas(fxy_matrix_n,th1,th2);
+    gww_matrix = GetWithThetas(gxy_matrix_n,th1,th2);
+    
     % Build two Cauchy matrices, the first for coefficients of fxy and the
     % second for the coefficients of gxy
-    C_fw = BuildT1(fxy_matrix_n,n1,n2,k,k,opt_theta_1,opt_theta_2);
-    C_gw = BuildT1(gxy_matrix_n,m1,m2,k,k,opt_theta_1,opt_theta_2);
+    T_f = BuildT1(fww_matrix,n1-k,n2-k);
+    T_g = BuildT1(gww_matrix,m1-k,m2-k);
     
     % Build the diagonal matrix D^{-1}
     D = BuildD(k,k,m1,m2,n1,n2);
@@ -117,20 +105,24 @@ for k=1:1:min(m,n)
     % Include Q / Exclude Q from Sylvester Matrix
     switch BOOL_Q
         case 'y'
+            
             % Build the diagonal matrix Q such that Q * [v \\ u] gives the
             % coefficients of u and v in the scaled bernstein basis
-            Q1 = BuildQ1(n1,n2,k,k);
-            Q2 = BuildQ1(m1,m2,k,k);
-            
-            C_fw = D*C_fw*Q1;
-            C_gw = D*C_gw*Q2;
+            Q1 = BuildQ1(n1-k,n2-k);
+            Q2 = BuildQ1(m1-k,m2-k);
+                        
+            % Build the Two Partitions of the Syvlester Matrix 
+            % S = [C(f) C(g)].
+            C_f = D * T_f * Q1;
+            C_g = D * T_g * Q2;
         case 'n'
+            % Do Nothing
         otherwise
-            error('must includ  Q')
+            error('BOOL_Q is either (y) or (n)')
     end
     
     % Build the Sylvester matrix
-    Sk = [C_fw opt_alpha.* C_gw];
+    Sk = [C_f  alpha.* C_g];
     
     ratio_max_min_entries_proc(k) = max(max(Sk))./min(min(Sk));
     
@@ -245,7 +237,15 @@ end
 
 
 % Set the optimal theta 1 and theta 2
-opt_theta_1 = vOptTheta1(t);
-opt_theta_2 = vOptTheta2(t);
+th1 = vOptTheta1(t);
+th2 = vOptTheta2(t);
+
+fprintf('---------------------------------------------------------\n')
+fprintf('\n')
+fprintf('Total Degree of GCD as calculated by GetDegree_Total() : \n')
+fprintf('Tota Degree = %i',t)
+fprintf('\n')
+fprintf('---------------------------------------------------------\n')
+
 
 end

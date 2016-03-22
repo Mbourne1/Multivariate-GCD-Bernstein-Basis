@@ -1,4 +1,6 @@
-function [dxy_matrix_calc] = o_gcd(ex_num,el,bool_preproc,bool_sntln)
+function [dxy_matrix_calc] = o_gcd(ex_num,el,bool_preproc,low_rank_approx_method)
+% o_gcd(ex_num,el,bool_preproc,bool_sntln)
+%
 % Given an example number and set of parameters, obtain GCD of the two
 % polynomials f(x,y) and g(x,y) in the given example file. 
 % Where the polynomials f(x,y) and g(x,y) are defined as polynomails in 
@@ -10,46 +12,22 @@ function [dxy_matrix_calc] = o_gcd(ex_num,el,bool_preproc,bool_sntln)
 %
 % el - Lower noise level
 %
-% BOOL_PREPROC ('y'/'n')
-%       y - Include Preprocessing
-%       n - Exclude Preprocessing
+% bool_preproc ('y'/'n')
+%       'y' : Include Preprocessing
+%       'n' : Exclude Preprocessing
 %
-% BOOL_SNTLN ('y'/'n')
-%       y - Include SNTLN
-%       n - Exclude SNTLN
-%
-% SEED - SEED Number for noise generation
+% low_rank_approx_method :
+%       'Standard SNTLN' : Include SNTLN
+%       'None' : Exclude SNTLN
 %
 
-%%
-%                           Set Variables
+% %
+% Set Variables
+SetGlobalVariables()
 
 
-global BOOL_Q
-global BOOL_PREPROC
-global BOOL_NOISE
-global BOOL_SNTLN
-global PLOT_GRAPHS
-global SEED
-global THRESHOLD
-global MAX_ERROR_SNTLN
-global MAX_ITERATIONS_SNTLN
-
-BOOL_PREPROC = bool_preproc;
-BOOL_Q = 'y';
-BOOL_NOISE = 'y';
-BOOL_SNTLN = bool_sntln;
-PLOT_GRAPHS = 'y';
-SEED = 1024;
-THRESHOLD = 1;
-
-MAX_ERROR_SNTLN = 1e-10;
-MAX_ITERATIONS_SNTLN = 50;
-
-% seed - SEED Number for noise generation
-%%
-%                   Get Example
-
+% %
+% Get Example
 
 [fxy_matrix_exact, gxy_matrix_exact,...
     uxy_matrix_exact,vxy_matrix_exact,...
@@ -80,7 +58,7 @@ fprintf('t2 : %i \n',t2_exact)
 fprintf('----------------------------------------------------------------\n')
 fprintf('\n')
 
-
+% %
 % Add Noise to the coefficients
 switch BOOL_NOISE
     case 'y'
@@ -98,17 +76,13 @@ if PLOT_GRAPHS == 'y'
     plot_fxy_gxy(fxy_matrix,gxy_matrix);
 end
 
-%%
-
-%                   Calculate GCD
+% % Calculate GCD
 
 % Calculate the gcd, and quotient polynomials of f(x,y) and g(x,y)
 [uxy_matrix_calc, vxy_matrix_calc, dxy_matrix_calc] = o1(fxy_matrix,gxy_matrix,...
     m,n);
 
-%% 
-
-%                   Results.
+% % Results.
 
 PrintoutCoefficients('u',uxy_matrix_calc,uxy_matrix_exact)
 PrintoutCoefficients('v',vxy_matrix_calc,vxy_matrix_exact)

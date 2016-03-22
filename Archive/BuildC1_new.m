@@ -1,24 +1,14 @@
-function T1 = BuildC1_new(uww_matrix,m1,m2,n1,n2,t1,t2,~,~)
-% % Build the matrix u_xy_binoms by pre and post multiplying 'uxy_matrix'
-% by two binomial matrices
+function T1 = BuildC1_new(uww_matrix_bi,m1,m2,n1,n2,t1,t2)
 
-% Build the matrix which pre multiplies u(x,y)
-Bi_m1_t1 = GetBinomials(m1-t1);
-Pre_binoms_mtrx = diag(Bi_m1_t1);
 
-% Build the matrix which post multiplies u(x,y)
-Bi_m2_t2 = GetBinomials(m2-t2);
-Post_binoms_mtrx = diag(Bi_m2_t2);
-
-% Create matrix fxy_bi which includes the binomial coefficients
-uww_matrix_bi = Pre_binoms_mtrx *  uww_matrix * Post_binoms_mtrx;
-
+% Get the degree of u(w,w)
+[r,c] = size(uww_matrix_bi);
+m1_t1 = r-1;
+m2_t2 = c-1;
 
 % Initalise a zero matrix 
-zero_matrix = zeros(m1 + n1 - t1 + 1, m2 + n2 - t2 + 1);
-uww_matrix_bi_padded = zero_matrix;
+zero_matrix = zeros(m1_t1 + n1 + 1, m2_t2 + n2 + 1);
 
-uww_matrix_bi_padded(1:m1-t1+1,1:m2-t2+1) = uww_matrix_bi;
 
 T1 = [];
 

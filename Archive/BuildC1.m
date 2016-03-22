@@ -1,58 +1,43 @@
 function C1 = BuildC1(uxy_matrix,t1,t2,m1,m2,th1,th2)
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% Build the matrix C1(u), where C1(u) * d = f.
+%
 % %                         Inputs
-
-
+%
+%
 % uxy_matrix :  Input quotient polynomial uxy in matrix form. Excluding
 %               binomial coefficients. Excluding thetas.
-
+%
 % t1 :  Degree of GCD with respect to x
-
+%
 % t2 :  Degree of GCD with respect to y
-
+%
 % m1 :  Degree of polynomial f with respect to x
-
+%
 % m2 :  Degree of polynomial f with respect to y
-
+%
 % th1 : Optimal value of theta x = \theta_1\omega_1
-
+%
 % th2 : Optimal value of theta y = \theta_2\omega_2
+%
+% %
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-% get size of uxy_matrix
-[rows,cols] = size(uxy_matrix);
+% Get size of uxy_matrix
+[nRows_uxy,nCols_uxy] = size(uxy_matrix);
 
 % get m1-t1, degree of uxy with respect to x
-m1_t1 = rows - 1;
+m1_t1 = nRows_uxy - 1;
 
 % Get m2-t2, degree of uxy with respect to y
-m2_t2 = cols - 1;
+m2_t2 = nCols_uxy - 1;
 
 %% Build the matrix uxy_matrix_binoms
 
-% Build the matrix which premultiplies u_xy
-Pre_binoms_matrix = diag(GetBinomials(m1_t1));
-
-% Build the matrix which post multiplies u_xy
-Post_binoms_matrix = diag(GetBinomials(m2_t2));
-
-% Build the matrix which premultiplies u(x,y) by thetas
-Pre_thetas = th1.^(0:1:m1_t1);
-Pre_thetas_mtrx = diag(Pre_thetas);
-
-% Build the matrix which post multiplies u(x,y) by thetas
-Post_thetas = th2.^(0:1:m2_t2);
-Post_thetas_mtrx = diag(Post_thetas);
-
-% Create matrix uxy_binom which includes binomial coefficients
-uxy_matrix_bi = Pre_binoms_matrix * uxy_matrix * Post_binoms_matrix;
+%Include Binomial Coefficients
+uxy_matrix_bi = GetWithBinomials(uxy_matrix);
 
 % Include thetas
-uw1w2_matrix_bi = Pre_thetas_mtrx * uxy_matrix_bi * Post_thetas_mtrx;
+uw1w2_matrix_bi = GetWithThetas(uxy_matrix_bi,th1,th2);
 
 %%
 

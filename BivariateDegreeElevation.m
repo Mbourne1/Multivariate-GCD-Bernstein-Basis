@@ -113,36 +113,13 @@ fprintf('Degree of polynomial d: d1 = %i, d2 = %i, d = %i \n' ,d1,d2,d)
 % % Build a matrix which is equal only to the binomial coefficients of
 % fxy_matrix
 
-% . Initialise the Empty matrix
-fxy_binoms = zeros(m1+1,m2+1);
-% . For each row of the matrix fxy - for each basis element 1,x,...x^m1
-for i = 0:1:m1
-    % . For each column of the matrix fxy - for each basis element
-    % 1,y,...,y^m2
-    for j = 0:1:m2
-        fxy_binoms(i+1,j+1) = nchoosek(m1,i) * nchoosek(m2,j);
-    end
-end
+fxy_binoms = GetWithBinomials(ones(m1+1,m2+1);
 
+gxy_binoms = GetWithBinomials(ones(n1+1,n2+1);
 
 
 % % Build a matrix which is equal only to the binomial coefficiens of
 % gxy_matrix
-
-% . Initialise the empty matrix
-gxy_binoms = zeros((n1+1),(n2+1));
-% . For each row of the matrix gxy - for each basis element 1,x,...,x^m1
-for i = 0:1:n1
-    % . For each column of the matrix gxy - for each basis element
-    % 1,y,...,y^m2
-    for j = 0:1:n2
-        gxy_binoms(i+1,j+1) = nchoosek(n1,i) * nchoosek(n2,j);
-    end
-end
-
-fprintf('The binomial matrices')
-fxy_binoms
-gxy_binoms
 
 % Strip fxy_matrix_bi of binomial coefficients to obtain fxy_matrix
 fxy_matrix = fxy_matrix_bi./fxy_binoms;
@@ -156,8 +133,8 @@ gxy_matrix
 
 % Get number of additional entries in x and y for degree elevation
 
-        deg_elv_fxy_matrix_bi = fxy_matrix_bi;
-        deg_elv_gxy_matrix_bi = gxy_matrix_bi;
+deg_elv_fxy_matrix_bi = fxy_matrix_bi;
+deg_elv_gxy_matrix_bi = gxy_matrix_bi;
 
 
 
@@ -206,9 +183,9 @@ for k = 1:1:min(m,n)
     % Build the Sylvester matrix
     
     if k == 3
-    size(Cauchy_f)
+        size(Cauchy_f)
         Cauchy_f
-    
+        
     end
     
     

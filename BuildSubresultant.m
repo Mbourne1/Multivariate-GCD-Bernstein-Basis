@@ -1,25 +1,21 @@
-
 function Sk = BuildSubresultant(fxy_matrix_n,gxy_matrix_n,k1,k2,alpha,th1,th2)
 % Build the sylvester subresultant matrix S_{k1,k2}.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
+%
 % %                         Inputs.
-
-
-% fxy_matrix_n - coefficients of polynomial fxy in the scaled bernstein
-% basis (including the binomial coefficients) a_{i,j}
-% \binom{m_{1}}{i}\binom{m_{2}}{j}
-
-% gxy_matrix_n - coefficients of polynomial gxy in the scaled bernstein
-% basis (including the binomial coefficients) b_{i,j}
+%
+%
+% fxy_matrix_n : Coefficients of the polynomial f(x,y)
+%
+% gxy_matrix_n : Matrix of coefficients of polynomial gxy in the scaled 
+% bernstein basis (including the binomial coefficients) b_{i,j}
 % \binom{n_{1}}{i}\binom{n_{2}}{j}
-
-% k1 - the degree k_{1} with respect to x of the polynomial d_{k_{1},k_{2}}
-
-% k2 - The degree k_{2} with respect to y of the polynomial d_{k_{1},k_{2}}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% k1 : The degree k_{1} with respect to x of the polynomial d_{k_{1},k_{2}}
+%
+% k2 : The degree k_{2} with respect to y of the polynomial d_{k_{1},k_{2}}
+%
+%
 
 % %                     Global Variables
 
@@ -30,25 +26,24 @@ function Sk = BuildSubresultant(fxy_matrix_n,gxy_matrix_n,k1,k2,alpha,th1,th2)
 
 global BOOL_Q
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 
 % %                         Code
 
-[rows,cols] = size(fxy_matrix_n);
+% Get the degree of f(x,y) with respect to x and y
+[m1,m2] = GetDegree(fxy_matrix_n);
 
-% get the degrees of fxy with respect to x and y
-m1 = rows - 1;
-m2 = cols - 1;
-
-% get the degrees of gxy with respect to x and y
-[rows,cols] = size(gxy_matrix_n);
-n1 = rows - 1;
-n2 = cols - 1;
+% Get the degree of g(x,y) with respect to x and y
+[n1,n2] = GetDegree(gxy_matrix_n);
 
 % Build two Cauchy matrices, the first for coefficients of fxy and the
 % second for the coefficients of gxy
-C_f = BuildT1(fxy_matrix_n,n1,n2,k1,k2,th1,th2);
-C_g = BuildT1(gxy_matrix_n,m1,m2,k1,k2,th1,th2);
+
+fww_matrix = GetWithThetas(fxy_matrix_n,th1,th2);
+gww_matrix = GetWithThetas(gxy_matrix_n,th1,th2);
+
+C_f = BuildT1(fww_matrix,n1-k1,n2-k2);
+C_g = BuildT1(gww_matrix,m1-k1,m2-k2);
 
 % Build the diagonal matrix D^{-1}
 D = BuildD(k1,k2,m1,m2,n1,n2);
@@ -59,10 +54,10 @@ switch BOOL_Q
     case 'y'
         % Build the diagonal matrix Q such that Q * [v \\ u] gives the
         % coefficients of u and v in the scaled bernstein basis
-        Q = BuildQ(k1,k2,m1,m2,n1,n2);
+        Q = BuildQ(n1-k1,n2-k2,m1-k1,m2-k2);
         Sk = D*[C_f, alpha .* C_g]*Q;
     case 'n'
-        Q = BuildQ(k1,k2,m1,m2,n1,n2);
+        
         Sk = D*[C_f, alpha.* C_g];
 end
 

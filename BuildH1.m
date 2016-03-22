@@ -1,5 +1,7 @@
 function H1 = BuildH1(m1,m2)
-% Build H1, the diagonal matrix of binomials coefficients.
+% BuildH1(m1,m2)
+%
+% Build the diagonal matrix H1 consisting of binomials coefficients
 %
 %                               Inputs.
 %
@@ -8,12 +10,13 @@ function H1 = BuildH1(m1,m2)
 % m2 :  Degree of polynomial f with respect to y
 %
 
-Pre_matrix = diag(GetBinomials(m1))
-Post_matrix = diag(GetBinomials(m2))
+% Get Matrix of binomial coefficients
+Binom_matrix = GetWithBinomials(ones(m1+1,m2+1));
 
-Binom_matrix =  Pre_matrix * ones(m1+1,m2+1) * Post_matrix ;
+% Convert to vector
 Binom_vector = GetAsVector(Binom_matrix);
 
+% Diagonalize
 H1 = diag(1./Binom_vector);
 
 end

@@ -1,39 +1,23 @@
-function [] = o_IntersectionImplicitBezier(ex_num,el,bool_preproc, bool_sntln,seed)
+function [] = o_IntersectionImplicitBezier(ex_num,el,bool_preproc, low_rank_approx_method)
 % Get the points of intersection between the explicitly defined surface
 % z = f(x,y) and the the Bézier surface patch
+%
+% Inputs.
+%
+% ex_num :
+% 
+% el : 
+%
+% bool_preproc :
+%
+% low_rank_approx_method
+% 
 
-global BOOL_Q
-BOOL_Q = 'y';
 
-global BOOL_PREPROC
-BOOL_PREPROC = bool_preproc;
+% Set the global variables.
+SetGlobalVariables()
 
-global BOOL_NOISE
-BOOL_NOISE = 'y';
-
-global bool_degreeMethod
-bool_degreeMethod = '2';
-
-global bool_remove_cols
-bool_remove_cols = 'n';
-
-global BOOL_SNTLN
-BOOL_SNTLN = bool_sntln;
-
-global PLOT_GRAPHS
-PLOT_GRAPHS = 'n';
-
-global SEED
-SEED = seed;
-
-% Get the implicit surface
-fxy = ...
-    [
-        0 1;
-        1 0;
-    ];
-
-%% Get the parametric Bezier surface
+% % Get the parametric Bezier surface
 
 % %    P(:,:,1): x-coordates of control points as 4 x 4 matrix 
 % %    P(:,:,2): y-coordates of control points as 4 x 4 matrix 
@@ -83,7 +67,7 @@ C2_z = P(:,:,3);
 
 C1 = subs(C1,{x,y,z},{C2_x,C2_y,C2_z})
 
-GetRoots(C1)
+o_roots_mymethod(C1)
 
 
 

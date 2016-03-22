@@ -5,10 +5,9 @@ function [alpha, theta1,theta2] = OptimalAlphaTheta(max_mtrx_f,min_mtrx_f, max_m
 f = [1 -1 0 0 0];
 
 % get the degree of polynomial f and g
-m1 = size(max_mtrx_f,1) -1;
-m2 = size(max_mtrx_f,2) -1;
-n1 = size(max_mtrx_g,1) -1;
-n2 = size(max_mtrx_g,2) -1;
+[m1,m2] = GetDegree(max_mtrx_f);
+
+[n1,n2] = GetDegree(max_mtrx_g);
 
 % Assemble the four submatrices of Matrix A
 PartOne = zeros((m1+1)*(m2+1),5);

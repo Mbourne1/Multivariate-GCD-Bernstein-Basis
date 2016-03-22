@@ -14,9 +14,7 @@ function deg_elv_fxy_matrix = DegreeElevate(fxy_matrix,ad_rows,ad_cols)
 %   ad_cols : number of degree elevations with respect to y.
 
 % Get the degree of input polynomial f(x,y)
-[r,c] = size(fxy_matrix);
-m1 = r - 1;
-m2 = c - 1;
+[m1,m2] = GetDegree(fxy_matrix);
 
 % let r_f be the number of rows being added
 r_f = ad_rows;
