@@ -2,7 +2,7 @@ function y = LSE(~,f,C,g)
 % This function uses the QR decomposition to solve the LSE problem
 % minimise ||Ey-f||  subject to  Cy=g
 % The output is the vector y.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
     [m1,~]=size(C);
     

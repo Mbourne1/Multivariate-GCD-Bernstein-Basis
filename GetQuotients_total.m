@@ -26,7 +26,7 @@ global bool_preproc
 
 
 % padd polynomials fxy and gxy
-[r,c] = size(fxy_matrix);
+[r,c] = GetDegree(fxy_matrix);
 fxy_padd = zeros(m+1,m+1);
 fxy_padd(1:r,1:c) = fxy_matrix;
 
@@ -87,44 +87,17 @@ end
 St1t2 = BuildSubresultant(fxy_matrix_n,gxy_matrix_n,t,t,opt_alpha, opt_theta_1, opt_theta_2);
 
 
-%% Find Optimal column for removal from St
-% given that t1 and t2 have been calculated build the sylvester matrix and
-% find the optimal column such that a residual is minimized
+%%
 
-[~,cols] = size(St1t2);
-
-% QR Decomposition of the Sylvester Matrix S_{k}
-[Qk,Rk] = qr(St1t2);
-
-for j=1:1:cols
-    
-    ck = St1t2(:,j);
-    [Q,~] = qrdelete(Qk,Rk,j);
-    cd = Q'*ck;
-    d = cd(n+1:end,:);
-    residuals_QR(j) = norm(d);
-    
-end
-
-%Obtain the column for which the residual is minimal.
-[~,opt_col] = min(log10(residuals_QR));
-fprintf('Optimal column for removal is given by %i \n',opt_col)
-
-
-%% Get the coefficients for u(x,y) and v(x,y)
+[opt_col] = GetOptimalColumn(fxy_matrix,gxy_matrix,t1,t2,lambda,mu,opt_alpha,opt_theta_1,opt_theta_2);
 
 Atj = St1t2;
 cki = St1t2(:,opt_col);
 Atj(:,opt_col) = [];
 
-% [~,n_col] = size(Atj);
-% [Q,R] = qr(Atj);
-% R1 = R(1:n_col,:);
-% cd = Q'*cki;
-% c = cd(1:n_col,:);
-% x_ls = R1\c;
+x_ls = SolveAx_b(Atj,cki);
 
-x_ls = pinv(Atj) * cki;
+%% Get the coefficients for u(x,y) and v(x,y)
 
 % Obtain the solution vector x = [-v;u]
 vecx =[
@@ -134,79 +107,41 @@ vecx =[
     ];
 
 num_coeff_v = (n-t+1) * (n-t+1);
-num_coeff_u = (m-t+1) * (m-t+1);
-
 
 % get coefficients of u and v
 vw_calc = vecx(1:num_coeff_v);
 uw_calc = -vecx(num_coeff_v+1:end);
 
 
-%% Get the value of fv-gu
-norm(St1t2 * [vw_calc ;-uw_calc])
-
-
 %% Obtain u(x,y) in its matrix form
 % Arrange uw into a matrix form based on its dimensions.
-uw_calc_mat = getAsMatrix(uw_calc,m-t,m-t);
+uw_calc_mat = GetAsMatrix(uw_calc,m-t,m-t);
 
 %% Obtain v(x,y) in its matrix form
 % Arrange vw into a matrix form based on their dimensions.
-vw_calc_mat = getAsMatrix(vw_calc,n-t,n-t);
+vw_calc_mat = GetAsMatrix(vw_calc,n-t,n-t);
 
-%%
+
 % Remove the thetas from the matrix of coefficients of v(w,w) to obtain
 % coefficients of v(x,y)
+vxy_matrix_calc = GetWithoutThetas(vw_calc_mat,opt_theta_1,opt_theta_2);
 
-pre_theta = diag(1./(opt_theta_1.^(0:1:n-t)));
-post_theta = diag(1./(opt_theta_2.^(0:1:n-t)));
-
-vxy_matrix_calc = pre_theta * vw_calc_mat * post_theta;
-
-%%
 % Remove the thetas from the matrix of coefficients of u(w,w) to obtain
 % coefficients of u(x,y)
+uxy_matrix_calc = GetWithoutThetas(uw_calc_mat,opt_theta_1,opt_theta_2);
 
-% for each row, divide by theta2^i1
 
-pre_theta = diag(1./(opt_theta_1.^(0:1:m-t)));
-post_theta = diag(1./(opt_theta_2.^(0:1:m-t)));
-
-uxy_matrix_calc = pre_theta * uw_calc_mat * post_theta;
-
-%% If we excluded Q from the coefficient matrix, then remove the binomial 
+% If we excluded Q from the coefficient matrix, then remove the binomial 
 % coefficients from v(x,y) and u(x,y)
 switch bool_Q
     case 'n'
-                %%
+        
         % Remove binomial coefficients from v(w,w)_bi
-        [r,c] = size(vxy_matrix_calc);
-        n1_t1 = r - 1;
-        n2_t2 = c - 1;
-        
-        bi_n1_t1 = getBinoms(n1_t1)
-        mat1 = diag(1./bi_n1_t1);
-        
-        bi_n2_t2 = getBinoms(n2_t2)
-        mat2 = diag(1./bi_n2_t2);
-        
-        vxy_matrix_calc = mat1 * vxy_matrix_calc * mat2;
-        
-        %%
+        vxy_matrix_calc = GetWithoutBinomials(vxy_matrix_calc);
+       
         % Remove the binomial coefficients from u(w,w)_bi
-        [r,c] = size(uxy_matrix_calc);
-        m1_t1 = r - 1;
-        m2_t2 = c - 1;
-        
-        bi_m1_t1 = getBinoms(m1_t1)
-        bi_m2_t2 = getBinoms(m2_t2)
-        
-        
-        mat1 = diag(1./bi_m1_t1);
-        mat2 = diag(1./bi_m2_t2);
-        
-        uxy_matrix_calc = mat1 * uxy_matrix_calc * mat2;
-
+        uxy_matrix_calc = GetWithoutBinomials(uxy_matrix_calc);
+       
 
 end
 

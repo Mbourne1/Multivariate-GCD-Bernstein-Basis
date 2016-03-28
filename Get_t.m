@@ -2,8 +2,6 @@ function [t, th1, th2] = Get_t(fxy_matrix,gxy_matrix,m,n)
 % Get the total degree t of the two input polynomials f(x,y) and g(x,y)
 
 % Initialise the global variables
-global BOOL_PREPROC
-global BOOL_Q
 global PLOT_GRAPHS
 
 % Get degrees of polynomial f(x,y)
@@ -19,153 +17,66 @@ fxy_matrix_delv = DegreeElevate(fxy_matrix,m-m1,m-m2);
 % matrix.
 gxy_matrix_delv = DegreeElevate(gxy_matrix,n-n1,n-n2);
 
-% Get degrees of polynomial f(x,y)
-[m1,m2] = GetDegree(fxy_matrix_delv);
+% Get min(m,n)
+min_mn = min(m,n);
 
-% Get degrees of polynomial g(x,y)
-[n1,n2] = GetDegree(gxy_matrix_delv);
+% Initialise some vectors.
+vMinimumSingularVal = zeros(min_mn,1);
+vCondition = zeros(min_mn,1);
 
-% Initialise some vectors
-minmn = min(m,n);
+vGM_fx = zeros(min_mn,1);
+vGM_gx = zeros(min_mn,1);
+vAlpha = zeros(min_mn,1);
+vTh1 = zeros(min_mn,1);
+vTh2 = zeros(min_mn,1);
 
-vMinimumSingularVal = zeros(1,minmn);
-vCondition = zeros(1,minmn);
-vOptTheta1 = zeros(1,minmn);
-vOptTheta2 = zeros(1,minmn);
+
 Data_RowNorm = [];
 Data_DiagNorm = [];
 
 
 % for each possible total degree
-for k=1:1:min(m,n)
+for k=1:1:min_mn
     
     % Apply preprocessing
-    switch BOOL_PREPROC
-        case 'y'
-            
-            % Preproecessor One - Normalise by geometric mean
-            [lambda, mu] = GetGeometricMean(fxy_matrix_delv,gxy_matrix_delv,k,k);
-            
-            % Normalise f(x,y)
-            fxy_matrix_n = fxy_matrix_delv./lambda;
-            
-            % Normalise g(x,y)
-            gxy_matrix_n = gxy_matrix_delv./mu;
-            
-            % Preprocessor Two and Three - LinProg to obtain optimal values
-            % of alpha, theta_1 and theta_2
-            
-            % Get the maximum and minimum entries of f(x,y) in the
-            % Sylvester matrix S(f,g)
-            [max_mtrx_f, min_mtrx_f] = GetMaxMin(fxy_matrix_n,n1,n2,k,k);
-            
-            % Get the maximum and minimum entries of g(x,y) in the
-            % Sylvester matrix S(f,g)
-            [max_mtrx_g, min_mtrx_g] = GetMaxMin(gxy_matrix_n,m1,m2,k,k);
-            
-            % Get optimal values of alpha and theta
-            [alpha, th1, th2] = OptimalAlphaTheta(max_mtrx_f,min_mtrx_f,max_mtrx_g,min_mtrx_g);
-            
-            
-        case 'n'
-            
-            fxy_matrix_n = fxy_matrix_delv;
-            gxy_matrix_n = gxy_matrix_delv;
-            
-            alpha = 1;
-            th1 = 1;
-            th2 = 1;
-            lambda = 1;
-            mu = 1;
-        otherwise
-            error('err')
-    end
     
-    vOptTheta1(k)       = th1;
-    vOptTheta2(k)       = th2;
-    opt_alpha_vec(k)    = alpha;
-    lambda_vec(k)       = lambda;
-    mu_vec(k)           = mu;
+    [vGM_fx(k),vGM_gx(k),vAlpha(k), vTh1(k),vTh2(k)] = ...
+        Preprocess(fxy_matrix_delv,gxy_matrix_delv,k);
     
+    % Get f(x,y) normalized by geometric mean lambda.
+    fxy_matrix_n = fxy_matrix_delv./vGM_fx(k);
     
-    %% Build the Sylvester matrix S_{k,k}
+    % Get g(x,y) normalised by geometric mean mu.
+    gxy_matrix_n = gxy_matrix_delv./vGM_gx(k);
     
-    fww_matrix = GetWithThetas(fxy_matrix_n,th1,th2);
-    gww_matrix = GetWithThetas(gxy_matrix_n,th1,th2);
+    % Get f(w,w) from f(x,y)
+    fww_matrix = GetWithThetas(fxy_matrix_n,vTh1(k),vTh2(k));
     
-    % Build two Cauchy matrices, the first for coefficients of fxy and the
-    % second for the coefficients of gxy
-    T_f = BuildT1(fww_matrix,n1-k,n2-k);
-    T_g = BuildT1(gww_matrix,m1-k,m2-k);
+    % Get g(w,w) from g(x,y)
+    gww_matrix = GetWithThetas(gxy_matrix_n,vTh1(k),vTh2(k));
     
-    % Build the diagonal matrix D^{-1}
-    D = BuildD(k,k,m1,m2,n1,n2);
+    % Build the k-th subresultant matrix.
+    Sk = BuildDTQ(fww_matrix,vAlpha(k).*gww_matrix,k,k);
     
-    
-    % Include Q / Exclude Q from Sylvester Matrix
-    switch BOOL_Q
-        case 'y'
-            
-            % Build the diagonal matrix Q such that Q * [v \\ u] gives the
-            % coefficients of u and v in the scaled bernstein basis
-            Q1 = BuildQ1(n1-k,n2-k);
-            Q2 = BuildQ1(m1-k,m2-k);
-                        
-            % Build the Two Partitions of the Syvlester Matrix 
-            % S = [C(f) C(g)].
-            C_f = D * T_f * Q1;
-            C_g = D * T_g * Q2;
-        case 'n'
-            % Do Nothing
-        otherwise
-            error('BOOL_Q is either (y) or (n)')
-    end
-    
-    % Build the Sylvester matrix
-    Sk = [C_f  alpha.* C_g];
-    
-    ratio_max_min_entries_proc(k) = max(max(Sk))./min(min(Sk));
-    
-    
-    %% Get QR Decomposition
-    % Using QR Decomposition of the sylvester matrix
-    [~,R] = qr(Sk);
-    
-    % Take absolute values.
-    R = abs(R);
-    
-    % Get number of rows in R1
-    [R1_rows,~] = size(diag(R));
-    
-    % Obtain R1 the top square of the R matrix.
-    R1 = R(1:R1_rows,1:R1_rows);
+    % Get the matrix R1 from QR decomposition of S_{k}
+    R1 = GetR1(Sk);
     
     % Get Norms of each row in the matrix R1
     R1_RowNorm = sqrt(sum(R1.^2,2))./norm(R1);
     
     % Get ONLY the diagonal elements and normalise them.
     R1_DiagNorm = diag(R1)./norm(diag(R1));
-    
-    % Build Array of all diagonals
-    % Scatter Plot Data
-    ks = k.*ones(size(R1_RowNorm));
-    ns = 1:1:size(R1_RowNorm,1);
-    
-    X = [ks R1_RowNorm ns'];
-    Data_RowNorm = [Data_RowNorm; X];
-    
-    X2 = [ks R1_DiagNorm ns'];
-    Data_DiagNorm = [Data_DiagNorm;X2];
-    
-    %%
+       
+    Data_RowNorm = AddToData(R1_RowNorm,Data_RowNorm,k);
+    Data_DiagNorm = AddToData(R1_DiagNorm,Data_DiagNorm,k);
     
     % Get SVD of unproc and processed Sylvester Surbesultant S_{k,k}
     vMinimumSingularVal(k) = min(svd(Sk));
-    %min_sing_val_vec_unproc(k) = min(svd(Sk_unproc));
     
     % Get the condition of Sk
     vCondition(k) = cond(Sk);
-    %cond_vec_unproc(k) = cond(Sk_unproc);
+    
+    
     
 end
 
@@ -237,8 +148,8 @@ end
 
 
 % Set the optimal theta 1 and theta 2
-th1 = vOptTheta1(t);
-th2 = vOptTheta2(t);
+th1 = vTh1(t);
+th2 = vTh2(t);
 
 fprintf('---------------------------------------------------------\n')
 fprintf('\n')
@@ -247,5 +158,50 @@ fprintf('Tota Degree = %i',t)
 fprintf('\n')
 fprintf('---------------------------------------------------------\n')
 
+
+end
+
+function [data] = AddToData(vResults,data,k)
+
+% Get number of entries in results vector
+[nEntries,~] = size(vResults);
+
+% Get vector of k
+vec_k = k.*ones(nEntries,1);
+
+% Get index vector
+vec_idx = (1:1:nEntries)';
+
+data = ...
+    [
+    data;
+    vec_k vResults vec_idx;
+    ];
+
+
+
+end
+
+
+function R1 = GetR1(Sk)
+% Given the k-th Sylvester matrix get the upper triangular square matrix
+% R1.
+%
+% Inputs.
+%
+% Sk
+
+% Get QR Decomposition
+% Using QR Decomposition of the sylvester matrix
+[~,R] = qr(Sk);
+
+% Take absolute values.
+R = abs(R);
+
+% Get number of rows in R1
+[R1_rows,~] = size(diag(R));
+
+% Obtain R1 the top square of the R matrix.
+R1 = R(1:R1_rows,1:R1_rows);
 
 end

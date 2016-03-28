@@ -42,7 +42,7 @@ THRESHOLD = 1;
 
 %% Variables related to Low rank approximation
 global MAX_ERROR_SNTLN
-MAX_ERROR_SNTLN = 1e-10;
+MAX_ERROR_SNTLN = 1e-14;
 
 global MAX_ITERATIONS_SNTLN
 MAX_ITERATIONS_SNTLN = 50;

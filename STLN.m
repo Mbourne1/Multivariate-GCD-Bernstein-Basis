@@ -36,7 +36,7 @@ function [ fxy_output,gxy_output,X_output] = ...
 %
 %
 
-%                       Global Inputs
+% Global Variables
 
 global MAX_ERROR_SNTLN
 global MAX_ITERATIONS_SNTLN
@@ -50,15 +50,11 @@ end
 % Set the initial iterations number
 ite = 1;
 
-% Get degree of polynomials f.
-[r,c] = size(fxy_matrix);
-m1 = r - 1;
-m2 = c - 1;
+% Get degree of polynomial f(x,y).
+[m1,m2] = GetDegree(fxy_matrix);
 
-% Get degree of polynomial g.
-[r,c] = size(gxy_matrix);
-n1 = r - 1;
-n2 = c - 1;
+% Get degree of polynomial g(x,y).
+[n1,n2] = GetDegree(gxy_matrix);
 
 % Get the number of coefficients in the polynomial f(x,y)
 num_coeff_f = (m1+1) * (m2+1);
@@ -112,75 +108,57 @@ e = I(:,opt_col);
 
 %% Form the Coefficient Matrix T = [C(f)|C(g)] such that DTQ * x = [col]
 
-D = BuildD(t1,t2,m1,m2,n1,n2);
+% % Build the Sylvester matrix D*T(f,g)*Q
+DTQ = BuildDTQ(fxy_matrix,gxy_matrix,t1,t2);
 
-Q = BuildQ(n1-t1,n2-t2,m1-t1,m2-t2);
-
-T1 = BuildT1(fxy_matrix,n1-t1,n2-t2);
-T2 = BuildT1(gxy_matrix,m1-t1,m2-t2);
-DTQ = D*[T1 T2]*Q;
-
-
-%%
-% Initialise the vector z of structured perturbations
-% if we are working with strictly the roots problem, the number of entries
-% in z can be reduced.
-
-zk = zeros(num_coeff , 1);
-
-% Get the coefficients of f(x,y) in matrix form
-fww_vec = GetAsVector(fxy_matrix);
-gww_vec = GetAsVector(gxy_matrix);
-
-% Get the matrix A_{k}(f,g), which is the subresultant matrix S(f,g) with
+% Get the matrix A_{t}(f,g), which is the subresultant matrix S(f,g) with
 % an opitmal column removed
 At = DTQ;
 ct = DTQ(:,opt_col);
 At(:,opt_col) = [];
 
 %%
+% Initialise the vector z of structured perturbations
+% if we are working with strictly the roots problem, the number of entries
+% in z can be reduced.
+zk = zeros(num_coeff , 1);
+
+%%
 % % Build the matrix of binomials corresponding to polynomial f(x,y)
 
-% Multiply each row by nchoosek(m1,i)
-% Multiply each column by nchoosek(m2,j)
-Bi_m1 = GetBinomials(m1);
-Bi_m2 = GetBinomials(m2);
+% Get the matrix of binomial coefficients corresponding to the entries of
+% f(x,y)
+binomials_f = GetWithBinomials(ones(m1+1,m2+1));
 
-binoms_f = diag(Bi_m1) * ones(m1+1,m2+1) * diag(Bi_m2);
+% Get the binomials of f(x,y) as a vector.
+vBinomials_f = GetAsVector(binomials_f);
 
-% % Build the matrix of binomials corresponding to polynomial g(x,y)
 
-% Multiply each row by nchoosek(n1,i)
-% Multiply each column by nchoosek(n2,j)
-Bi_n1 = GetBinomials(n1);
-Bi_n2 = GetBinomials(n2);
+% Build the matrix of binomials corresponding to polynomial g(x,y)
+binomials_g = GetWithBinomials(ones(n1+1,n2+1));
 
-binoms_g = diag(Bi_n1) * ones(n1+1,n2+1) * diag(Bi_n2);
+% % Get the Binomials of g(x,y) as a vector.
+vBinomials_g = GetAsVector(binomials_g);
 
-% % Get the Binomials of f and g as vectors
-binoms_f_vec = GetAsVector(binoms_f);
-binoms_g_vec = GetAsVector(binoms_g);
-G = diag([binoms_f_vec;binoms_g_vec]);
-%%
+% Build the matrix D^{-1}
+D = BuildD(t1,t2,m1,m2,n1,n2);
 
+% Build the matrix G
+G = diag([vBinomials_f;vBinomials_g]);
+
+%
 P = BuildP(m1,m2,n1,n2,1,1,1,t1,t2,opt_col);
+
 P = D*P*G;
 
 %%
 % Perform QR decomposition of Ak to obtain the solution x
 x_ls = SolveAx_b(At,ct);
 
-first_part = x_ls(1:(opt_col-1));
-second_part = x_ls(opt_col:end);
-x = [first_part ; 0 ; second_part];
 
 % Build Matrix Y, where Y(v,u)*[f;g] = S(f,g)*[u;v]
 Y = BuildY(m1,m2,n1,n2,t1,t2,opt_col,x_ls,1,1,1);
 DYG = D*Y*G;
-
-test1 = DYG * [fww_vec;gww_vec];
-test2 = DTQ * x;
-test1./test2;
 
 % Calculate the initial residual r = ck - (Ak*x)
 res_vec = ct - (DTQ*M*x_ls);
@@ -204,11 +182,8 @@ E = eye(num_entries);
 
 %%
 % Create the matrix D(T+N)Q, initially N is empty so this is the same as T.
+DTNQ = BuildDTQ(fxy_matrix,gxy_matrix,t1,t2);
 
-T1 = BuildT1(fxy_matrix,n1-t1,n2-t2);
-T2 = BuildT1(gxy_matrix,m1-t1,m2-t2);
-
-DTNQ = D*[T1 T2]*Q;
 
 % Create the matrix C for input into iteration
 
@@ -231,8 +206,6 @@ yy              =   start_point;
 % over written later.
 condition(ite) = norm(res_vec)/norm(ct);
 
- % Edit 17/11/2015
-
 xk = x_ls;
 
 while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
@@ -241,7 +214,6 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     
     y = LSE(E,p,C,res_vec);
     
-    y_old = y;
     % Increment the iteration number
     ite = ite + 1;
     
@@ -254,17 +226,14 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     
     % get the coefficients corresponding to f and g
     delta_zk        = y(1:num_coeff_f + num_coeff_g ,1);
+    
     % Remove the zk coefficients from the list of coefficients
     y(1:num_coeff_f + num_coeff_g) = [];
     
     % Get the coefficients corresponding to x
     delta_xk        = y(1:num_coeff_x,1);
-    % Remove them from the list of coefficients
-    y(1:num_coeff_x) = [];
     
-
-    
-    %% Update the variables
+    % Update the variables
     
     % Update variables z_{k}, where z_{k} are perturbations in the
     % coefficients of f and g.
@@ -273,18 +242,13 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     % Update x_{k}, where x_{k} is the solution vector, containing
     % coefficients u and v.
     xk = xk + delta_xk;
-
-    % Construct the Sylvester subresultant matrix DTQ.
-    T1 = BuildT1(fxy_matrix,n1-t1,n2-t2);
-    T2 = BuildT1(gxy_matrix,m1-t1,m2-t2);
-    DTQ = D*[T1 T2]*Q;
     
-
-
+    % Construct the Sylvester subresultant matrix DTQ.
+    DTQ = BuildDTQ(fxy_matrix,gxy_matrix,t1,t2);
+       
     % Calculate the column c_{k} of DTQ that is moved to the right hand side
     ct = DTQ*e;
     
-
     % Create the vector of structured perturbations zf and zg applied
     % to F and G.
     z_fx      = zk(1:num_coeff_f);
@@ -298,57 +262,45 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     
     % Build the coefficient Matrix N = [T(z1) T(z2)], of structured perturbations, with
     % same structure as DTQ.
-    N1 = BuildT1(z_fx_mat,n1-t1,n2-t2);
-    N2 = BuildT1(z_gx_mat,m1-t1,m2-t2);
-    DNQ = D*[N1 N2]*Q;
+    DNQ = BuildDTQ(z_fx_mat,z_gx_mat,t1,t2);
 
     % Calculate the column of DNQ that is moved to the right hand side, which
     % has the same structure as c_{k} the column of S_{k} moved to the RHS
-    h = DNQ*e;
+    ht = DNQ*e;
        
     % Build the matrix (T+N)
-    TN1 = BuildT1(fxy_matrix + z_fx_mat,n1-t1,n2-t2);
-    TN2 = BuildT1(gxy_matrix + z_gx_mat,m1-t1,m2-t2);
-    DTNQ = D*[TN1 TN2]*Q;
+    DTNQ = BuildDTQ(fxy_matrix + z_fx_mat,...
+                    gxy_matrix + z_gx_mat,...
+                    t1,t2);
 
     % Calculate the matrix DY where Y is the Matrix such that E_{k}x = Y_{k}z.
     Y = BuildY(m1,m2,n1,n2,t1,t2,opt_col,xk,1,1,1);
-    
     DYG = D*Y*G;
-    
-    test1 = DYG * [fww_vec;gww_vec];
-    first_part = xk(1:(opt_col-1));
-    second_part = xk(opt_col:end);
-    x = [first_part ; 0 ; second_part];
-    test2 = DTQ * x;
-    
     
     % Calculate the matrix DP where P is the matrix such that c = P[f;g]
     P = BuildP(m1,m2,n1,n2,1,1,1,t1,t2,opt_col);
     P = D*P*G;
     
     % Get residual as a vector
-    rk = (ct+h) - DTNQ*M*xk ;
+    rk = (ct+ht) - DTNQ*M*xk ;
     
     % Create the matrix C. This is made up of five submatrices, HZ, Hx,
     % H_alpha and H_theta1 and H_theta2.
     
     Hz          = DYG-P;
-    
     Hx          = DTNQ*M;
     
-   
+    % Update the matrix C for LSE Problem
+    C = [Hz,Hx];  
     
-    C = [Hz,Hx];  % the matrix C
+    % Update the RHS vector 
+    et = ct + ht;
     
-    % Calculate the new right hand vector
-    ek = ct + h;
-    
-    % Update gnew - used in lse problem
+    % Update residual vector
     res_vec = rk;
     
     % Calculate the normalised residual of the solution.
-    condition(ite) = norm(rk) / norm(ek);
+    condition(ite) = norm(rk) / norm(et);
     
     % Update fnew - used in LSE Problem.
     p = -(yy-start_point);
@@ -360,9 +312,9 @@ end
 global PLOT_GRAPHS
 switch PLOT_GRAPHS
     case 'y'
-        figure('name','Residuals in SNTLN')
+        figure('name','STLN - Residuals in STLN')
         hold on
-        title('Residuals in SNTLN')
+        title('Residuals in STLN')
         xlabel('Iterations')
         ylabel('log_{10} Residuals')
         plot((1:1:ite),log10(condition),'-s')
@@ -403,7 +355,7 @@ X_output  = xk;
 
 % Print the number of iterations
 fprintf('--------------------------------------------------------------------------- \n')
-fprintf('Iterations over Sylvester Matrix : %i \n', ite);
+fprintf('Iterations over STLN() function for Low Rank Approximation of Sylvester Matrix : %i \n', ite);
 fprintf('--------------------------------------------------------------------------- \n')
 end
 

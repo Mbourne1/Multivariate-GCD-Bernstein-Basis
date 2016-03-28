@@ -14,28 +14,13 @@ function [] = plot_fxy_gxy(fxy_matrix_Brn, gxy_matrix_Brn)
 %   B_{m1}(x)   |_______|_______|
 
 %%  Get the dimensions of f(x,y)
-[rows,cols] = size(fxy_matrix_Brn);
-
-% Set the degrees m1 and m2
-m1 = rows -1;
-m2 = cols -1;
-
-%% Get the dimensions of g(x,y)
-[rows,cols] = size(gxy_matrix_Brn);
-
-% Set the degrees m1 and m2
-n1 = rows -1;
-n2 = cols -1;
 
 
-%% Plot the control points of the surface of f(x,y)
+% Plot the control points of the surface of f(x,y)
 fxy_coordinates_CP = getCoordinates_CP(fxy_matrix_Brn);
 gxy_coordinates_CP = getCoordinates_CP(gxy_matrix_Brn);
 
-
-%% Plot the control points of the surface of g(x,y)
-
-
+% Plot the control points of the surface of g(x,y)
 % Plot the control points in a three dimensional scatter
 figure('name','Bernstein Control Points', 'NumberTitle','off')
 hold on
@@ -45,7 +30,7 @@ scatter3(gxy_coordinates_CP(:,1), gxy_coordinates_CP(:,2), gxy_coordinates_CP(:,
 hold off
 
 
-%% Plot 3
+% Plot 3
 % % Plot the Bézier surface by evaluating at a series of points
 
 % Get the surface coordinates
@@ -93,9 +78,10 @@ figure(4)
 title('Exact Bernstein Surface')
 hold on
 g1 = surf(f_XI,f_YI,f_ZI);
-%g3 = mesh(XI_p1,YI_p1,ZI_p1,'edgecolor','black','facecolor','blue','MarkerFaceColor','black');
-
 g2 = surf(g_XI,g_YI,g_ZI);
+
+set(g1,'FaceColor',[1 0 0],'FaceAlpha',0.9);
+set(g2,'FaceColor',[0 1 0],'FaceAlpha',0.9);
 
 %alpha(g3,0.05)
 hold off
@@ -108,9 +94,7 @@ function [fxy_coordinates] = getCoordinates_CP(fxy_matrix_Brn)
 %% Get the (x,y,z) coordinates of each of the control points
 
 % get dimensions of f(x,y)
-[rows,cols] = size(fxy_matrix_Brn);
-m1 = rows - 1;
-m2 = cols - 1;
+[m1,m2] = GetDegree(fxy_matrix_Brn);
 
 % Initialise a matrix to store all of the coordinates
 num_coordinates = (m1+1) * (m2+1);
@@ -121,9 +105,9 @@ count = 1;
 for i = 0:1:m1
     for j = 0:1:m2
         % get x coordinate of control point
-        x_pos = i/(rows-1);
+        x_pos = i/(m1);
         % Get y coordinate of control point
-        y_pos = j/(cols-1);
+        y_pos = j/(m2);
         % Get z coordinate of control point
         z_pos = fxy_matrix_Brn(i+1,j+1);
         
@@ -144,10 +128,7 @@ function fxy_coordinates_Curve = get_Coordinates_Curve(fxy_matrix_Brn)
 % Given a set of coefficients for a surface f(x,y) obtain a set of (x,y,z)
 % values for points on the curve.
 
-[rows,cols] = size(fxy_matrix_Brn);
-m1 = rows - 1;
-m2 = cols - 1;
-
+[m1,m2] = GetDegree(fxy_matrix_Brn);
 
 % Initialise empty vector
 fxy_coordinates_Curve = [];

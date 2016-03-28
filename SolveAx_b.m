@@ -22,6 +22,7 @@ if (res_SVD < res_QR)
 else 
     %winner = 'QR';
     x = x_QR;
+    %x = x_SVD;
 end
 
 

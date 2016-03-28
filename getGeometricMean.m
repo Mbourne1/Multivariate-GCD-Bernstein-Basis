@@ -1,10 +1,8 @@
 function [lambda,mu] = GetGeometricMean(fxy_mtrx,gxy_mtrx,k1,k2)
 % Given teh polynomial f(x,y) and g(x,y), get the geometric mean of their
 % entries in the Sylvester matrix S_{k_{1},k_{2})(f,g).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% %                     Inputs
+%
+% Inputs
 %
 %
 % fxy_mtrx : Coefficients of the polynomial f(x,y)
@@ -15,9 +13,8 @@ function [lambda,mu] = GetGeometricMean(fxy_mtrx,gxy_mtrx,k1,k2)
 %
 % k2 : Degree of common divisor d(x,y)
 %
-%
-%
 %                     Outputs
+%
 %
 % lambda : Geometric mean of entries in T(f)
 %
@@ -33,7 +30,7 @@ colsA = (n1-k1+1) * (n2-k2+1);
 % Get number of columns in second partition
 %colsB = (m1-k1+1) * (m2-k2+1);
 
-Sk = BuildSubresultant(fxy_mtrx,gxy_mtrx,k1,k2,1,1,1);
+Sk = BuildDTQ(fxy_mtrx,gxy_mtrx,k1,k2);
 
 C_f = Sk(:,1:colsA);
 C_g = Sk(:,colsA+1:end);

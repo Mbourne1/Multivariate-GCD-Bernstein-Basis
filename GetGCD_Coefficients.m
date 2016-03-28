@@ -39,12 +39,12 @@ function [dxy_calc_matrix] = GetGCD_Coefficients(uxy_matrix,vxy_matrix,...
 % Get the degrees of polynomial g
 [n1,n2] = GetDegree(gxy_matrix);
 
-%% Assemble the Subresultant S_{t1,t2}
+% % Assemble the Subresultant S_{t1,t2}
 
 % Build matrix H
 H = BuildH(m1,m2,n1,n2);
 
-%% Build Matrix HCG
+% % Build Matrix HCG
 % Build Matrix C1
 uww_matrix = GetWithThetas(uxy_matrix,th1,th2);
 vww_matrix = GetWithThetas(vxy_matrix,th1,th2);
@@ -103,10 +103,8 @@ dww_calc_matrix = GetAsMatrix(dww_calc,t1,t2);
 %
 % Remove thetas from dw
 % Divide the row i by theta1^i
-mat1 = diag(1./th1.^(0:1:t1));
-mat2 = diag(1./th2.^(0:1:t2));
 
-dxy_calc_matrix = mat1 * dww_calc_matrix * mat2;
+dxy_calc_matrix = GetWithoutThetas(dww_calc_matrix,th1,th2);
 
 
 

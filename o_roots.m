@@ -30,11 +30,6 @@ SetGlobalVariables()
 % polynomial f(x,y)
 [fxy_matrix] = Examples_Roots(ex_num);
 
-% Get dimensions of polynomial f(x,y)
-[nRows_fxy,nCols_fxy] = size(fxy_matrix);
-m1 = nRows_fxy - 1;
-m2 = nCols_fxy - 1;
-
 % Plot the surface of the bivariate polynomial f(x,y)
 switch PLOT_GRAPHS
     case 'y'

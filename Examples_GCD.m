@@ -30,6 +30,32 @@ v_roots_xy = [];
 
 switch ex
     
+    case 'Custom'
+        
+        prompt = 'Enter the degree of Polynomial f(x) :';
+        m = input(prompt);
+        
+        prompt = 'Enter the degree of Polynomial g(x) :';
+        n = input(prompt);
+        
+        prompt = 'Enter the degree of Polynomial d(x) :';
+        t = input(prompt);
+        
+        intvl_low = -1;
+        intvl_high = 1;
+        
+        [f_roots_x,g_roots_x] = BuildRandomPolynomials(m,n,t,intvl_low, intvl_high);
+        [f_roots_y,g_roots_y] = BuildRandomPolynomials(m,n,t,intvl_low, intvl_high);
+        
+        d_roots_x = getDivisor(f_roots_x,g_roots_x);
+        d_roots_y = getDivisor(f_roots_y,g_roots_y);
+        
+        u_roots_x = getQuotient(f_roots_x,d_roots_x);
+        u_roots_y = getQuotient(f_roots_y,d_roots_y);
+        
+        v_roots_x = getQuotient(g_roots_x,d_roots_x);
+        v_roots_y = getQuotient(g_roots_y,d_roots_y);
+        
     case 'template'
         
         % Roots of Polynomial f(x,y)
@@ -196,10 +222,10 @@ switch ex
             ];
         
         % Roots of v with respect to y
-        v_roots_y = ...
+        v_roots_y  = ...
             [
             -0.9    1
-            ]
+            ];
         
         % Roots of d with respect to x
         d_roots_x = ...
@@ -1025,8 +1051,10 @@ switch ex
         m = 16;
         n = 27;
         t = 13;
-        otherwise 
-error('not a valid example number')
+    otherwise
+        
+        
+        error('not a valid example number')
         
         
 end
@@ -1061,35 +1089,15 @@ uxy_mtrx_exct = BuildPoly_NonSeparable(u_roots);
 vxy_mtrx_exct = BuildPoly_NonSeparable(v_roots);
 dxy_mtrx_exct = BuildPoly_NonSeparable(d_roots);
 
-[r,c] = size(fxy_mtrx_exct);
-m1 = r -1;
-m2 = c -1;
+[m1,m2] = GetDegree(fxy_mtrx_exct);
 
-[r,c] = size(gxy_mtrx_exct);
-n1 = r -1;
-n2 = c -1;
+[n1,n2] = GetDegree(gxy_mtrx_exct);
 
-[r,c] = size(dxy_mtrx_exct);
-t1 = r-1;
-t2 = c-1;
-
-
+[t1,t2] = GetDegree(dxy_mtrx_exct);
 
 
 end
 
-function mat = root_x(r)
-% given a simple root r, get the matrix of its coefficients
-
-mat = [-r; 1-r];
-
-end
-
-function mat = root_y(r)
-
-mat = [-r 1-r];
-
-end
 
 
 function cellArr = mult_roots_x(root_mult_mat)

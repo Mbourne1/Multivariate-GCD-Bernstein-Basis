@@ -18,6 +18,7 @@ function [dxy_matrix_calc] = o_gcd(ex_num,el,bool_preproc,low_rank_approx_method
 %
 % low_rank_approx_method :
 %       'Standard SNTLN' : Include SNTLN
+%       'Standard STLN : Include STLN
 %       'None' : Exclude SNTLN
 %
 
@@ -51,7 +52,6 @@ fprintf('m2 : %i \n\n',m2)
 fprintf('n  : %i \n',n)
 fprintf('n1 : %i \n',n1)
 fprintf('n2 : %i \n\n',n2)
-
 fprintf('t  : %i \n',t_exact)
 fprintf('t1 : %i \n',t1_exact)
 fprintf('t2 : %i \n',t2_exact)
@@ -90,11 +90,21 @@ PrintoutCoefficients('d',dxy_matrix_calc,dxy_matrix_exact)
 
 end
 
-function [] = PrintoutCoefficients(u,uxy_matrix_calc,uxy_matrix_exact)
+function [] = PrintoutCoefficients(name,matrix_calc,matrix_exact)
 fprintf('----------------------------------------------------------------')
 fprintf('\n')
-fprintf('Compare Exact Coefficients with Computed Coefficients of %s(x,y):',u)
-uxy_matrix_calc ./ uxy_matrix_calc(1,1)
-uxy_matrix_exact./uxy_matrix_exact(1,1)
+fprintf('Compare Exact Coefficients with Computed Coefficients of %s(x,y):',name)
+
+matrix_calc  = normalise(matrix_calc);
+matrix_exact = normalise(matrix_exact);
+
+display(matrix_calc)
+display(matrix_exact)
+
+fprintf('Analysis of Coefficients of %s(x,y) computed vs %s(x,y) exact: \n',name,name)
+fprintf('Distance between exact and calculated matrix:')
+(norm(matrix_exact,'fro') - norm(matrix_calc,'fro') )./ norm(matrix_exact,'fro')
+
+
 
 end

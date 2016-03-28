@@ -17,10 +17,7 @@ function [] = PlotImplicitBezierSurface(fxy_matrix_Brn)
 %% Plot 1
 
 % % Plot the control points of the surface in bernstein basis
-[rows,cols] = size(fxy_matrix_Brn);
-
-m1 = rows -1;
-m2 = cols -1;
+[m1,m2] = GetDegree(fxy_matrix_Brn);
 
 % Get number of control points
 num_cp = (m1+1) * (m2+1);
@@ -40,7 +37,7 @@ for i = 0:1:m1
         z_pos = fxy_matrix_Brn(i+1,j+1);
         % Add the coordinates to the dataset
         data(count,:) = [x_pos y_pos z_pos];
-        z(i+1,j+1) = z_pos
+        z(i+1,j+1) = z_pos;
         count = count + 1;
     end
 end

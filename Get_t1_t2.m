@@ -84,14 +84,14 @@ end
 
 % Remove duplicate rows
 mat = unique(mat,'rows');
-[r,~] = size(mat);
+[nRowsMyMat,~] = size(mat);
 
 % for each row in the constructed matrix of (k1,k2) pairs
 mymat = [];
 
 
 % for every row in the matrix
-for i = 1:1:r
+for i = 1:1:nRowsMyMat
     
     k1 = mat(i,1);
     k2 = mat(i,2);
@@ -134,9 +134,12 @@ for i = 1:1:r
             
     end
     
+    fww_matrix = GetWithThetas(fxy_matrix_n,th1,th2);
+    gww_matrix = GetWithThetas(gxy_matrix_n,th1,th2);
+    
     % Build the k1,k2 subresultant
     Sk1k2 = ...
-        BuildSubresultant(fxy_matrix_n,gxy_matrix_n,k1,k2,alpha,th1,th2);
+        BuildDTQ(fww_matrix,alpha.*gww_matrix,k1,k2);
     
     % Get the minimum singular value
     min_sing_val = min(svd(Sk1k2));
@@ -170,9 +173,9 @@ switch method
         
 end
 
-[r,c] = size(z);
-z2 = zeros(r+1,c+1);
-z2(1:r,1:c) = z;
+[nRowsMyMat,c] = size(z);
+z2 = zeros(nRowsMyMat+1,c+1);
+z2(1:nRowsMyMat,1:c) = z;
 z = z2;
 
 %%
@@ -200,7 +203,7 @@ end
 switch PLOT_GRAPHS
     case 'y'
         % Plot 3d data points
-        figure('name','Plot Min Sing Val S(k1,k2)')
+        figure('name','Get Relative Degree - Minimum Singular Values')
         hold on
         title('Minimum Singular Values in S_{t_{1},t_{2}}')
         xlabel('t_{1}')
@@ -214,22 +217,22 @@ switch PLOT_GRAPHS
         error('Error: plot_graphs is either y or n')
 end
 %%
-[r,c] = size(z);
+[nRowsMyMat,c] = size(z);
 % take from (0,0)
-zz = z(1:1:r,1:1:c);
+zz = z(1:1:nRowsMyMat,1:1:c);
 
 % get the second row to the end
-delta_x = [zeros(1,c) ; z(2:1:r,1:1:c)];
+delta_x = [zeros(1,c) ; z(2:1:nRowsMyMat,1:1:c)];
 
 % get the second col to the end
-delta_y = [zeros(r,1) z(1:1:r,2:1:c)];
+delta_y = [zeros(nRowsMyMat,1) z(1:1:nRowsMyMat,2:1:c)];
 
 % Get change in x component (k1) and a row of zeros
 delta_z_x = [diff(z,1) ; zeros(1,c)];
 
 % Get change in y component (k2) and a zero col
 
-delta_z_y = [diff(z,1,2) zeros(r,1)];
+delta_z_y = [diff(z,1,2) zeros(nRowsMyMat,1)];
 
 delta_zz = delta_z_x + delta_z_y;
 
@@ -257,8 +260,8 @@ t2 = y-1;
 
 
 % % If only one row is returned, then take t1 and t2
-[r,~] = size(mymat);
-if r == 1
+[nRowsMyMat,~] = size(mymat);
+if nRowsMyMat == 1
     t1 = mymat(1,1);
     t2 = mymat(1,2);
     return;
@@ -272,7 +275,7 @@ end
 
 switch PLOT_GRAPHS
     case 'y'
-        figure('name','Separate Degree Calculation')
+        figure('name','Get Relative Degree ')
         plot(log10(mymat(:,2)));
         hold off
     case 'n'

@@ -1,6 +1,6 @@
 function [uxy_matrix_calc, vxy_matrix_calc,...
     lambda,mu,...
-    opt_alpha, th1, th2] = GetQuotients(fxy_matrix, gxy_matrix,...
+    alpha, th1, th2] = GetQuotients(fxy_matrix, gxy_matrix,...
     t1,t2)
 % Given two input polynomials and the degree of the GCD return the quotient
 % polynomials u(x,y) and v(x,y)
@@ -18,7 +18,6 @@ function [uxy_matrix_calc, vxy_matrix_calc,...
 
 % Initialise Global Variables
 global BOOL_Q
-
 global BOOL_PREPROC
 
 %%
@@ -56,14 +55,14 @@ switch BOOL_PREPROC
         [gxy_max_mtrx,gxy_min_mtrx] = GetMaxMin(gxy_matrix_n,m1,m2,t1,t2);
         
         % Get optimal values of alpha and theta
-        [opt_alpha, th1, th2] = ...
+        [alpha, th1, th2] = ...
             OptimalAlphaTheta(fxy_max_mtrx,fxy_min_mtrx,gxy_max_mtrx,gxy_min_mtrx);
         
 
     case 'n'
         th1 = 1;
         th2 = 1;
-        opt_alpha = 1;
+        alpha = 1;
         
         
         lambda = 1;
@@ -76,13 +75,16 @@ switch BOOL_PREPROC
 end
 
 % Build the (t1,t2)-th subresultant
-St1t2 = BuildSubresultant(fxy_matrix_n,gxy_matrix_n,t1,t2,opt_alpha, th1, th2);
+
+fww_matrix = GetWithThetas(fxy_matrix_n,th1,th2);
+gww_matrix = GetWithThetas(gxy_matrix_n,th1,th2);
+St1t2 = BuildDTQ(fww_matrix, alpha.*gww_matrix,t1,t2);
 
 
 %% Find Optimal column for removal from St
 % given that t1 and t2 have been calculated build the sylvester matrix and
 % find the optimal column such that a residual is minimized
-opt_col_index = GetOptimalColumn(fxy_matrix,gxy_matrix,t1,t2,lambda,mu,opt_alpha, th1, th2);
+opt_col_index = GetOptimalColumn(fxy_matrix,gxy_matrix,t1,t2,lambda,mu,alpha, th1, th2);
 
 % Get the matrix A_{t_{1},t_{2}} 
 At = St1t2;
@@ -138,10 +140,9 @@ switch BOOL_Q
     case 'y'
         % Do nothing
     case 'n'
-                %%
-        % Remove binomial coefficients from v(w,w)_bi
-        [n1_t1,n2_t2] = GetDegree(vxy_matrix_calc);
-        
+        % If Q is not included in the Sylvester matrix, then Q is included
+        % in the solution vector, so strip binomial coefficients from
+        % v(x,y) and u(x,y)
         vxy_matrix_calc = GetWithoutBinomails(vxy_matrix_calc);
         
         uxy_matrix_calc = GetWithoutBinomials(uxy_matrix_calc);

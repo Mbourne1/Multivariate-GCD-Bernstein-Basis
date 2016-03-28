@@ -79,7 +79,7 @@ gxy_matrix_n = gxy_matrix./mu;
 fww_matrix = GetWithThetas(fxy_matrix_n)
 
 % Get f(w,w) as a vector
-fww_vec_th = getAsVector(fww_matrix);
+fww_vec_th = GetAsVector(fww_matrix);
 
 %% Include thetas in g(x,y) to obtain g(w,w)
 
@@ -87,7 +87,7 @@ fww_vec_th = getAsVector(fww_matrix);
 gww_matrix_th = GetWithThetas(gxy_matrix_n,th1,th2);
 
 % Get g(x,y) as a vector
-gww_vec = getAsVector(gww_matrix_th);
+gww_vec = GetAsVector(gww_matrix_th);
 
 
 %% Create the right hand side vector

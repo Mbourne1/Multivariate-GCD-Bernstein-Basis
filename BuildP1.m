@@ -3,7 +3,7 @@ function P = BuildP1(m1,m2,n1,n2,th1,th2,opt_col,t1,t2)
 % column removed from the Sylvester matrix.
 
 % Get a matrix of thetas corresponding to polynomial f(x,y)
-thetas_matrix = GetWithThetas(ones(m1+1,m2+1),th1,th2)
+thetas_matrix = GetWithThetas(ones(m1+1,m2+1),th1,th2);
 
 % Produce a zero matrix to fill the space
 padd_mat = zeros(m1+n1-t1+1, m2+n2-t2+1);
