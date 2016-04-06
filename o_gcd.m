@@ -24,7 +24,7 @@ function [dxy_matrix_calc] = o_gcd(ex_num,el,bool_preproc,low_rank_approx_method
 
 % %
 % Set Variables
-SetGlobalVariables()
+SetGlobalVariables(bool_preproc,low_rank_approx_method)
 
 
 % %
@@ -60,6 +60,7 @@ fprintf('\n')
 
 % %
 % Add Noise to the coefficients
+global BOOL_NOISE
 switch BOOL_NOISE
     case 'y'
         % Add noise to the coefficients of f and g
@@ -72,6 +73,7 @@ end
 
 
 % Plot the surfaces of the two polynomials fxy and gxy
+global PLOT_GRAPHS
 if PLOT_GRAPHS == 'y'
     plot_fxy_gxy(fxy_matrix,gxy_matrix);
 end
@@ -88,7 +90,13 @@ PrintoutCoefficients('u',uxy_matrix_calc,uxy_matrix_exact)
 PrintoutCoefficients('v',vxy_matrix_calc,vxy_matrix_exact)
 PrintoutCoefficients('d',dxy_matrix_calc,dxy_matrix_exact)
 
+dxy_error = GetDistance('d',dxy_matrix_calc,dxy_matrix_exact);
+
+PrintToFile(m,n,t,dxy_error);
+
+
 end
+
 
 function [] = PrintoutCoefficients(name,matrix_calc,matrix_exact)
 fprintf('----------------------------------------------------------------')
@@ -101,10 +109,39 @@ matrix_exact = normalise(matrix_exact);
 display(matrix_calc)
 display(matrix_exact)
 
+
+end
+
+function [] = GetDistance(name,matrix_calc,matrix_exact)
+
+matrix_calc = normalise(matrix_calc);
+matrix_exact = normalise(matrix_exact);
+
 fprintf('Analysis of Coefficients of %s(x,y) computed vs %s(x,y) exact: \n',name,name)
 fprintf('Distance between exact and calculated matrix:')
-(norm(matrix_exact,'fro') - norm(matrix_calc,'fro') )./ norm(matrix_exact,'fro')
+(norm(matrix_exact,'fro') - norm(matrix_calc,'fro') )./ norm(matrix_exact,'fro');
 
 
+end
+
+
+function []= PrintToFile(m,n,t,error_dx)
+
+global NOISE
+global BOOL_PREPROC
+
+fullFileName = 'o_gcd_results.txt';
+
+
+if exist('o_gcd_results.txt', 'file')
+    fileID = fopen('o_gcd_results.txt','a');
+    fprintf(fileID,'%5d \t %5d \t %5d \t %s \t %s \t %s\n',...
+        m,n,t,error_dx,BOOL_PREPROC, NOISE);
+    fclose(fileID);
+else
+  % File does not exist.
+  warningMessage = sprintf('Warning: file does not exist:\n%s', fullFileName);
+  uiwait(msgbox(warningMessage));
+end
 
 end

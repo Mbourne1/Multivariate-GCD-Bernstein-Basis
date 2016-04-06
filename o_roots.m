@@ -19,11 +19,15 @@ function [] = o_roots(ex_num,el,bool_preproc, low_rank_approx_method)
 %       'Standard SNTLN' : Include SNTLN
 %       'None' - Exclude SNTLN
 
+
 % Set the global variables
-SetGlobalVariables()
+global PLOT_GRAPHS
+global BOOL_NOISE
 
-%%
 
+SetGlobalVariables(bool_preproc,low_rank_approx_method)
+
+% %
 %                   Get Example
 
 % Given the example number, return the coefficients of the bivariate

@@ -1,4 +1,4 @@
-function [hxy_matrix] = Bernstein_Deconvolve_Bivariate(fxy_matrix,gxy_matrix)
+function [hxy_matrix] = Deconvolve_Bivariate(fxy_matrix,gxy_matrix)
 % Perform deconvolution f/g by the matrix multiplication C(g) * h = f.
 %
 

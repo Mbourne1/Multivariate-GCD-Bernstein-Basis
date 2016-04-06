@@ -1,3 +1,5 @@
+function [] = SetGlobalVariables(bool_preproc,low_rank_approx_method)
+
 % Set Variables
 
 % BOOL_Q ('y'/'n')

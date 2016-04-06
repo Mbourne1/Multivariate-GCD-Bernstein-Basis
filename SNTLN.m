@@ -41,10 +41,11 @@ function [ fxy_output,gxy_output,alpha_output,theta1_output,theta2_output,X_outp
 %
 %
 
-%                       Global Inputs
+% Global Inputs
 
 global MAX_ERROR_SNTLN
 global MAX_ITERATIONS_SNTLN
+global PLOT_GRAPHS
 
 if isempty(MAX_ERROR_SNTLN) || isempty(MAX_ITERATIONS_SNTLN)
     error('err')
@@ -134,7 +135,6 @@ gww_matrix = GetWithThetas(gxy_matrix_n,th1,th2);
 %% Form the Coefficient Matrix T = [C(f)|C(g)] such that DTQ * x = [col]
 
 D = BuildD(t1,t2,m1,m2,n1,n2);
-Q = BuildQ(n1-t1,n2-t2,m1-t1,m2-t2);
 DTQ = BuildDTQ(fww_matrix,alpha(ite).*gww_matrix,t1,t2);
 
 % Calculate the partial derivatives of f(w,w) and g(w,w) with respect to alpha
@@ -155,7 +155,6 @@ gw_wrt_theta2 = Differentiate_wrt_theta2(gww_matrix,th2(ite));
 
 % Build the derivative of T(f,g) with respect to alpha
 DTQ_alpha = BuildDTQ(fw_wrt_alpha,alpha_gw_wrt_alpha,t1,t2);
-
 
 % Calculate the derivative of T(f,g) with respect to theta_{1}
 DTQ_wrt_theta1 = BuildDTQ(fw_wrt_theta1, alpha(ite).*gw_wrt_theta1,t1,t2);
@@ -404,9 +403,9 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     
     % Calculate the derivatives of c_{k} with respect to \alpha, \theta_{1}
     % and \theta_{2}
-    ck_wrt_alpha        = DTQ_wrt_alpha*e;
-    ck_wrt_theta1       = DTQ_wrt_theta1*e;
-    ck_wrt_theta2       = DTQ_wrt_theta2*e;
+    ck_wrt_alpha    = DTQ_wrt_alpha*e;
+    ck_wrt_theta1   = DTQ_wrt_theta1*e;
+    ck_wrt_theta2   = DTQ_wrt_theta2*e;
     
     % Create the vector of structured perturbations zf and zg applied
     % to F and G.
@@ -493,16 +492,8 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     
     % Calculate the matrix DY where Y is the Matrix such that E_{k}x = Y_{k}z.
     Y = BuildY(m1,m2,n1,n2,t1,t2,opt_col,xk,alpha(ite),th1(ite),th2(ite));
-    
     DYG = D*Y*G;
-    
-    %test1 = DYG * [fxy_vec;gxy_vec];
-    %first_part = xk(1:(opt_col-1));
-    %second_part = xk(opt_col:end);
-    %x = [first_part ; 0 ; second_part];
-    %test2 = DTQ * x;
-    
-    
+       
     % Calculate the matrix DP where P is the matrix such that c = P[f;g]
     P = BuildP(m1,m2,n1,n2,th1(ite),th2(ite),alpha(ite),t1,t2,opt_col);
     P = D*P*G;
@@ -541,7 +532,7 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
 end
 
 % Plot Graphs
-global PLOT_GRAPHS
+
 switch PLOT_GRAPHS
     case 'y'
         figure('name','SNTLN - Residuals in SNTLN')

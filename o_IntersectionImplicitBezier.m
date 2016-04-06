@@ -4,6 +4,7 @@ function [] = o_IntersectionImplicitBezier(ex_num,el,bool_preproc, low_rank_appr
 %
 % Inputs.
 %
+%
 % ex_num :
 % 
 % el : 
@@ -15,7 +16,7 @@ function [] = o_IntersectionImplicitBezier(ex_num,el,bool_preproc, low_rank_appr
 
 
 % Set the global variables.
-SetGlobalVariables()
+SetGlobalVariables(bool_preproc, low_rank_approx_method)
 
 % % Get the parametric Bezier surface
 

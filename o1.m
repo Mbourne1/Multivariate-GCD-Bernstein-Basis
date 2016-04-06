@@ -25,10 +25,10 @@ input_gxy = gxy_matrix;
 % Get Degree by first finding the total degree, then obtain t1 and t2
 
 % Get total degreee
-[t, opt_th1_tot, opt_th2_tot] = Get_t(fxy_matrix, gxy_matrix,m,n);
+[t, opt_th1_tot, opt_th2_tot] = GetGCDDegree_Total(fxy_matrix, gxy_matrix,m,n);
 
 % Get degree t1 and t2
-[t1,t2,lambda,mu,alpha, th1,th2] = Get_t1_t2(fxy_matrix,gxy_matrix,m,n,t);
+[t1,t2,lambda,mu,alpha, th1,th2] = GetGCDDegree_Relative(fxy_matrix,gxy_matrix,m,n,t);
 
 % Get Optimal column for removal from S_{t_{1},t_{2}}
 opt_col = GetOptimalColumn(fxy_matrix,gxy_matrix,t1,t2,lambda,mu,alpha,th1,th2);
@@ -79,7 +79,7 @@ switch LOW_RANK_APPROXIMATION_METHOD
         error('bool_SNTLN is either (Standard SNTLN) or (None)')
 end
 
-%% Get Quotients u(x,y) and v(x,y)
+% % Get Quotients u(x,y) and v(x,y)
 % Calc method is either total or respective
 
 switch degree_calc_method
@@ -96,7 +96,7 @@ end
 
 
 
-%% Get the GCD
+% % Get the GCD
 % % Get d(x,y) from the polynomials u(x,y) and v(x,y).
 
 switch degree_calc_method
@@ -116,7 +116,7 @@ switch degree_calc_method
         error('error')
 end
 
-%% Compare Singular values of S(f(x,y),g(x,y)) and S(f+\delta f, g+ \delta g)
+% % Compare Singular values of S(f(x,y),g(x,y)) and S(f+\delta f, g+ \delta g)
 S_unproc = BuildDTQ(input_fxy,input_gxy,0,0);
 
 fw_preproc = GetWithThetas(input_fxy,th1,th2);
@@ -132,7 +132,8 @@ vSingularValues_unproc = svd(S_unproc);
 vSingularValues_preproc = svd(S_preproc);
 vSingularValues_lowrank = svd(S_lowrank);
 
-figure()
+figure_name = sprintf('%s - Sylvester Matrices',mfilename);
+figure('name',figure_name)
 hold on
 plot(log10(vSingularValues_unproc),'DisplayName','S(f(x,y),g(x,y))')
 plot(log10(vSingularValues_preproc),'DisplayName','S(f(\omega,\omega),g(\omega,\omega))')

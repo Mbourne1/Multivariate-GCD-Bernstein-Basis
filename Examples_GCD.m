@@ -489,21 +489,22 @@ switch ex
         n = 17;
         t = 11;
         
-    case '5'
         
+    case '5'
+        %% EXAMPLE :
         % Roots of f with respect to x
         f_roots_x = ...
             [
             1.4   1
-            0.5   1
-            0.9   1
+            0.5   2
+            0.9   3
             ];
         % Roots of f with respect to y
         f_roots_y = ...
             [
             1.3   1
-            1.1   1
-            1.7   1
+            1.1   2
+            1.7   2
             ];
         % Roots of f with respect to xy
         f_roots_xy{1,1} = ...
@@ -516,21 +517,25 @@ switch ex
             0.1     1.1;
             1.1     2.1
             ];
-        
+        f_roots_xy{3,1} = ...
+            [
+            0.1     1.1;
+            1.1     2.1
+            ];
         
         % Roots of g with respect to x
         g_roots_x = ...
             [
             1.4   1
-            0.5   1
-            0.4   1
+            0.5   2
+            0.4   3
             ];
         
         % Roots of g with respect to y
         g_roots_y = ...
             [
             1.9   1
-            1.1   1
+            1.1   2
             ];
         
         % Roots of f with respect to xy
@@ -544,7 +549,12 @@ switch ex
             0.1     1.1;
             1.1     2.1
             ];
-        g_roots_xy{3,1} =...
+        g_roots_xy{3,1} = ...
+            [
+            0.1     1.1;
+            1.1     2.1
+            ];
+        g_roots_xy{4,1} =...
             [
             1.7     2.7;
             2.7     3.7;
@@ -555,12 +565,12 @@ switch ex
         d_roots_x = ...
             [
             1.4   1
-            0.5   1
+            0.5   2
             ];
         % Roots of d with respect to y
         d_roots_y = ...
             [
-            1.1   1;
+            1.1   2;
             ];
         
         % Roots of d with respect to xy
@@ -574,27 +584,31 @@ switch ex
             0.1     1.1;
             1.1     2.1
             ];
-        
+        d_roots_xy{2,1} = ...
+            [
+            0.1     1.1;
+            1.1     2.1
+            ];
         
         
         % Roots of u with respect to x
         u_roots_x = ...
             [
-            0.9   1
+            0.9   3
             ];
         
         % Roots of u with respect to y
         u_roots_y = ...
             [
             1.3   1;
-            1.7   1;
+            1.7   2;
             ];
         
         
         % Roots of v with respect to x
         v_roots_x = ...
             [
-            0.4   1
+            0.4   3
             ];
         
         % Roots of v with respect to y
@@ -611,9 +625,9 @@ switch ex
             ];
         
         
-        m = 8;
-        n = 7;
-        t = 5;
+        m = 14;
+        n = 13;
+        t = 8;
     case '6'
         % Example with factorisation
         % (x+y+0.1) (x-0.2) (y-0.3)

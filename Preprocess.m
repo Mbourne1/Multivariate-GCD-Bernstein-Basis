@@ -1,4 +1,4 @@
-function [lambda, mu, alpha, th1,th2] = Preprocess(fxy_matrix_delv,gxy_matrix_delv,k)
+function [lambda, mu, alpha, th1,th2] = Preprocess(fxy_matrix_delv,gxy_matrix_delv,k1,k2)
 % Get lamda,mu, alpha, theta_{1} and theta_{2}
 %
 % Inputs.
@@ -35,7 +35,7 @@ switch BOOL_PREPROC
     case 'y'
         
         % Preproecessor One - Normalise by geometric mean
-        [lambda, mu] = GetGeometricMean(fxy_matrix_delv,gxy_matrix_delv,k,k);
+        [lambda, mu] = GetGeometricMean(fxy_matrix_delv,gxy_matrix_delv,k1,k2);
         
         % Normalise f(x,y)
         fxy_matrix_n = fxy_matrix_delv./lambda;
@@ -45,11 +45,11 @@ switch BOOL_PREPROC
         
         % Get the maximum and minimum entries of f(x,y) in the
         % Sylvester matrix S(f,g)
-        [max_mtrx_f, min_mtrx_f] = GetMaxMin(fxy_matrix_n,n1,n2,k,k);
+        [max_mtrx_f, min_mtrx_f] = GetMaxMin(fxy_matrix_n,n1,n2,k1,k2);
         
         % Get the maximum and minimum entries of g(x,y) in the
         % Sylvester matrix S(f,g)
-        [max_mtrx_g, min_mtrx_g] = GetMaxMin(gxy_matrix_n,m1,m2,k,k);
+        [max_mtrx_g, min_mtrx_g] = GetMaxMin(gxy_matrix_n,m1,m2,k1,k2);
         
         % Get optimal values of alpha and theta
         [alpha, th1, th2] = OptimalAlphaTheta(max_mtrx_f,min_mtrx_f,max_mtrx_g,min_mtrx_g);

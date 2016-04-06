@@ -43,9 +43,6 @@ while iteration_condition
     str  = strcat(str1,str2);
     fprintf(str);
     
-    % Get the degree structure of f(x,y)
-    [m1,m2] = GetDegree(qx{ite_num});
-    
     % Differentiate f(x,y) with respect to x to obtain g(x,y)
     qx_der = Differentiate_wrt_x(qx{ite_num});
     n  = m-1;
@@ -354,10 +351,10 @@ for i = 1:1:num_entries_wx
         wxy{i} = dxy_calc_matrix;
         
         % Divide w_{x} by the GCD to obtain w_{x} without y component
-        wx{i} = Bivariate(wx{i},dxy_calc_matrix);
+        wx{i} = Deconvolve_Bivariate(wx{i},dxy_calc_matrix);
         
         % Divide w_{y} by the GCD to obtain w_{y} without x component
-        wy{i} = Bivariate(wy{i},dxy_calc_matrix);
+        wy{i} = Deconvolve_Bivariate(wy{i},dxy_calc_matrix);
         
     end
     
