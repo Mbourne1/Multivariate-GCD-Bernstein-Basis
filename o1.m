@@ -1,4 +1,4 @@
-function [uxy_calc_matrix, vxy_calc_matrix, dxy_calc_matrix,t,t1,t2] = o1(fxy_matrix,gxy_matrix,...
+function [uxy, vxy, dxy_calc_matrix,t,t1,t2] = o1(fxy_matrix,gxy_matrix,...
     m,n)
 % o1(fxy_matrix,gxy_matrix,m,n)
 %
@@ -25,70 +25,49 @@ input_gxy = gxy_matrix;
 % Get Degree by first finding the total degree, then obtain t1 and t2
 
 % Get total degreee
-[t, opt_th1_tot, opt_th2_tot] = GetGCDDegree_Total(fxy_matrix, gxy_matrix,m,n);
+[t, ~, ~] = GetGCDDegree_Total(fxy_matrix, gxy_matrix,m,n);
 
 % Get degree t1 and t2
 [t1,t2,lambda,mu,alpha, th1,th2] = GetGCDDegree_Relative(fxy_matrix,gxy_matrix,m,n,t);
 
+fxy_matrix_n = fxy_matrix./lambda;
+gxy_matrix_n = gxy_matrix./mu;
+
+fww_matrix_n = GetWithThetas(fxy_matrix_n ,th1,th2);
+gww_matrix_n = GetWithThetas(gxy_matrix_n ,th1,th2);
+a_gww_matrix_n = alpha.* gww_matrix_n;
+
 % Get Optimal column for removal from S_{t_{1},t_{2}}
-opt_col = GetOptimalColumn(fxy_matrix,gxy_matrix,t1,t2,lambda,mu,alpha,th1,th2);
+opt_col = GetOptimalColumn(fww_matrix_n,a_gww_matrix_n,t1,t2);
 
 
-%% Perform iterative inprovements in SNTLN
-global LOW_RANK_APPROXIMATION_METHOD
 
-switch LOW_RANK_APPROXIMATION_METHOD
-    case 'Standard SNTLN'
-        % Apply SNTLN improvements
-        [ fxy_matrix,gxy_matrix,~,~,~,~] = ...
-            SNTLN( fxy_matrix,gxy_matrix, alpha, th1, th2,t1,t2, lambda,mu, opt_col);
-        
-        fprintf('Input Polynomial f(x,y)')
-        
-    case 'Standard STLN'
-        %% Preprocessing
+[fxy_matrix,gxy_matrix,alpha,th1,th2] = LowRankApproximation...
+    (fxy_matrix_n,gxy_matrix_n,alpha,th1,th2,t1,t2,opt_col);
 
-        % Normalise polynomial f(x,y) by geometric means
-        fxy_matrix_n = fxy_matrix./lambda;
-        gxy_matrix_n = gxy_matrix./mu;
 
-        % Obtain polynomials in Modified Bernstein Basis, using initial values of
-        % alpha and theta.
-
-        % Multiply the rows of fxy_matrix by theta1, and multiply the cols of
-        % fxy_matrix by theta2.
-        fww_matrix = GetWithThetas(fxy_matrix_n,th1,th2);
-
-        % Multiply the rows of gxy_matrix by theta1, and multiply the cols of
-        % gxy_matrix by theta2.
-        gww_matrix = GetWithThetas(gxy_matrix_n,th1,th2);
-        
-        % Perform STLN Computation.
-        [fww_matrix, gww_matrix, ~] = STLN(fww_matrix, alpha.*gww_matrix,t1,t2,opt_col);
-        
-        % Scale outputs to obtain f(x,y) and g(x,y).
-        fxy_matrix = GetWithoutThetas(fww_matrix,th1,th2);
-        gxy_matrix = GetWithoutThetas(gww_matrix,th1,th2) ./ alpha;
-        
-        display('')
-        
-    case 'None'
-        % Dont Apply SNTLN improvements
-        
-    otherwise
-        error('bool_SNTLN is either (Standard SNTLN) or (None)')
-end
 
 % % Get Quotients u(x,y) and v(x,y)
 % Calc method is either total or respective
 
+
+
 switch degree_calc_method
     case 'respective'
-        [uxy_calc_matrix, vxy_calc_matrix, lambda,mu, alpha, th1, th2] ...
-            = GetQuotients(fxy_matrix, gxy_matrix,t1,t2);
+        
+        fww = GetWithThetas(fxy_matrix_n,th1,th2);
+        gww = GetWithThetas(gxy_matrix_n,th1,th2);
+        a_gww = alpha.* gww;
+        
+        [uww, vww] ...
+            = GetQuotients(fww, a_gww,t1,t2);
+        
+        uxy = GetWithoutThetas(uww,th1,th2);
+        vxy = GetWithoutThetas(vww,th1,th2);
+        
     case 'total'
-        [uxy_calc_matrix, vxy_calc_matrix, lambda,mu, alpha, th1, th2] ...
-            = GetQuotients_total(fxy_matrix, gxy_matrix,m,n,t);
+        [uxy, vxy] ...
+            = GetQuotients_total(fww_matrix_n, alpha.*gww_matrix_n,m,n,t);
     otherwise
         
 end
@@ -101,20 +80,15 @@ end
 
 switch degree_calc_method
     case 'respective'
-        dxy_calc_matrix = GetGCD_Coefficients(uxy_calc_matrix,vxy_calc_matrix,...
-            fxy_matrix,gxy_matrix,...
-            t1,t2,...
-            lambda,mu,...
-            alpha,th1,th2);
+        dww_calc_matrix = GetGCD_Coefficients(uww,vww,...
+            fww,alpha.*gww,t1,t2);
     case 'total'
-        dxy_calc_matrix = GetGCD_Coefficients_total(uxy_calc_matrix,vxy_calc_matrix,...
-            fxy_matrix,gxy_matrix,...
-            m,n,t,...
-            lambda,mu,...
-            alpha,th1,th2);
+        dww_calc_matrix = GetGCD_Coefficients_total(uww,vww,...
+            fww_matrix,gww_matrix,m,n,t);
     otherwise
         error('error')
 end
+dxy_calc_matrix = GetWithoutThetas(dww_calc_matrix,th1,th2);
 
 % % Compare Singular values of S(f(x,y),g(x,y)) and S(f+\delta f, g+ \delta g)
 S_unproc = BuildDTQ(input_fxy,input_gxy,0,0);

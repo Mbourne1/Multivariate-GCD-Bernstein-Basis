@@ -1,4 +1,4 @@
-function [] = SetGlobalVariables(bool_preproc,low_rank_approx_method)
+function [] = SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method)
 
 % Set Variables
 
@@ -10,11 +10,14 @@ function [] = SetGlobalVariables(bool_preproc,low_rank_approx_method)
 global BOOL_Q
 BOOL_Q = 'y';
 
-% bool_preproc ('y'/'n')
+global MEAN_METHOD
+MEAN_METHOD = mean_method;
+
+% bool_alpha_theta ('y'/'n')
 %       'y' - Include the three preprocessing operations.
 %       'n' - Exclude the three preprocessing operations.
-global BOOL_PREPROC
-BOOL_PREPROC = bool_preproc;
+global BOOL_ALPHA_THETA
+BOOL_ALPHA_THETA = bool_alpha_theta;
 
 % BOOL_NOISE ('y'/'n')
 %       'y' - Add noise to the coefficients of input polynomial f

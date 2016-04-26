@@ -1,21 +1,16 @@
-function [max_mtrx,min_mtrx] = GetMaxMin(fxy,n1,n2,k1,k2)
+function [max_mtrx,min_mtrx] = GetMaxMin(fxy,n1_k1,n2_k2)
 % Get the maximum and minimum of each entry of f(x,y) in the Sylvester
 % matrix.
 %
-%                               Inputs
+% Inputs
 %
-% fxy : The Coefficients of polynomial fxy in standard bernstein basis.
+% fxy : The Coefficients of polynomial f(x,y) in standard bernstein basis.
 %       Given in matrix form so that the rows are in terms of x basis
 %       elements and the columns are y basis elements.
 %
-% n1 : Degree of g(x,y) with respect to x
+% n1_k1 : Degree of v(x,y) with respect to x
 %
-% n2 : Degree of g(x,y) with respect to y
-%
-% k1 : Degree of d(x,y) with respect to x
-%
-% k2 : Degree of d(x,y) with respect to y
-
+% n2_k2 : Degree of v(x,y) with respect to y
 
 % Get the degree of polynomial f(x,y)
 [m1,m2] = GetDegree(fxy);
@@ -33,7 +28,7 @@ min_mtrx = zeros(m1+1,m2+1);
 for i1=0:1:m1
     for i2 = 0:1:m2
         % This gives the i1,i2 coefficient of f
-        [maximum,minimum] = GetMaxMin2(fxy(i1+1,i2+1),i1,i2,m1,m2,n1,n2,k1,k2);
+        [maximum,minimum] = GetMaxMin2(fxy(i1+1,i2+1),i1,i2,m1,m2,n1_k1,n2_k2);
         
         max_mtrx(i1+1,i2+1) = maximum;
         min_mtrx(i1+1,i2+1) = minimum;
@@ -45,7 +40,7 @@ end
 
 end
 
-function [maximum,minimum] = GetMaxMin2(a_i1i2,i1,i2,m1,m2,n1,n2,k1,k2)
+function [maximum,minimum] = GetMaxMin2(a_i1i2,i1,i2,m1,m2,n1_k1,n2_k2)
 % Note this function assumes the inclusion of Q in the coefficient matrix.
 
 global BOOL_Q
@@ -53,7 +48,7 @@ global BOOL_Q
 
 % Build a 2 dimensional vector to store all occurences of the coefficient
 % a_{i_{1},i_{2}}
-A = zeros(n1-k1+1,n2-k2+1);
+A = zeros(n1_k1+1,n2_k2+1);
 
 
 
@@ -61,11 +56,11 @@ switch BOOL_Q
     case 'y'
         % With the inclusion of Q
         % for each occurence of a_{i_{1},i_{2}} in each column
-        for j1 = 0:1:n1-k1
-            for j2 = 0:1:n2-k2
+        for j1 = 0:1:n1_k1
+            for j2 = 0:1:n2_k2
                 A(j1+1,j2+1) = (a_i1i2 .*  nchoosek(m1,i1) .* nchoosek(m2,i2) .*...
-                                nchoosek(n1,j1) .* nchoosek(n2,j2) )./ ...
-                                (nchoosek(m1+n1-k1,i1+j1) .* nchoosek(m2+n2-k2,i2+j2));
+                                nchoosek(n1_k1,j1) .* nchoosek(n2_k2,j2) )./ ...
+                                (nchoosek(m1+n1_k1,i1+j1) .* nchoosek(m2+n2_k2,i2+j2));
             end
         end    
     case 'n'
@@ -74,7 +69,7 @@ switch BOOL_Q
         for j1 = 0:1:n1-k1
             for j2 = 0:1:n2-k2
                 A(j1+1,j2+1) = (a_i1i2 .*  nchoosek(m1,i1) .* nchoosek(m2,i2)) ./ ...
-                                (nchoosek(m1+n1-k1,i1+j1) .* nchoosek(m2+n2-k2,i2+j2));
+                                (nchoosek(m1+n1_k1,i1+j1) .* nchoosek(m2+n2_k2,i2+j2));
             end
         end
 end

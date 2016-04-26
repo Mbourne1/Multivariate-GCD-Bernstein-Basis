@@ -1,4 +1,4 @@
-function [lambda,mu] = GetGeometricMean(fxy_mtrx,gxy_mtrx,k1,k2)
+function [lambda,mu] = GetGeometricMean(fxy_matrix,n1_k1,n2_k2)
 % Given teh polynomial f(x,y) and g(x,y), get the geometric mean of their
 % entries in the Sylvester matrix S_{k_{1},k_{2})(f,g).
 %
@@ -17,26 +17,14 @@ function [lambda,mu] = GetGeometricMean(fxy_mtrx,gxy_mtrx,k1,k2)
 %
 %
 % lambda : Geometric mean of entries in T(f)
-%
-% mu : Geometric mean of entries in T(g)
 
 
-% Get degree of polynomial g(x,y)
-[n1,n2] = GetDegree(gxy_mtrx);
-
-% Get number of columns in first partition
-colsA = (n1-k1+1) * (n2-k2+1);
 
 % Get number of columns in second partition
 %colsB = (m1-k1+1) * (m2-k2+1);
+DT1Q1 = BuildDT1Q1(fxy_matrix,n1_k1,n2_k2);
 
-Sk = BuildDTQ(fxy_mtrx,gxy_mtrx,k1,k2);
+lambda = geomean(reshape(abs(DT1Q1(DT1Q1~=0)),1,[]));
 
-C_f = Sk(:,1:colsA);
-C_g = Sk(:,colsA+1:end);
-
-
-lambda = geomean(reshape(abs(C_f(C_f~=0)),1,[]));
-mu = geomean(reshape(abs(C_g(C_g~=0)),1,[]));
 
 end

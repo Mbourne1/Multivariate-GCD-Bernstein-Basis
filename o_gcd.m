@@ -1,5 +1,5 @@
-function [dxy_matrix_calc] = o_gcd(ex_num,el,bool_preproc,low_rank_approx_method)
-% o_gcd(ex_num,el,bool_preproc,bool_sntln)
+function [dxy_matrix_calc] = o_gcd(ex_num,el,mean_method,bool_alpha_theta,low_rank_approx_method)
+% o_gcd(ex_num,el,mean_method,bool_alpha_theta,low_rank_approx_method)
 %
 % Given an example number and set of parameters, obtain GCD of the two
 % polynomials f(x,y) and g(x,y) in the given example file. 
@@ -11,6 +11,10 @@ function [dxy_matrix_calc] = o_gcd(ex_num,el,bool_preproc,low_rank_approx_method
 % ex_num - Example Number
 %
 % el - Lower noise level
+%
+% mean_method
+%       'None'
+%       'Geometric Mean Matlab Method'
 %
 % bool_preproc ('y'/'n')
 %       'y' : Include Preprocessing
@@ -24,7 +28,7 @@ function [dxy_matrix_calc] = o_gcd(ex_num,el,bool_preproc,low_rank_approx_method
 
 % %
 % Set Variables
-SetGlobalVariables(bool_preproc,low_rank_approx_method)
+SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method)
 
 
 % %
@@ -92,7 +96,7 @@ PrintoutCoefficients('d',dxy_matrix_calc,dxy_matrix_exact)
 
 dxy_error = GetDistance('d',dxy_matrix_calc,dxy_matrix_exact);
 
-PrintToFile(m,n,t,dxy_error);
+PrintToFile(m,n,dxy_error);
 
 
 end
@@ -112,23 +116,23 @@ display(matrix_exact)
 
 end
 
-function [] = GetDistance(name,matrix_calc,matrix_exact)
+function [dist] = GetDistance(name,matrix_calc,matrix_exact)
 
 matrix_calc = normalise(matrix_calc);
 matrix_exact = normalise(matrix_exact);
 
 fprintf('Analysis of Coefficients of %s(x,y) computed vs %s(x,y) exact: \n',name,name)
 fprintf('Distance between exact and calculated matrix:')
-(norm(matrix_exact,'fro') - norm(matrix_calc,'fro') )./ norm(matrix_exact,'fro');
+dist = (norm(matrix_exact,'fro') - norm(matrix_calc,'fro') )./ norm(matrix_exact,'fro');
 
 
 end
 
 
-function []= PrintToFile(m,n,t,error_dx)
+function []= PrintToFile(m,n,error_dx)
 
 global NOISE
-global BOOL_PREPROC
+global BOOL_ALPHA_THETA
 
 fullFileName = 'o_gcd_results.txt';
 
@@ -136,7 +140,7 @@ fullFileName = 'o_gcd_results.txt';
 if exist('o_gcd_results.txt', 'file')
     fileID = fopen('o_gcd_results.txt','a');
     fprintf(fileID,'%5d \t %5d \t %5d \t %s \t %s \t %s\n',...
-        m,n,t,error_dx,BOOL_PREPROC, NOISE);
+        m,n,error_dx,BOOL_ALPHA_THETA, NOISE);
     fclose(fileID);
 else
   % File does not exist.

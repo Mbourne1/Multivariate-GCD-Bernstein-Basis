@@ -1,6 +1,4 @@
-function [uxy_matrix_calc, vxy_matrix_calc,...
-    lambda,mu,...
-    opt_alpha, opt_theta_1, opt_theta_2] = GetQuotients_total(fxy_matrix, gxy_matrix,...
+function [uxy_matrix_calc, vxy_matrix_calc] = GetQuotients_total(fxy_matrix, gxy_matrix,...
     m,n,t)
 % Given two input polynomials and the degree of the GCD return the quotient
 % polynomials u(x,y) and v(x,y)
@@ -26,13 +24,13 @@ global bool_preproc
 
 
 % padd polynomials fxy and gxy
-[r,c] = GetDegree(fxy_matrix);
+[m1,m2] = GetDegree(fxy_matrix);
 fxy_padd = zeros(m+1,m+1);
-fxy_padd(1:r,1:c) = fxy_matrix;
+fxy_padd(1:m1+1,1:m2+1) = fxy_matrix;
 
-[r,c] = size(gxy_matrix);
-gxy_padd = zeros(m+1,m+1);
-gxy_padd(1:r,1:c) = gxy_matrix;
+[n1,n2] = size(gxy_matrix);
+gxy_padd = zeros(n+1,n+1);
+gxy_padd(1:n1,1:n2) = gxy_matrix;
 
 fxy_matrix = fxy_padd;
 gxy_matrix = gxy_padd;

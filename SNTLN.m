@@ -2,7 +2,6 @@ function [ fxy_output,gxy_output,alpha_output,theta1_output,theta2_output,X_outp
     SNTLN( fxy_matrix,gxy_matrix,...
     i_alpha, i_theta1, i_theta2,...
     t1,t2,...
-    lambda,mu,...
     opt_col)
 % Obtain the low rank approximation by method of SNTLN (Structured
 % Non-Linear Total Least Norm) of the Sylvester matrix S(f,g).
@@ -118,8 +117,7 @@ e = I(:,opt_col);
 %% Preprocessing
 
 % Normalise polynomial f(x,y) by geometric means
-fxy_matrix_n = fxy_matrix./lambda;
-gxy_matrix_n = gxy_matrix./mu;
+
 
 % Obtain polynomials in Modified Bernstein Basis, using initial values of
 % alpha and theta.

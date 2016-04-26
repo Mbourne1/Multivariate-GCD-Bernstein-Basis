@@ -1,4 +1,4 @@
-function opt_col = GetOptimalColumn(fxy_matrix,gxy_matrix,t1,t2,lambda,mu,alpha,th1,th2)
+function opt_col = GetOptimalColumn(fxy_matrix_n,gxy_matrix_n,t1,t2)
 %% Find Optimal column for removal from S_{t_{1},t_{2}}
 % Given that t1 and t2 have been calculated build the sylvester matrix and
 % find the optimal column such that a residual is minimized
@@ -12,33 +12,12 @@ function opt_col = GetOptimalColumn(fxy_matrix,gxy_matrix,t1,t2,lambda,mu,alpha,
 % t1         : Degree of GCD d(x,y) with respect to x
 %
 % t2         : Degree of GCD d(x,y) with respect to y
-%
-% lambda     : Geometric mean of polynomial f
-%
-% mu         : Geometric mean of polynomial g
-%
-% opt_alpha  : Optimal value of \alpha
-%
-% opt_theta_1: Optimal value of \theta_{1}
-%
-% opt_theta_2: Optimal value of \theta_{2}
 
-
-%%
-
-% Normalise f by geometric mean
-fxy_matrix_n = fxy_matrix./lambda;
-
-% Normalise g by geometric mean
-gxy_matrix_n = gxy_matrix./mu;
 
 % Get the degree of polynomial g(x,y)
-[n1,n2] = GetDegree(gxy_matrix);
+[n1,n2] = GetDegree(gxy_matrix_n);
 
-% Build the (t_{1},t_{2})-th subresultant
-fww_matrix = GetWithThetas(fxy_matrix_n,th1,th2);
-gww_matrix = GetWithThetas(gxy_matrix_n,th1,th2);
-St1t2 = BuildDTQ(fww_matrix,alpha.*gww_matrix,t1,t2);
+St1t2 = BuildDTQ(fxy_matrix_n,gxy_matrix_n,t1,t2);
 
 %% Find Optimal column for removal from St
 % given that t1 and t2 have been calculated build the sylvester matrix and

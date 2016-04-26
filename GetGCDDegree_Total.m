@@ -108,7 +108,7 @@ switch PLOT_GRAPHS
         
         % %
         figure_name = sprintf('%s - Diagonal Norms',mfilename);
-        figure('name','Diag Norms')
+        figure('name',figure_name)
         plot(Data_DiagNorm(:,1),(log10(Data_DiagNorm(:,2))),'*')
         axis([0.9,min(m,n),-inf,+inf])
         xlabel('k')

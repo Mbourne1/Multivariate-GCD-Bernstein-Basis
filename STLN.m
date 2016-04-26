@@ -141,7 +141,7 @@ binomials_g = GetWithBinomials(ones(n1+1,n2+1));
 vBinomials_g = GetAsVector(binomials_g);
 
 % Build the matrix D^{-1}
-D = BuildD(t1,t2,m1,m2,n1,n2);
+D = BuildD(m1,m2,n1-t1,n2-t2);
 
 % Build the matrix G
 G = diag([vBinomials_f;vBinomials_g]);
