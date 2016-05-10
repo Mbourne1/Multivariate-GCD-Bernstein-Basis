@@ -14,7 +14,7 @@ function [uxy_matrix_calc, vxy_matrix_calc] = GetQuotients(fxy_matrix, gxy_matri
 %
 
 % Initialise Global Variables
-global BOOL_Q
+global SETTINGS
 
 %%
 % Get the degrees of polynomial f(x,y)
@@ -77,7 +77,7 @@ vxy_matrix_calc = GetAsMatrix(vww_calc,n1-t1,n2-t2);
 % If we excluded Q from the coefficient matrix, then remove the binomial 
 % coefficients from v(x,y) and u(x,y)
 
-switch BOOL_Q
+switch SETTINGS.BOOL_Q
     case 'y'
         % Do nothing
     case 'n'

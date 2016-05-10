@@ -1,10 +1,10 @@
-function [uxy, vxy, dxy_calc_matrix,t,t1,t2] = o1(fxy_matrix,gxy_matrix,...
-    m,n)
+function [uxy, vxy, dxy_calc_matrix,t,t1,t2] = o_gcd_mymethod(fxy_matrix,gxy_matrix,...
+    m,n,t_limits)
 % o1(fxy_matrix,gxy_matrix,m,n)
 %
 % Given two input polynomials, calculate the GCD and its degree structure
 %
-% Inputs.
+% % Inputs.
 %
 %
 % fxy_matrix : Matrix of coefficients of f(x,y)
@@ -25,7 +25,10 @@ input_gxy = gxy_matrix;
 % Get Degree by first finding the total degree, then obtain t1 and t2
 
 % Get total degreee
-[t, ~, ~] = GetGCDDegree_Total(fxy_matrix, gxy_matrix,m,n);
+[t_old, ~, ~] = GetGCDDegree_Total(fxy_matrix, gxy_matrix,m,n);
+[t_new, ~, ~] = GetGCDDegree_Total2(fxy_matrix, gxy_matrix,m,n, t_limits);
+
+t = t_new
 
 % Get degree t1 and t2
 [t1,t2,lambda,mu,alpha, th1,th2] = GetGCDDegree_Relative(fxy_matrix,gxy_matrix,m,n,t);

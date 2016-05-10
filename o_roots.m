@@ -22,12 +22,11 @@ function [] = o_roots(ex_num,el,mean_method,bool_alpha_theta, low_rank_approx_me
 % low_rank_approx_method ('y'/'n')
 %       'Standard SNTLN' : Include SNTLN
 %       'None' - Exclude SNTLN
-
+%
+% >> o_roots('1',1e-10,'Geometric Mean Matlab Method','y', 'None')
 
 % Set the global variables
-global PLOT_GRAPHS
-global BOOL_NOISE
-
+global SETTINGS
 
 SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method)
 
@@ -39,7 +38,7 @@ SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method)
 [fxy_matrix] = Examples_Roots(ex_num);
 
 % Plot the surface of the bivariate polynomial f(x,y)
-switch PLOT_GRAPHS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         PlotImplicitBezierSurface(fxy_matrix)
     case 'n'
@@ -49,7 +48,7 @@ switch PLOT_GRAPHS
 end     
 
 % Add noise to the coefficients
-switch BOOL_NOISE
+switch SETTINGS.BOOL_NOISE
     case 'y'
         % Add noise to the coefficients of polynomial f(x,y)
         [fxy_matrix,~] = Noise2(fxy_matrix,el);

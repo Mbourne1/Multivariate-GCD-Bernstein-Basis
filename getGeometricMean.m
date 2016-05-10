@@ -1,4 +1,4 @@
-function [lambda,mu] = GetGeometricMean(fxy_matrix,n1_k1,n2_k2)
+function [lambda] = GetGeometricMean(fxy_matrix,n1_k1,n2_k2)
 % Given teh polynomial f(x,y) and g(x,y), get the geometric mean of their
 % entries in the Sylvester matrix S_{k_{1},k_{2})(f,g).
 %

@@ -15,8 +15,7 @@ function DTQ = BuildDTQ(fxy_matrix,gxy_matrix,k1,k2)
 % k1 : The degree k_{1} with respect to x of the polynomial d_{k_{1},k_{2}}
 %
 % k2 : The degree k_{2} with respect to y of the polynomial d_{k_{1},k_{2}}
-%
-%
+
 
 
 % Get the degree of f(x,y) with respect to x and y

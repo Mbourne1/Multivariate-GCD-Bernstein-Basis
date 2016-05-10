@@ -1,9 +1,9 @@
-function  [partial_fxy] = Bern_Differentiate_wrt_y(fxy_matrix)
+function  [partial_fxy] = Differentiate_wrt_y(fxy_matrix)
 
 % Given the matrix of coefficients of the bivariate polynomial f(x,y),
 % diffferentiate with respect to y
 
-[r,c] = size(fxy_matrix);
+[m1,m2] = GetDegree(fxy_matrix);
 
 m1 = r-1;
 m2 = c-1;
@@ -25,9 +25,7 @@ function fxy_wrt_y = diff_y(fxy)
 
 
 % get the size of polynomial fxy
-[r,c] = size(fxy);
-m2 = c-1;
-
+[~,m2] = GetDegree(fxy);
 
 
 mult_mat = zeros(m2+1,m2);

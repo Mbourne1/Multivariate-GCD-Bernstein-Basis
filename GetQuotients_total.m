@@ -14,14 +14,10 @@ function [uxy_matrix_calc, vxy_matrix_calc] = GetQuotients_total(fxy_matrix, gxy
 %   n :
 %
 %   t :
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 % Initialise Global Variables
-global bool_Q
-global bool_preproc
-
+global SETTINGS
 
 % padd polynomials fxy and gxy
 [m1,m2] = GetDegree(fxy_matrix);
@@ -38,7 +34,7 @@ gxy_matrix = gxy_padd;
 
 
 %%
-switch bool_preproc
+switch SETTINGS.BOOL_ALPHA_THETA
     case 'y'
         
         % Preproecessor One - Normalise by geometric mean
@@ -85,7 +81,7 @@ end
 St1t2 = BuildSubresultant(fxy_matrix_n,gxy_matrix_n,t,t,opt_alpha, opt_theta_1, opt_theta_2);
 
 
-%%
+% %
 
 [opt_col] = GetOptimalColumn(fxy_matrix,gxy_matrix,t1,t2,lambda,mu,opt_alpha,opt_theta_1,opt_theta_2);
 
@@ -95,7 +91,7 @@ Atj(:,opt_col) = [];
 
 x_ls = SolveAx_b(Atj,cki);
 
-%% Get the coefficients for u(x,y) and v(x,y)
+% % Get the coefficients for u(x,y) and v(x,y)
 
 % Obtain the solution vector x = [-v;u]
 vecx =[
@@ -111,11 +107,11 @@ vw_calc = vecx(1:num_coeff_v);
 uw_calc = -vecx(num_coeff_v+1:end);
 
 
-%% Obtain u(x,y) in its matrix form
+% % Obtain u(x,y) in its matrix form
 % Arrange uw into a matrix form based on its dimensions.
 uw_calc_mat = GetAsMatrix(uw_calc,m-t,m-t);
 
-%% Obtain v(x,y) in its matrix form
+% % Obtain v(x,y) in its matrix form
 % Arrange vw into a matrix form based on their dimensions.
 vw_calc_mat = GetAsMatrix(vw_calc,n-t,n-t);
 
@@ -131,7 +127,7 @@ uxy_matrix_calc = GetWithoutThetas(uw_calc_mat,opt_theta_1,opt_theta_2);
 
 % If we excluded Q from the coefficient matrix, then remove the binomial 
 % coefficients from v(x,y) and u(x,y)
-switch bool_Q
+switch SETTINGS.BOOL_Q
     case 'n'
         
         % Remove binomial coefficients from v(w,w)_bi

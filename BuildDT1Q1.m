@@ -24,6 +24,7 @@ T1 = BuildT1(fxy_matrix,n1_k1,n2_k2);
 % Build the diagonal matrix D^{-1}
 D = BuildD(m1,m2,n1_k1,n2_k2);
 
+% Build the diagonal matrix Q_{1}
 Q1 = BuildQ1(n1_k1,n2_k2);
 
 

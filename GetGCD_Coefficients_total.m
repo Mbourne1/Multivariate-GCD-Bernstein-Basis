@@ -58,8 +58,10 @@ vww_matrix = GetWithThetas(vxy_matrix,th1,th2);
 C1_u = BuildT1(uww_matrix,t,t);
 C2_v = BuildT1(vww_matrix,t,t);
 
-C = [ C1_u;
-    C2_v ];
+C = [ ...
+    C1_u;
+    C2_v;
+    ];
 
 % Buid matrix G
 G = BuildG(t,t);
@@ -67,7 +69,8 @@ G = BuildG(t,t);
 % Build the Coefficient Matrix HCG 
 HCG = H*C*G;
 
-%% Preprocess f(x,y) and g(x,y)
+% %
+% Preprocess f(x,y) and g(x,y)
 
 % Noramlise f(x,y) by geometric mean
 fxy_matrix_n = fxy_matrix./lambda;
@@ -76,12 +79,13 @@ fxy_matrix_n = fxy_matrix./lambda;
 gxy_matrix_n = gxy_matrix./mu;
 
 % Build the theta matrices which will convert f(x,y) to f(w,w)
-fww_matrix = GetWithThetas(fxy_matrix_n)
+fww_matrix = GetWithThetas(fxy_matrix_n);
 
 % Get f(w,w) as a vector
 fww_vec_th = GetAsVector(fww_matrix);
 
-%% Include thetas in g(x,y) to obtain g(w,w)
+% % Include thetas in g(x,y) to obtain g(w,w)
+%
 
 % Build the theta matrices which will convert g(x,y) to g(w,w)
 gww_matrix_th = GetWithThetas(gxy_matrix_n,th1,th2);
@@ -111,11 +115,7 @@ dww_calc_matrix = getAsMatrix(dww_calc,t,t);
 %%
 % Remove thetas from dw
 % Divide the row i by theta1^i
-mat1 = diag(1./th1.^(0:1:t));
-mat2 = diag(1./th2.^(0:1:t));
-
-dxy_calc_matrix = mat1 * dww_calc_matrix * mat2;
-
+dxy_calc_matrix = GetWithoutThetas(dww_calc_matrix);
 
 
 

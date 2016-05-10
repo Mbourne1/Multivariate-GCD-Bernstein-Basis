@@ -43,7 +43,7 @@ end
 function [maximum,minimum] = GetMaxMin2(a_i1i2,i1,i2,m1,m2,n1_k1,n2_k2)
 % Note this function assumes the inclusion of Q in the coefficient matrix.
 
-global BOOL_Q
+global SETTINGS
 
 
 % Build a 2 dimensional vector to store all occurences of the coefficient
@@ -52,7 +52,7 @@ A = zeros(n1_k1+1,n2_k2+1);
 
 
 
-switch BOOL_Q 
+switch SETTINGS.BOOL_Q 
     case 'y'
         % With the inclusion of Q
         % for each occurence of a_{i_{1},i_{2}} in each column

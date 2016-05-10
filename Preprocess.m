@@ -24,8 +24,7 @@ function [lambda, mu, alpha, th1,th2] = Preprocess(fxy,gxy,k1,k2)
 % th2 : Optimal value of \theta_{2}
 
 % Global variables
-global BOOL_ALPHA_THETA
-
+global SETTINGS
 
 % Get degree of f(x,y)
 [m1,m2] = GetDegree(fxy);
@@ -44,7 +43,7 @@ fxy_n = fxy./lambda;
 % Normalise g(x,y) by geometric mean
 gxy_n = gxy./mu;
 
-switch BOOL_ALPHA_THETA
+switch SETTINGS.BOOL_ALPHA_THETA
     case 'y'
         
         

@@ -38,10 +38,10 @@ function [ fxy_output,gxy_output,X_output] = ...
 
 % Global Variables
 
-global MAX_ERROR_SNTLN
-global MAX_ITERATIONS_SNTLN
+global SETTINGS
 
-if isempty(MAX_ERROR_SNTLN) || isempty(MAX_ITERATIONS_SNTLN)
+
+if isempty(SETTINGS.MAX_ERROR_SNTLN) || isempty(SETTINGS.MAX_ITERATIONS_SNTLN)
     error('err')
 end
 
@@ -208,7 +208,7 @@ condition(ite) = norm(res_vec)/norm(ct);
 
 xk = x_ls;
 
-while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
+while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIONS_SNTLN
     % Use the QR decomposition to solve the LSE problem
     % min |y-p| subject to Cy=q
     
@@ -309,8 +309,8 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
 end
 
 % Plot Graphs
-global PLOT_GRAPHS
-switch PLOT_GRAPHS
+
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         figure('name','STLN - Residuals in STLN')
         hold on
@@ -327,7 +327,7 @@ switch PLOT_GRAPHS
 end
 
 %%
-if ite == MAX_ITERATIONS_SNTLN
+if ite == SETTINGS.MAX_ITERATIONS_SNTLN
     fprintf('SNTLN Failed to converge, default to input values\n')
     fxy_output = fxy_matrix;
     gxy_output = gxy_matrix;

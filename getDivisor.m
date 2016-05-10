@@ -1,4 +1,4 @@
-function d_roots = getDivisor(f_roots,g_roots)
+function d_roots = GetDivisor(f_roots,g_roots)
 % Given the set of roots of f(x) and roots of f(x) and their multiplicities,
 % get the common roots of polynomials f(x) and g(x) given by d(x).
 

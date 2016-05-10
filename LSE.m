@@ -4,11 +4,11 @@ function y = LSE(~,f,C,g)
 % The output is the vector y.
 
 
-    [m1,~]=size(C);
+    [m1,~] = size(C);
     
-    [Q,R]=qr(C'); 
+    [Q,R] = qr(C'); 
     
-    R1=R(1:m1,:);
+    R1 = R(1:m1,:);
     
     w1 = R1'\g;
     

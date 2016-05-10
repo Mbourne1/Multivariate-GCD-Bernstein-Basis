@@ -2,9 +2,9 @@ function [fxy_matrix,gxy_matrix,alpha,th1,th2] = LowRankApproximation...
     (fxy_matrix_n,gxy_matrix_n,alpha,th1,th2,t1,t2,opt_col)
 
 
-global LOW_RANK_APPROXIMATION_METHOD
+global SETTINGS
 
-switch LOW_RANK_APPROXIMATION_METHOD
+switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
     case 'Standard SNTLN'
         
         
@@ -38,6 +38,9 @@ switch LOW_RANK_APPROXIMATION_METHOD
         
     case 'None'
         % Dont Apply SNTLN improvements
+        fxy_matrix = fxy_matrix_n;
+        gxy_matrix = gxy_matrix_n;
+
         
     otherwise
         error('bool_SNTLN is either (Standard SNTLN) or (None)')

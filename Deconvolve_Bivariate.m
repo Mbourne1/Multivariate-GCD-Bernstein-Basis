@@ -15,7 +15,7 @@ C1 = BuildT1(gxy_matrix,m1-n1,m2-n2);
 % Get the polynomial f in vector form
 f = GetAsVector(fxy_matrix);
 
-D = BuildD(0,0,m1,m2,0,0);
+D = BuildD(0,0,m1,m2);
 G = BuildG(m1-n1,m2-n2);
 
 h = SolveAx_b(D*C1*G,f);

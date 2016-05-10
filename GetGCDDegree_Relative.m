@@ -27,7 +27,7 @@ function [t1,t2,lambda,mu,alpha,th1,th2] = GetGCDDegree_Relative(fxy,gxy,...
 %   th2 : Optimal value of theta_{2}
 
 
-global PLOT_GRAPHS
+global SETTINGS
 
 % Get the degree structure of polynomial f(x,y)
 [m1,m2] = GetDegree(fxy);
@@ -152,7 +152,7 @@ z = z2;
 
 %%
 % Plot 3d surface
-switch PLOT_GRAPHS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         [x,y] = meshgrid(x,y);
         figure_name = sprintf('%s - Surface',mfilename);
@@ -173,7 +173,7 @@ switch PLOT_GRAPHS
 end
 
 %%
-switch PLOT_GRAPHS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         % Plot 3d data points
         figure_name = sprintf('%s - Minimum Singular Values', mfilename);
@@ -212,8 +212,8 @@ delta_zz = delta_z_x + delta_z_y;
 
 criterion = max(log10(abs(delta_zz(:))));
 
-global THRESHOLD
-if criterion < THRESHOLD
+global SETTINGS
+if criterion < SETTINGS.THRESHOLD
     fprintf('Value below threshold \n')
     
     t1 = min(m1,n1);
@@ -247,7 +247,7 @@ end
 % Get the position of the maximum change in values of min singular value
 % for each t1 + t2 = tot
 
-switch PLOT_GRAPHS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         figure_name = sprintf('%s - data',mfilename);
         figure('name',figure_name)

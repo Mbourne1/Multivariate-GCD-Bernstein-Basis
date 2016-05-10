@@ -21,7 +21,7 @@ function [f_root_mult_arr,g_root_mult_array] = BuildRandomPolynomials(m,n,t,intv
 %
 % g_root_mult_arr : root and multiplicity array for polynomial g.
 
-global SEED
+global SETTINGS
 
 a = intvl_low;
 b = intvl_high;
@@ -35,7 +35,7 @@ for i = 1:1:t
     prob_arr(i) = i./ nchoosek(t+1,2);
 end
 prob_arr = fliplr(prob_arr);
-rng(SEED);
+rng(SETTINGS.SEED);
 
 
 % Get the multiplicity structure of d.

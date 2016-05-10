@@ -15,76 +15,78 @@ function [] = o_roots_mymethod(fxy_matrix)
 % Obtain the series q_{x}{i} by series of GCD calculations
 
 % Set the first entry of q to be the input polynomial f(x,y)
-qx{1} = fxy_matrix;
+fx{1} = fxy_matrix;
 
 % Get dimensions of polynomial f(x,y)
 [m1,m2] = GetDegree(fxy_matrix);
 
+% Get total degree of f(x,y)
 m = m1+m2;
 
 % Set the degree structure of qx{1}
-vDeg1_qx(1) = m1;
-vDeg2_qx(1) = m2;
-vDegt_qx(1) = m;
+vDeg1_fx(1) = m1;
+vDeg2_fx(1) = m2;
+vDegt_fx(1) = m;
 
 % Set the iteration number
-ite_num = 1;
-
-% Set the iteration condition to true
-iteration_condition = true;
+ite = 1;
 
 % Whilst the most recently calculated GCD has a degree greater than
 % zero. ie is not a constant, perform a gcd calculation on it and its
 % derivative.
-while iteration_condition
+while vDeg1_fx(ite) > 0
     
-    str1 = iptnum2ordinal(ite_num);
-    str2 = sprintf(' GCD calculation with respect to x. %i \n',ite_num);
-    str  = strcat(str1,str2);
-    fprintf(str);
+    fprintf('GCD Calculation Loop iteration = %i \n', ite );
+    fprintf('Compute GCD of f_{%i} and derivative f_{%i}\n\n',ite,ite);   
     
     % Differentiate f(x,y) with respect to x to obtain g(x,y)
-    qx_der = Differentiate_wrt_x(qx{ite_num});
+    gxy = Differentiate_wrt_x(fx{ite});
+    
+    m = vDegt_fx(ite);
     n  = m-1;
     
-    fprintf('Input Polynomials for GCD calculation : %i \n',ite_num)
+    fprintf('Input Polynomials for GCD calculation : %i \n',ite)
     
-    % If the degree of g(x,y) with respect to x is 0 , then g(x,y) is a
-    % scalar and set GCD to be g(x,y)
-
-    % GCD is only a scalar with respect to x so set equal to g(x,y).
-    [~,~,dxy_matrix,t,t1,t2] = o1(qx{ite_num},qx_der,m,n);
-
-    % increment the iteration number
-    ite_num = ite_num + 1;
     
-    % Assign the GCD to be the newest member of the q array.
-    qx{ite_num} = dxy_matrix;
-    
-    % Set the degree of q{i} with respect to x
-    vDeg1_qx(ite_num) = t1;
-    % Set the degree of q{i} with respect to y
-    vDeg2_qx(ite_num) = t2;
-    % Set the total degree of q{i} 
-    vDegt_qx(ite_num) = t;
-    
-    % Set m to be equal to t, ready for the next iteration
-    m = t;
-    
-    % If the degree of the GCD with respect to x is zero, then terminate 
-    % iterations
-    if t1 == 0
-        iteration_condition = false;
+    if ite > 1
+        lower_lim = vDegt_fx(ite)-d(ite-1);
+        upper_lim = m-1;
     else
-        iteration_condition = true;
+        lower_lim = 1;
+        upper_lim = m-1;
     end
+    
+    fprintf('Minimum degree of f_{%i}: %i \n', ite+1, lower_lim);
+    fprintf('Maximum degree of f_{%i}: %i \n', ite+1, upper_lim);
+    
+    % GCD is only a scalar with respect to x so set equal to g(x,y).
+    [fx{ite},~,fx{ite+1},t,t1,t2] = o_gcd_mymethod(fx{ite},gxy,m,n,[lower_lim,upper_lim]);
+
+    % Set the degree of q{i} with respect to x
+    vDeg1_fx(ite+1) = t1;
+    
+    % Set the degree of q{i} with respect to y
+    vDeg2_fx(ite+1) = t2;
+    
+    % Set the total degree of q{i} 
+    vDegt_fx(ite+1) = t;
+    
+    % Get number of distinct roots of f(ite)
+    d(ite) = vDegt_fx(ite) - vDegt_fx(ite+1);
+    
+    fprintf('The computed deg(GCD(f_{%i},f_{%i}) is : %i \n',ite,ite,vDegt_fx(ite+1))
+    fprintf('Number of distinct roots in f_{%i} : %i \n',ite,d(ite))
+    fprintf('Degree of f_{%i} : %i \n',ite + 1, vDegt_fx(ite+1))
+    
+    % increment the iteration number
+    ite = ite + 1;
 end
 
 
 %% Obtain the series h_{x}{i} by series of deconvolutions on q_{x}{i}
 
 % Get number of elements in the series of polynomials q_{i}
-[~,num_entries_qx] = size(qx);
+[~,num_entries_qx] = size(fx);
 
 % Pre assign the CellArray h_{x} to have one less element than the
 % CellArray q_{x}
@@ -99,16 +101,16 @@ vDegt_hx = zeros(1,num_entries_qx-1);
 for i = 1:1:num_entries_qx-1
     
     % Get the series h_{x,i}
-    hx{i} = Deconvolve_Bivariate(qx{i},qx{i+1});
+    hx{i} = Deconvolve_Bivariate(fx{i},fx{i+1});
     
     % Set the degree of h with respect to x
-    vDeg1_hx(i) = vDeg1_qx(i) - vDeg1_qx(i+1);
+    vDeg1_hx(i) = vDeg1_fx(i) - vDeg1_fx(i+1);
     
     % Set the degree of h with respect to y
-    vDeg2_hx(i) = vDeg2_qx(i) - vDeg2_qx(i+1);
+    vDeg2_hx(i) = vDeg2_fx(i) - vDeg2_fx(i+1);
     
     % Set the total degree of h 
-    vDegt_hx(i) = vDegt_qx(i) - vDegt_qx(i+1);
+    vDegt_hx(i) = vDegt_fx(i) - vDegt_fx(i+1);
     
 end
 
@@ -177,96 +179,102 @@ fprintf('################################################################\n')
 %% Obtain series of q_{y}{i} by series of GCD calculations
 
 % Set the first entry of q to be the input polynomial f(x,y)
-qy{1} = fxy_matrix;
+fy{1} = fxy_matrix;
+
 [m1,m2] = GetDegree(fxy_matrix);
 m = m1+m2;
-vDeg1_qy(1) = m1;
-vDeg2_qy(1) = m2;
-vDegt_qy(1) = m;
 
-% Get dimensions of polynomial q_{y}(x,y)
-[~,m2] = GetDegree(qy{1});
+% Get degree of polynomial f(x,y) with respect to x
+vDeg1_fy(1) = m1;
+
+% Get degree of polynomial f(x,y) with respect to y
+vDeg2_fy(1) = m2;
+
+% Get total degree of polynomial f(x,y)
+vDegt_fy(1) = m;
 
 % Set the iteration number
-ite_num = 1;
-
-% If f(x,y) is just a scalar with respect to y then dont perform GCD
-% calculation
-if m2 < 1
-    iteration_condition = false;
-else
-    iteration_condition = true;
-end
-
-%
+ite = 1;
 
 % Whilst the most recently calculated GCD has a degree greater than
 % zero. ie is not a constant, perform a gcd calculation on it and its
 % derivative.
-while iteration_condition
+
+while vDegt_fy(ite) > 0
     
-    str1 = iptnum2ordinal(ite_num);
-    str2 = sprintf(' GCD calculation with respect to y. %i \n',ite_num);
-    str  = strcat(str1,str2);
-    fprintf(str)
-    
+   
     % set dxy to be the input of the next loop
-    fxy_matrix = qy{ite_num};
+    fxy_matrix = fy{ite};
     
-    [m1,m2] = GetDegree(qy{ite_num});
+    % Get the degree structure
+    [m1,m2] = GetDegree(fy{ite});
+    
     m = m1 + m2;
     
     % Differentiate f(x,y) with respect to x to obtain g(x,y)
     qy_der = Differentiate_wrt_y(fxy_matrix);
     
-   
+    % Get degree of g(x,y)
     n = m-1;
     
-    % GCD is only a scalar with respect to y so set equal to g(x,y).
-    [~,~,dxy_matrix,t,t1,t2] = o1(qy{ite_num},qy_der,m,n);
-
-    % increment the iteration number
-    ite_num = ite_num + 1;
-    
-    % Assign the GCD to be the newest member of the q array.
-    qy{ite_num} = dxy_matrix;
-    
-    vDeg1_qy(ite_num) = t1;
-    vDeg2_qy(ite_num) = t2;
-    vDegt_qy(ite_num) = t;
-    
-    % Check the iteration condition.
-    if t2 == 0
-        iteration_condition = false;
+    if ite > 1
+        lower_lim = vDegt_fy(ite)-d(ite-1);
+        upper_lim = m-1;
+    else
+        lower_lim = 1;
+        upper_lim = m-1;
     end
+    
+    fprintf('Minimum degree of f_{%i}: %i \n', ite+1, lower_lim);
+    fprintf('Maximum degree of f_{%i}: %i \n', ite+1, upper_lim);
+    
+    % GCD is only a scalar with respect to y so set equal to g(x,y).
+    [fy{ite},~,fy{ite+1},t,t1,t2] = o_gcd_mymethod(fy{ite},qy_der,m,n,[lower_lim,upper_lim]);
+      
+    %
+    vDeg1_fy(ite+1) = t1;
+    
+    %
+    vDeg2_fy(ite+1) = t2;
+    
+    %
+    vDegt_fy(ite+1) = t;
+    
+    % increment the iteration number
+    ite = ite + 1;
+    
 end
 
 %% Obtain the series h_{y}{i}
 
 % get number of elements in the series of polynomials q_{i}
-[~,num_entries_qy] = size(qy);
+[~,num_entries_qy] = size(fy);
 
 num_entries_hy = num_entries_qy - 1;
 
 % Preassign CellArray for hy
 hy = cell(1,num_entries_hy);
+
+%
 vDeg1_hy = zeros(1,num_entries_hy);
+
+%
 vDeg2_hy = zeros(1,num_entries_hy);
 
 % For every q_{y,i}, deconvolve with q_{y,i+1} to obtain h_{y,i}
 for i = 1:1:num_entries_qy-1
     
     % Perform Deconvolution to obtain h_{y,i}
-    hy{i} = Deconvolve_Bivariate(qy{i},qy{i+1});
+    hy{i} = Deconvolve_Bivariate(fy{i},fy{i+1});
     
     % Get the degree of h_{y,i} with respect to x
-    vDeg1_hy(i) = vDeg1_qy(i) - vDeg1_qy(i+1);
+    vDeg1_hy(i) = vDeg1_fy(i) - vDeg1_fy(i+1);
     
     % Get the degree of h_{y,i} with respect to y
-    vDeg2_hy(i) = vDeg2_qy(i) - vDeg2_qy(i+1);
+    vDeg2_hy(i) = vDeg2_fy(i) - vDeg2_fy(i+1);
    
     % Get the total degree of h_{y,i}
-    vDegt_hy(1) = vDegt_qy(i) - vDegt_qy(i+1);
+    vDegt_hy(1) = vDegt_fy(i) - vDegt_fy(i+1);
 end
 
 
@@ -366,7 +374,7 @@ end
 % form, where coefficients are in terms of (1-y)^{m-i}y^{i}.
 fprintf('----------------------------------------------------------------\n')
 fprintf('Roots and Multiplicities of f(x,y) with respect to x \n')
-[r,c] = size(wx);
+[~,c] = size(wx);
 for i=1:1:c
     
     % Get the factor

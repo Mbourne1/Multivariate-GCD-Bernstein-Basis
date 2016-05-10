@@ -47,12 +47,12 @@ G = BuildG(t1,t2);
 % Build the Coefficient Matrix HCG 
 HCG = H*C*G;
 
-%% Preprocess f(x,y) and g(x,y)
+% % Preprocess f(x,y) and g(x,y)
 
 % Get f(x,y) as a vector
 fxy_vec_th = GetAsVector(fxy_matrix_n);
 
-%% Include thetas in g(x,y) to obtain g(w,w)
+% % Include thetas in g(x,y) to obtain g(w,w)
 % Get g(x,y) as a vector
 gxy_vec = GetAsVector(gxy_matrix_n);
 
