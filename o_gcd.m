@@ -1,4 +1,4 @@
-function [dxy_matrix_calc] = o_gcd(ex_num,el,mean_method,bool_alpha_theta,low_rank_approx_method)
+function [dxy_calc] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method)
 % o_gcd(ex_num,el,mean_method,bool_alpha_theta,low_rank_approx_method)
 %
 % Given an example number and set of parameters, obtain GCD of the two
@@ -11,6 +11,8 @@ function [dxy_matrix_calc] = o_gcd(ex_num,el,mean_method,bool_alpha_theta,low_ra
 % ex_num - Example Number
 %
 % el - Lower noise level
+%
+% em - Upper noise level
 %
 % mean_method
 %       'None'
@@ -27,11 +29,11 @@ function [dxy_matrix_calc] = o_gcd(ex_num,el,mean_method,bool_alpha_theta,low_ra
 %
 % % Examples
 %
-% >> o_gcd('1',1e-12,'Geometric Mean Matlab Method','y','None')
+% >> o_gcd('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','None')
 
 % %
 % Set Variables
-SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method)
+SetGlobalVariables(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_method)
 global SETTINGS
 
 % %
@@ -54,15 +56,11 @@ DegreeStructure()
 % %
 % Add Noise to the coefficients
 
-switch SETTINGS.BOOL_NOISE
-    case 'y'
-        % Add noise to the coefficients of f and g
-        [fxy_matrix, ~] = Noise2(fxy_matrix_exact,el);
-        [gxy_matrix, ~] = Noise2(gxy_matrix_exact,el);
-    case 'n'
-    otherwise
-        error('noise value either y or n')
-end
+
+% Add noise to the coefficients of f and g
+[fxy_matrix, ~] = Noise2(fxy_matrix_exact,emin,emax);
+[gxy_matrix, ~] = Noise2(gxy_matrix_exact,emin,emax);
+
 
 
 % Plot the surfaces of the two polynomials fxy and gxy
@@ -76,18 +74,19 @@ lower_limit = 1;
 upper_limit = min(m,n);
 
 % Calculate the gcd, and quotient polynomials of f(x,y) and g(x,y)
-[uxy_matrix_calc, vxy_matrix_calc, dxy_matrix_calc] = o_gcd_mymethod(fxy_matrix,gxy_matrix,...
+[fxy_calc,gxy_calc,dxy_calc,uxy_calc, vxy_calc,t,t1,t2] = o_gcd_mymethod(fxy_matrix,gxy_matrix,...
     m,n,[lower_limit,upper_limit]);
 
 % % Results.
 
-PrintoutCoefficients('u',uxy_matrix_calc,uxy_matrix_exact)
-PrintoutCoefficients('v',vxy_matrix_calc,vxy_matrix_exact)
-PrintoutCoefficients('d',dxy_matrix_calc,dxy_matrix_exact)
+PrintoutCoefficients('u',uxy_calc,uxy_matrix_exact)
+PrintoutCoefficients('v',vxy_calc,vxy_matrix_exact)
+PrintoutCoefficients('d',dxy_calc,dxy_matrix_exact)
 
-dxy_error = GetDistance('d',dxy_matrix_calc,dxy_matrix_exact);
-
-PrintToFile(m,n,dxy_error);
+error.dxy = GetDistance('d',dxy_calc,dxy_matrix_exact);
+error.uxy = GetDistance('u',uxy_calc,uxy_matrix_exact);
+error.vxy = GetDistance('v',vxy_calc,vxy_matrix_exact);
+PrintToFile(m,n,error);
 
 
 end
@@ -112,28 +111,33 @@ function [dist] = GetDistance(name,matrix_calc,matrix_exact)
 matrix_calc = normalise(matrix_calc);
 matrix_exact = normalise(matrix_exact);
 
-fprintf('Analysis of Coefficients of %s(x,y) computed vs %s(x,y) exact: \n',name,name)
-fprintf('Distance between exact and calculated matrix:')
+fprintf([mfilename sprintf('Analysis of Coefficients of %s(x,y) computed vs %s(x,y) exact: \n',name,name)])
+fprintf([mfilename sprintf('Distance between exact and calculated matrix: \n')])
 dist = (norm(matrix_exact,'fro') - norm(matrix_calc,'fro') )./ norm(matrix_exact,'fro');
 
 
 end
 
 
-function []= PrintToFile(m,n,error_dx)
+function []= PrintToFile(m,n,error)
 
 global SETTINGS
 
 
-fullFileName = 'o_gcd_results.txt';
+fullFileName = 'Results_o_gcd.txt';
 
 
-if exist('o_gcd_results.txt', 'file')
-    fileID = fopen('o_gcd_results.txt','a');
-    fprintf(fileID,'%5d \t %5d \t %5d \t %s \t %s \t %s\n',...
-        m,n,error_dx,...
+if exist('Results_o_gcd.txt', 'file')
+    fileID = fopen('Results_o_gcd.txt','a');
+    fprintf(fileID,'%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s \n',...
+        SETTINGS.EX_NUM,...
+        num2str(m),...
+        num2str(n),...
+        error.dxy,...
+        error.uxy,...
+        error.vxy,...
         SETTINGS.BOOL_ALPHA_THETA,...
-        SETTINGS.NOISE);
+        SETTINGS.EMIN);
     fclose(fileID);
 else
     % File does not exist.

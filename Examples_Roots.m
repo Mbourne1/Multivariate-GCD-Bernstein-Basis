@@ -17,6 +17,20 @@ root_mult_array_f_y = [];
 factor_f_xy = [];
 
 switch ex_num
+    
+    case 'Custom'
+        prompt_x = 'Enter the degree of Polynomial f(x,y) with respect to x :' ;
+        prompt_y = 'Entre the degree of polynomial f(x,y) with respect to y :' ;
+        m1 = input(prompt_x);
+        m2 = input(prompt_y);
+        intvl_low = -1;
+        intvl_high = 1;
+        
+        [root_mult_array_f_x] = BuildRandomPolynomial(m1,intvl_low, intvl_high)
+        [root_mult_array_f_y] = BuildRandomPolynomial(m2,intvl_low, intvl_high)
+        
+        m = m1+m2;
+        
     case '1'
         % Relates to roots_examples tex file example 1
         
@@ -181,8 +195,6 @@ switch ex_num
         error('err')
 end
 
-% Print out the roots
-PrintRoots_Bivariate(root_mult_array_f_x,root_mult_array_f_y,factor_f_xy);
 
 % Get the array of factors of f (in x)
 factors_x = mult_roots_x(root_mult_array_f_x);

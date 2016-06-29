@@ -47,14 +47,14 @@ switch ex
         [f_roots_x,g_roots_x] = BuildRandomPolynomials(m,n,t,intvl_low, intvl_high);
         [f_roots_y,g_roots_y] = BuildRandomPolynomials(m,n,t,intvl_low, intvl_high);
         
-        d_roots_x = getDivisor(f_roots_x,g_roots_x);
-        d_roots_y = getDivisor(f_roots_y,g_roots_y);
+        d_roots_x = GetDivisor(f_roots_x,g_roots_x);
+        d_roots_y = GetDivisor(f_roots_y,g_roots_y);
         
-        u_roots_x = getQuotient(f_roots_x,d_roots_x);
-        u_roots_y = getQuotient(f_roots_y,d_roots_y);
+        u_roots_x = GetQuotient(f_roots_x,d_roots_x);
+        u_roots_y = GetQuotient(f_roots_y,d_roots_y);
         
-        v_roots_x = getQuotient(g_roots_x,d_roots_x);
-        v_roots_y = getQuotient(g_roots_y,d_roots_y);
+        v_roots_x = GetQuotient(g_roots_x,d_roots_x);
+        v_roots_y = GetQuotient(g_roots_y,d_roots_y);
         
     case 'template'
         

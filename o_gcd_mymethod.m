@@ -1,4 +1,4 @@
-function [uxy, vxy, dxy_calc_matrix,t,t1,t2] = o_gcd_mymethod(fxy_matrix,gxy_matrix,...
+function [fxy,gxy,dxy,uxy, vxy,t,t1,t2] = o_gcd_mymethod(fxy,gxy,...
     m,n,t_limits)
 % o1(fxy_matrix,gxy_matrix,m,n)
 %
@@ -19,22 +19,27 @@ function [uxy, vxy, dxy_calc_matrix,t,t1,t2] = o_gcd_mymethod(fxy_matrix,gxy_mat
 % % Get the degree of the GCD d(x,y) 
 degree_calc_method = 'respective';
 
-input_fxy = fxy_matrix;
-input_gxy = gxy_matrix;
+input_fxy = fxy;
+input_gxy = gxy;
 
 % Get Degree by first finding the total degree, then obtain t1 and t2
 
 % Get total degreee
-[t_old, ~, ~] = GetGCDDegree_Total(fxy_matrix, gxy_matrix,m,n);
-[t_new, ~, ~] = GetGCDDegree_Total2(fxy_matrix, gxy_matrix,m,n, t_limits);
+%[t_old, ~, ~] = GetGCDDegree_Total(fxy_matrix, gxy_matrix,m,n);
+[t_new, ~, ~] = GetGCDDegree_Total2(fxy, gxy,m,n, t_limits);
 
-t = t_new
+
+t = t_new;
+fprintf([mfilename ' : ' sprintf('Degree of GCD : %i \n',t)])
+
 
 % Get degree t1 and t2
-[t1,t2,lambda,mu,alpha, th1,th2] = GetGCDDegree_Relative(fxy_matrix,gxy_matrix,m,n,t);
+[t1,t2,lambda,mu,alpha, th1,th2] = GetGCDDegree_Relative(fxy,gxy,m,n,t);
 
-fxy_matrix_n = fxy_matrix./lambda;
-gxy_matrix_n = gxy_matrix./mu;
+fprintf([mfilename ' : ' sprintf('Degree of GCD : t1 = %i, t2 = %i \n',t1,t2)])
+
+fxy_matrix_n = fxy./lambda;
+gxy_matrix_n = gxy./mu;
 
 fww_matrix_n = GetWithThetas(fxy_matrix_n ,th1,th2);
 gww_matrix_n = GetWithThetas(gxy_matrix_n ,th1,th2);
@@ -45,7 +50,7 @@ opt_col = GetOptimalColumn(fww_matrix_n,a_gww_matrix_n,t1,t2);
 
 
 
-[fxy_matrix,gxy_matrix,alpha,th1,th2] = LowRankApproximation...
+[fxy,gxy,alpha,th1,th2] = LowRankApproximation...
     (fxy_matrix_n,gxy_matrix_n,alpha,th1,th2,t1,t2,opt_col);
 
 
@@ -91,7 +96,8 @@ switch degree_calc_method
     otherwise
         error('error')
 end
-dxy_calc_matrix = GetWithoutThetas(dww_calc_matrix,th1,th2);
+
+dxy = GetWithoutThetas(dww_calc_matrix,th1,th2);
 
 % % Compare Singular values of S(f(x,y),g(x,y)) and S(f+\delta f, g+ \delta g)
 S_unproc = BuildDTQ(input_fxy,input_gxy,0,0);
@@ -101,8 +107,8 @@ gw_preproc = GetWithThetas(input_gxy,th1,th2);
 
 S_preproc = BuildDTQ(fw_preproc,alpha.*gw_preproc,0,0);
 
-fw_lr = GetWithThetas(fxy_matrix,th1,th2);
-gw_lr = GetWithThetas(gxy_matrix,th1,th2);
+fw_lr = GetWithThetas(fxy,th1,th2);
+gw_lr = GetWithThetas(gxy,th1,th2);
 S_lowrank = BuildDTQ(fw_lr,alpha.*gw_lr,0,0);
 
 vSingularValues_unproc = svd(S_unproc);

@@ -1,8 +1,9 @@
-function [t, th1, th2] = GetGCDDegree_Total(fxy_matrix,gxy_matrix,m,n, limits_t)
+function [t, th1, th2] = GetGCDDegree_Total(fxy_matrix,gxy_matrix,m,n)
 % Get the total degree t of the two input polynomials f(x,y) and g(x,y)
 
-% Initialise the global variables
-global SETTINGS
+
+lower_lim = 1;
+upper_lim = min(m,n);
 
 % Get degrees of polynomial f(x,y)
 [m1,m2] = GetDegree(fxy_matrix);
@@ -66,60 +67,42 @@ for k=1:1:min_mn
     
     % Get ONLY the diagonal elements and normalise them.
     R1_DiagNorm = diag(R1)./norm(diag(R1));
-       
+    
     Data_RowNorm = AddToData(R1_RowNorm,Data_RowNorm,k);
     Data_DiagNorm = AddToData(R1_DiagNorm,Data_DiagNorm,k);
     
+    vSingularValues = svd(Sk);
+    
     % Get SVD of unproc and processed Sylvester Surbesultant S_{k,k}
-    vMinimumSingularValues(k) = min(svd(Sk));
+    vMinimumSingularValues(k) = min(vSingularValues);
     
     % Get the condition of Sk
     vCondition(k) = cond(Sk);
     
 end
 
-
-PlotGraphs()
-
-%%
-[svd_val,svd_maxindex] = max(diff(log10(vMinimumSingularValues)));
-
-% [rowdiag_val,rowdiag_maxindex] = min(diff(log10(ratio_maxmin_diag_vec)));
-% fprintf('Total Degree Calculated By Max:Min Row Diags: %i \n',rowdiag_maxindex);
-%
-% [rowsum_val,rowsum_maxindex] = min(diff(log10(ratio_maxmin_rowsum_vec)));
-% fprintf('Total Degree Calculated By Max:Min Row Sums: %i \n',rowsum_maxindex);
-
-fprintf('-----------------------------------------------------------------\n')
-
-
-val = svd_val;
-index = svd_maxindex;
-
-% check if the maximum change is significant
-
-if abs(val) < SETTINGS.THRESHOLD
-    % not significant
-    fprintf('Differences between minimum singular values of S_{k,k} are not significant \n')
-    t = min(m,n);
+% Check if more than one subresultant exists
+if min(m,n) == 1
+    t = GetGCDDegree_OneSubresultant(vSingularValues);
 else
-    % change is significant
-    t = index;
-    fprintf('Total Degree Calculated By Minimum Singular Values: %i \n',t);
-    
+    t = GetGCDDegree_MultipleSubresultants(vMinimumSingularValues,[lower_lim, upper_lim]);
+    PlotGraphs() 
 end
+
+if t == 0
+    th1 = 1;
+    th2 = 1;
+    return;
+end
+%%
 
 
 % Set the optimal theta 1 and theta 2
-th1 = vTh1(t);
-th2 = vTh2(t);
+th1 = vTh1(lower_lim + t - 1);
+th2 = vTh2(lower_lim + t - 1);
 
-fprintf('---------------------------------------------------------\n')
-fprintf('\n')
-fprintf('Total Degree of GCD as calculated by GetDegree_Total() : \n')
-fprintf('Tota Degree = %i',t)
-fprintf('\n')
-fprintf('---------------------------------------------------------\n')
+
+
 
 
 end

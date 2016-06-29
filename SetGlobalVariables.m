@@ -1,4 +1,4 @@
-function [] = SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method)
+function [] = SetGlobalVariables(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_method)
 
 % Set Variables
 
@@ -35,7 +35,7 @@ SETTINGS.LOW_RANK_APPROXIMATION_METHOD = low_rank_approx_method;
 %       y - plot graphs
 %       n - exclude plotting
 
-SETTINGS.PLOT_GRAPHS = 'y';
+SETTINGS.PLOT_GRAPHS = 'n';
 
 % seed - SEED Number for noise generation
 SETTINGS.SEED = 1024;
@@ -43,6 +43,11 @@ SETTINGS.SEED = 1024;
 %% Variables related to get degree ()
 SETTINGS.THRESHOLD = 1;
 
+SETTINGS.THRESHOLD_RANK = 1;
+
 %% Variables related to Low rank approximation
 SETTINGS.MAX_ERROR_SNTLN = 1e-14;
 SETTINGS.MAX_ITERATIONS_SNTLN = 50;
+
+SETTINGS.EX_NUM = ex_num;
+SETTINGS.EMIN = emin;

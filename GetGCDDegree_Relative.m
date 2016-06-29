@@ -1,6 +1,6 @@
 function [t1,t2,lambda,mu,alpha,th1,th2] = GetGCDDegree_Relative(fxy,gxy,...
-    m,n,t,lambda,mu,alpha,th1,th2)
-% Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two 
+    m,n,t)
+% Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two
 % polynomials f(x,y) and g(x,y)
 %
 %   Inputs.
@@ -27,7 +27,9 @@ function [t1,t2,lambda,mu,alpha,th1,th2] = GetGCDDegree_Relative(fxy,gxy,...
 %   th2 : Optimal value of theta_{2}
 
 
+%
 global SETTINGS
+
 
 % Get the degree structure of polynomial f(x,y)
 [m1,m2] = GetDegree(fxy);
@@ -35,67 +37,37 @@ global SETTINGS
 % Get the degree structure of polynomial g(x,y)
 [n1,n2] = GetDegree(gxy);
 
-% Produce the set of all possible t1 and t2 values
-method = 'All';
+% Get all k1 k2 pairs
+k1k2Pairs = GetPairs(m,m1,m2,n,n1,n2,t);
 
-switch method
-    case 'All'  % Use all possible (t1,t2) combinations
-        % The total of t1+t2 must be between t and 2t
-        mat = [];
-        for t1 = min(m1,n1):-1:0;
-            for t2 = min(m2,n2):-1:0;
-                
-                new_row = [t1 t2];
-                mat = [mat ; new_row];
-                
-            end
-        end
-        
-    case 'Refined' % Use only a subset of possible (t1,t2) combinations.
-        % The total of t1+t2 must be between t and 2t
-        mat = [];
-        
-        for t1 = t:-1:0;
-            for t2 = t:-1:0;
-                
-                condA = n1-t1 + n2 -t2 >= n-t;
-                condB = m1-t1 + m2 -t2 >= m-t;
-                condC = t1 <= n1 && t1 <= m1;
-                condD = t2 <= n2 && t2 <= m2;
-                condE = n1 - t1 + n2 - t2 <= 2*(n-t);
-                condF = m1 - t1 + m2 - t2 <= 2*(m-t);
-                condG = n1 - t1 <= n-t;
-                condH = n2 - t2 <= n-t;
-                condI = m1 - t1 <= m-t;
-                condJ = m2 - t2 <= m-t;
-                
-                
-                if condA && condB && condC && condD && condE && condF...
-                        && condG && condH && condI && condJ
-                    new_row = [t1 t2];
-                    mat = [mat ; new_row];
-                end
-                
-            end
-        end
-end
+% If only one entry in matrix of possible (k1,k2) pairs exist
+% then (t1,t2) = (k1,k2)
+[nPairs,~] = size(k1k2Pairs);
 
-% Remove duplicate rows
-mat = unique(mat,'rows');
-[nRowsMyMat,~] = size(mat);
+% if nPairs == 1
+%     fprintf('Only one possible combination of (t1,t2) \n')
+%     t1 = k1k2Pairs(1,1);
+%     t2 = k1k2Pairs(1,2);
+%     return
+% end
 
-% for each row in the constructed matrix of (k1,k2) pairs
-data = [];
+% Initialise some vectors
+vMinimumSingularValues_all = zeros(nPairs,1);
+vAlpha_all = zeros(nPairs,1);
+vTheta1_all = zeros(nPairs,1);
+vTheta2_all = zeros(nPairs,1);
+vLambda_all = zeros(nPairs,1);
+vMu_all = zeros(nPairs,1);
 
-
-% for every row in the matrix
-for i = 1:1:nRowsMyMat
+% For every row in the matrix
+for i = 1:1:nPairs
     
-    k1 = mat(i,1);
-    k2 = mat(i,2);
+    % Get the ith pair of k_{1} and k_{2} values
+    v_k1 = k1k2Pairs(i,1);
+    v_k2 = k1k2Pairs(i,2);
     
     % Preprocessing
-    [lambda, mu, alpha, th1,th2] = Preprocess(fxy,gxy,k1,k2);
+    [lambda, mu, alpha, th1,th2] = Preprocess(fxy,gxy,v_k1,v_k2);
     
     % Divide f(x) by geometric mean
     fxy_matrix_n = fxy ./lambda;
@@ -110,161 +82,122 @@ for i = 1:1:nRowsMyMat
     gww_matrix = GetWithThetas(gxy_matrix_n,th1,th2);
     
     % Build the k1,k2 subresultant matrix
-    Sk1k2 = ...
-        BuildDTQ(fww_matrix,alpha.*gww_matrix,k1,k2);
+    Sk1k2 = BuildDTQ(fww_matrix,alpha.*gww_matrix,v_k1,v_k2);
     
-    % Get the minimum singular value
-    min_sing_val = min(svd(Sk1k2));
+    % Get the singular values
+    vSingularValues = svd(Sk1k2);
     
-    
-    try
-        data = [data ; k1 k2 log10(min_sing_val) alpha th1 th2 lambda mu ];
-        z(k1+1,k2+1) = log10(min_sing_val);
-    catch
-        data = [data ; k1 k2 0];
-        z(k1+1,k2+1) = 0;
-    end
-    
+    % Store the minimum Singular value
+    vMinimumSingularValues_all(i) = min(vSingularValues);
+    vAlpha_all(i) = alpha;
+    vTheta1_all(i) = th1;
+    vTheta2_all(i) = th2;
+    vLambda_all(i) = lambda;
+    vMu_all(i) = mu;
     
 end
 
 
+% Sort all k1 k2 pairs by their total k_{total} =  k1 + k2. Get the minimum of the
+% minimum singular values for each total.
 
-max_k1 = max(data(:,1));
-max_k2 = max(data(:,2));
+% Get the sum of k1 + k2 for all (k1,k2) pairs
+sumk1k2 = sum(k1k2Pairs,2);
+
+% Create a matrix of data
+data = [k1k2Pairs, sumk1k2, vMinimumSingularValues_all,...
+    vAlpha_all, vTheta1_all, vTheta2_all, vLambda_all, vMu_all];
+
+% Get the minimum sum
+min_val = min(sumk1k2);
+
+% Get the maximum sum
+max_val = max(sumk1k2);
+
+% Get the number of possible sum values.
+nValues = max_val - min_val + 1;
+
+v_k1 = zeros(nValues,1);
+v_k2 = zeros(nValues,1);
+vMinimumSingularValues = zeros(nValues,1);
+vAlpha = zeros(nValues,1);
+vTheta1 = zeros(nValues,1);
+vTheta2 = zeros(nValues,1);
+vLambda = zeros(nValues,1);
+vMu = zeros(nValues,1);
 
 
-switch method
-    case 'All'
-        y = 0:min(m2,n2)+1;
-        x = 0:min(m1,n1)+1;
-        
-    case 'Refined'
-        x = 0:max_k1;
-        y = 0:max_k2;
-        
+
+for i = min_val:1:max_val
+    
+    k = i - min_val + 1;
+    
+    data_filtered = data(data(:, 3) == i, :);
+    
+    % Get the minimum singular value of all the [k1,k2] pairs
+    [~,index] = min(data_filtered(:,4));
+    
+    v_k1(k) = data_filtered(index,1);
+    v_k2(k) = data_filtered(index,2);
+    vMinimumSingularValues(k) = data_filtered(index,4);
+    vAlpha(k) = data_filtered(index,5);
+    vTheta1(k) = data_filtered(index,6);
+    vTheta2(k) = data_filtered(index,7);
+    vLambda(k) = data_filtered(index,8);
+    vMu(k) = data_filtered(index,9);
+    
 end
 
-[nRowsMyMat,nColsMyMat] = size(z);
-z2 = zeros(nRowsMyMat+1,nColsMyMat+1);
-z2(1:nRowsMyMat,1:nColsMyMat) = z;
-z = z2;
+% Plot the minimum singular values
+PlotGraphs_DegreeRelative();
 
-%%
-% Plot 3d surface
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
-        [x,y] = meshgrid(x,y);
-        figure_name = sprintf('%s - Surface',mfilename);
-        figure('name',figure_name)
-        hold on
-        s1 = surf(x,y,z');
-        xlabel('t_{1}')
-        ylabel('t_{2}')
-        xlim([0,max_k1+3])
-        ylim([0,max_k2+3])
-        
-        xlabel('t_{1}')
-        ylabel('t_{2}')
-        hold off
-    case 'n'
-    otherwise
-        error('Error : plot_graphs is either (y) or (n)')
-end
 
-%%
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
-        % Plot 3d data points
-        figure_name = sprintf('%s - Minimum Singular Values', mfilename);
-        figure('name',figure_name)
-        hold on
-        title('Minimum Singular Values in S_{t_{1},t_{2}}')
-        xlabel('t_{1}')
-        ylabel('t_{2}')
-        zlabel('log_{10} Min Sing Value')
-        scatter3(data(:,1),data(:,2),data(:,3),'filled')
-        grid('on')
-        hold off
-    case 'n'
-    otherwise
-        error('Error: plot_graphs is either y or n')
-end
-%%
-[nRowsMyMat,nColsMyMat] = size(z);
-% take from (0,0)
-zz = z(1:1:nRowsMyMat,1:1:nColsMyMat);
-
-% get the second row to the end
-delta_x = [zeros(1,nColsMyMat) ; z(2:1:nRowsMyMat,1:1:nColsMyMat)];
-
-% get the second col to the end
-delta_y = [zeros(nRowsMyMat,1) z(1:1:nRowsMyMat,2:1:nColsMyMat)];
-
-% Get change in x component (k1) and a row of zeros
-delta_z_x = [diff(z,1) ; zeros(1,nColsMyMat)];
-
-% Get change in y component (k2) and a zero col
-
-delta_z_y = [diff(z,1,2) zeros(nRowsMyMat,1)];
-
-delta_zz = delta_z_x + delta_z_y;
-
-criterion = max(log10(abs(delta_zz(:))));
-
-global SETTINGS
-if criterion < SETTINGS.THRESHOLD
-    fprintf('Value below threshold \n')
-    
-    t1 = min(m1,n1);
-    t2 = min(m2,n2);
-    
-    display(t1)
-    display(t2)
-    
+% If only one value (t1+t2)
+if (nValues ==1)
+    t1 = v_k1;
+    t2 = v_k2;
+    alpha = vAlpha(1);
+    th1 = vTheta1(1);
+    th2 = vTheta2(1);
+    lambda = vLambda(1);
+    mu = vMu(1);
     return
 end
 
-% Get the [i,j] entry which has maximum change to [i+1,j] and [i,j+1]
-[num idx] = max(delta_zz(:));
-[x y] = ind2sub(size(delta_zz),idx);
-% Set the values t1 and t2
-t1 = x-1;
-t2 = y-1;
 
 
-% % If only one row is returned, then take t1 and t2
-[nRowsMyMat,~] = size(data);
-if nRowsMyMat == 1
-    t1 = data(1,1);
-    t2 = data(1,2);
-    return;
-end
+% Get maximum change in Singular values
+[maxChange,index] = max(diff(log10(vMinimumSingularValues)));
 
-% fprintf('The set of pairs t_{1} and t_{2} are given by: \n')
-% mymat
-
-% Get the position of the maximum change in values of min singular value
-% for each t1 + t2 = tot
-
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
-        figure_name = sprintf('%s - data',mfilename);
-        figure('name',figure_name)
-        plot(log10(data(:,2)));
-        hold off
-    case 'n'
-    otherwise
-        error('plot_graphs is either y or n')
+if (maxChange < SETTINGS.THRESHOLD_RANK)
+    fprintf([mfilename ' : ' 'Insignificant Change \n'])
+    fprintf([mfilename ' : ' 'All subresultants are either full rank or rank deficient \n'])
+    fprintf([mfilename ' : ' 'All subresultants are full rank \n'])
+    t1 = v_k1(end);
+    t2 = v_k2(end);
+    alpha = vAlpha(end);
+    th1 = vTheta1(end);
+    th2 = vTheta2(end);
+    lambda = vLambda(end);
+    mu = vMu(end);
+    
+else
+    fprintf([mfilename ' : ' 'Significant Change \n'])
+    t1 = v_k1(index);
+    t2 = v_k2(index);
+    alpha = vAlpha(index);
+    th1 = vTheta1(index);
+    th2 = vTheta2(index);
+    lambda = vLambda(index);
+    mu = vMu(index);
 end
 
 
-fprintf('\n')
-fprintf('Degree t1 : %i \n',t1);
-fprintf('Degree t2 : %i \n',t2);
-fprintf('\n')
-fprintf('----------------------------------------------------------\n')
-
+LineBreakMedium()
+fprintf([mfilename ' : ' 'The Calculated Degree of the GCD is given by \n'])
+fprintf([mfilename ' : ' sprintf('Degree of GCD wrt x : t1 = %i\n',t1)])
+fprintf([mfilename ' : ' sprintf('Degree of GCD wrt y : t2 = %i\n',t2)])
+LineBreakMedium()
 
 end
 

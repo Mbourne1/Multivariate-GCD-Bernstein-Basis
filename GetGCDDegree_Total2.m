@@ -8,17 +8,17 @@ function [t, th1, th2] = GetGCDDegree_Total2(fxy_matrix,gxy_matrix,m,n, limits_t
 [n1,n2] = GetDegree(gxy_matrix);
 
 % Set the lower limit for the value of t
-lower_limit = limits_t(1);
+lower_lim = limits_t(1);
 
 % Set the upper limit for the value of t
-upper_limit = limits_t(2);
+upper_lim = limits_t(2);
 
 % Set the number of subresultants to be built
-n_subresultants = upper_limit - lower_limit +1;
+n_subresultants = upper_lim - lower_lim +1;
 
 % if upper limit is equal to lower limit
-if upper_limit == lower_limit
-   t = upper_limit;
+if upper_lim == lower_lim
+   t = upper_lim;
    th1 = 1;
    th2 = 1;
    return; 
@@ -49,9 +49,9 @@ Data_DiagNorm = [];
 
 
 % for each possible total degree
-for k = lower_limit : 1 : upper_limit
+for k = lower_lim : 1 : upper_lim
     
-    i = k - lower_limit + 1;
+    i = k - lower_lim + 1;
     
     % Apply preprocessing
     [vGM_fx(i),vGM_gx(i),vAlpha(i), vTh1(i),vTh2(i)] = ...
@@ -85,46 +85,37 @@ for k = lower_limit : 1 : upper_limit
     Data_DiagNorm = AddToData(R1_DiagNorm,Data_DiagNorm,k);
     
     % Get SVD of unproc and processed Sylvester Surbesultant S_{k,k}
-    vMinimumSingularValues(k) = min(svd(Sk));
+    vMinimumSingularValues(i) = min(svd(Sk));
     
     % Get the condition of Sk
-    vCondition(k) = cond(Sk);
+    vCondition(i) = cond(Sk);
     
 end
 
-PlotGraphs()
-
-
-[svd_val,svd_maxindex] = max(diff(log10(vMinimumSingularValues)));
-
-
-val = svd_val;
-index = svd_maxindex;
-
-% check if the maximum change is significant
-threshold = 3.5;
-if abs(val) < threshold
-    % not significant
-    fprintf('Differences between minimum singular values of S_{k,k} are not significant \n')
-    t = min(m,n);
+if min(m,n) == 1
+    t = GetGCDDegree_OneSubresultant(vSingularValues);
+    
+    
 else
-    % change is significant
-    t = index;
-    fprintf('Total Degree Calculated By Minimum Singular Values: %i \n',t);
+    PlotGraphs()
+    t = GetGCDDegree_MultipleSubresultants(vMinimumSingularValues,[lower_lim,upper_lim]);
+    
     
 end
+
+if t == 0
+    th1 = 1;
+    th2 = 1;
+    return;
+end
+%%
 
 
 % Set the optimal theta 1 and theta 2
-th1 = vTh1(t);
-th2 = vTh2(t);
+th1 = vTh1(t - lower_lim + 1);
+th2 = vTh2(t - lower_lim + 1);
 
-fprintf('---------------------------------------------------------\n')
-fprintf('\n')
-fprintf('Total Degree of GCD as calculated by GetDegree_Total() : \n')
-fprintf('Tota Degree = %i',t)
-fprintf('\n')
-fprintf('---------------------------------------------------------\n')
+
 
 
 end

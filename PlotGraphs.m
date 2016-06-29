@@ -25,17 +25,7 @@ switch SETTINGS.PLOT_GRAPHS
         ylabel('log_{10} Condition Number')
         legend(gca,'show')
         hold off
-        
-        % %
-        figure_name = sprintf('%s - Diagonal Norms',mfilename);
-        figure('name',figure_name)
-        plot(Data_DiagNorm(:,1),(log10(Data_DiagNorm(:,2))),'*')
-        axis([0.9,min(m,n),-inf,+inf])
-        xlabel('k')
-        ylabel('Normalised Row Sums of R1 in S_{k}')
-        title(['Normalised Row Sums of R1 fom the QR decomposition of each subresultant S_{k} \newline '...
-            'm = ' int2str(m) ', n = ' int2str(n) '(Original)']);
-        hold off
+
     case 'n'
     otherwise
         error('error: plot_graphs must be either (y) or (n)')

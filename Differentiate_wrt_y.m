@@ -3,10 +3,9 @@ function  [partial_fxy] = Differentiate_wrt_y(fxy_matrix)
 % Given the matrix of coefficients of the bivariate polynomial f(x,y),
 % diffferentiate with respect to y
 
+% Get the degree of polynomial f(x,y)
 [m1,m2] = GetDegree(fxy_matrix);
 
-m1 = r-1;
-m2 = c-1;
 
 partial_fxy = zeros(m1+1,m2);
 

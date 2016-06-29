@@ -5,122 +5,85 @@ function [alpha] = OptimalAlpha(max_mtrx_f,min_mtrx_f, max_mtrx_g,min_mtrx_g)
 f = [1 -1 0];
 
 % get the degree of polynomial f and g
-m1 = size(max_mtrx_f,1) -1;
-m2 = size(max_mtrx_f,2) -1;
-n1 = size(max_mtrx_g,1) -1;
-n2 = size(max_mtrx_g,2) -1;
 
+[m1,m2] = GetDegree(max_mtrx_f);
+[n1,n2] = GetDegree(max_mtrx_g);
+
+nEntries_f = (m1 + 1) * (m2 + 1);
+nEntries_g = (n1 + 1) * (n2 + 1);
+
+
+% % 
+% %
+% %
 % Assemble the four submatrices of Matrix A
-PartOne = zeros((m1+1)*(m2+1),3);
-count = 1;
-for i1 = 0:1:m1
-    for i2 = 0:1:m2
-        % Replace all of the 'count-th row'
-        PartOne(count,:) = [1 0 0];
-        count = count + 1 ;
-    end
-end
+PartOne = ...
+    [
+    ones(nEntries_f,1) ...
+    zeros(nEntries_f,1) ...
+    zeros(nEntries_f,1) ...
+    ];
+    
 
-PartTwo = zeros((n1+1)*(n2+1),3);
-count = 1;
-for i1 = 0:1:n1
-    for i2 = 0:1:n2
-        % Replace all of the 'count-th row'
-        PartTwo(count,:) = [1 0 -1];
-        count = count + 1;
-    end
-end
+PartTwo = ...
+    [
+    ones(nEntries_g,1) ...
+    zeros(nEntries_g,1) ...
+    -1.* ones(nEntries_g,1)
+    ];
 
-PartThree = zeros((m1+1)*(m2+1),3);
-count = 1;
-for i1 = 0:1:m1
-    for i2 = 0:1:m2
-        % Replace all of the 'count-th row'
-        PartThree(count,:) = [0 -1 0];
-        count = count + 1;
-    end
-end
+PartThree = ...
+    [
+    zeros(nEntries_f,1) ...
+    -1.* ones(nEntries_f,1) ...
+    zeros(nEntries_f,1) ...
+    ];
 
-PartFour = zeros((n1+1)*(n2+1),3);
-count = 1;
-for i1 = 0:1:n1
-    for i2 = 0:1:n2
-        % Replace all of the 'count-th row'
-        PartFour(count,:) = [0 -1 1];
-        count = count + 1;
-    end
-end
-
-
+PartFour = ...
+    [
+    zeros(nEntries_g,1) ...
+    -1.* ones(nEntries_g,1) ...
+    ones(nEntries_g,1) ...
+    ];
 
 % Now build the vector b
-
-lambda_vec = zeros((m1+1)*(m2+1),1);
-count = 1;
-for i1 = 0:1:m1
-    for i2 = 0:1:m2
-        lambda_vec(count) = max_mtrx_f(i1+1,i2+1);
-        count = count + 1;
-    end
-end
-
-mu_vec = zeros((n1+1)*(n2+1),1);
-count = 1;
-for i1 = 0:1:n1
-    for i2 = 0:1:n2
-        mu_vec(count) = max_mtrx_g(i1+1,i2+1);
-        count = count + 1;
-    end
-end
-
-rho_vec = zeros((m1+1)*(m2+1),1);
-count = 1;
-for i1 = 0:1:m1
-    for i2 = 0:1:m2
-        rho_vec(count) = min_mtrx_f(i1+1,i2+1);
-        count = count + 1;
-    end
-end
-
-tau_vec = zeros((n1+1)*(n2+1),1);
-count = 1;
-for i1 = 0:1:n1
-    for i2 = 0:1:n2
-        tau_vec(count) = min_mtrx_g(i1+1,i2+1);
-        count = count + 1;
-    end
-end
-
-% Find any zeros in the lambda vector
-indeces = find(~lambda_vec);
-PartOne(indeces,:) = [];
-lambda_vec(indeces,:) = [];
-
-% Find any zeros in the mu vector
-indeces = find(~mu_vec);
-PartTwo(indeces,:) = [];
-mu_vec(indeces,:) = [];
-
-% Find any zeros in the rho vector
-indeces = find(~rho_vec);
-PartThree(indeces,:) = [];
-rho_vec(indeces,:) = [];
-
-% Find any zeros in the tau vector
-indeces = find(~tau_vec);
-PartFour(indeces,:) = [];
-tau_vec(indeces,:) = [];
+lambda_vec = GetAsVector(max_mtrx_f);
+mu_vec = GetAsVector(max_mtrx_g);
+rho_vec = GetAsVector(min_mtrx_f);
+tau_vec = GetAsVector(min_mtrx_g);
 
 
-b = [log10(lambda_vec); log10(mu_vec); -log10(rho_vec);-log10(tau_vec)];
+% % Find any zeros in the lambda vector
+% indeces = find(~lambda_vec);
+% PartOne(indeces,:) = [];
+% lambda_vec(indeces,:) = [];
+% 
+% % Find any zeros in the mu vector
+% indeces = find(~mu_vec);
+% PartTwo(indeces,:) = [];
+% mu_vec(indeces,:) = [];
+% 
+% % Find any zeros in the rho vector
+% indeces = find(~rho_vec);
+% PartThree(indeces,:) = [];
+% rho_vec(indeces,:) = [];
+% 
+% % Find any zeros in the tau vector
+% indeces = find(~tau_vec);
+% PartFour(indeces,:) = [];
+% tau_vec(indeces,:) = [];
 
-A =[PartOne; PartTwo; PartThree; PartFour];
+
+b = [log10(lambda_vec); log10(mu_vec); -log10(rho_vec);-log10(tau_vec)]';
+
+A = [PartOne; PartTwo; PartThree; PartFour];
 
 
 
 x = linprog(f,-A,-b);
+
 try
-alpha  = 10^x(3);
+    alpha  = 10^x(3);
 catch
     alpha = 1;
     return
