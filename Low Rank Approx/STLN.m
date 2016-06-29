@@ -222,7 +222,8 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     
     % obtain the small changes
     
-    %% Break down y into its sections
+    % %
+    % % Break down y into its sections
     
     % get the coefficients corresponding to f and g
     delta_zk        = y(1:num_coeff_f + num_coeff_g ,1);
@@ -233,7 +234,8 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     % Get the coefficients corresponding to x
     delta_xk        = y(1:num_coeff_x,1);
     
-    % Update the variables
+    % %
+    % % Update the variables
     
     % Update variables z_{k}, where z_{k} are perturbations in the
     % coefficients of f and g.
@@ -354,9 +356,9 @@ X_output  = xk;
 
 
 % Print the number of iterations
-fprintf('--------------------------------------------------------------------------- \n')
+LineBreakLarge();
 fprintf('Iterations over STLN() function for Low Rank Approximation of Sylvester Matrix : %i \n', ite);
-fprintf('--------------------------------------------------------------------------- \n')
+LineBreakLarge();
 end
 
 

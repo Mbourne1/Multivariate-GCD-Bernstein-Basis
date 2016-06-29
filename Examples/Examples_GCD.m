@@ -1,9 +1,22 @@
-function [fxy_mtrx_exct,gxy_mtrx_exct,...
-    uxy_mtrx_exct, vxy_mtrx_exct,...
-    dxy_mtrx_exct,...
-    m,m1,m2,...
-    n,n1,n2,...
-    t,t1,t2] = Examples_GCD(ex)
+function [fxy,gxy,dxy,m,n,t] = Examples_GCD(ex_num)
+
+EXAMPLE_TYPE = 'From Roots';
+
+switch EXAMPLE_TYPE
+    case 'From Roots'
+        [fxy,gxy,dxy,m,n,t] = FromRoots(ex_num);
+        
+    case 'From Coefficients'
+        [fxy,gxy,dxy,m,n,t] = FromCoefficients(ex_num);
+        
+    otherwise
+        error('err');
+end
+
+
+end
+
+function [fxy,gxy,dxy,m,n,t] = FromRoots(ex_num)
 
 
 f_roots_x = [];
@@ -28,7 +41,7 @@ v_roots_xy = [];
 
 
 
-switch ex
+switch ex_num
     
     case 'Custom'
         
@@ -1097,22 +1110,50 @@ v_roots = [v_roots_x ; v_roots_y ; v_roots_xy];
 
 
 
-fxy_mtrx_exct = BuildPoly_NonSeparable(f_roots);
-gxy_mtrx_exct = BuildPoly_NonSeparable(g_roots);
-uxy_mtrx_exct = BuildPoly_NonSeparable(u_roots);
-vxy_mtrx_exct = BuildPoly_NonSeparable(v_roots);
-dxy_mtrx_exct = BuildPoly_NonSeparable(d_roots);
+fxy = BuildPoly_NonSeparable(f_roots);
+gxy = BuildPoly_NonSeparable(g_roots);
+uxy = BuildPoly_NonSeparable(u_roots);
+vxy = BuildPoly_NonSeparable(v_roots);
+dxy = BuildPoly_NonSeparable(d_roots);
 
-[m1,m2] = GetDegree(fxy_mtrx_exct);
+[m1,m2] = GetDegree(fxy);
 
-[n1,n2] = GetDegree(gxy_mtrx_exct);
+[n1,n2] = GetDegree(gxy);
 
-[t1,t2] = GetDegree(dxy_mtrx_exct);
+[t1,t2] = GetDegree(dxy);
 
 
 end
 
-
+function [fxy,gxy,dxy,m,n,t] = FromCoefficients(ex_num)
+switch ex_num
+    case '1'
+        x = sym('x');
+        y = sym('y');
+        
+        f = (x^2 + y^2 + 1)^2 * (x+1) * (y-1) * (y-3);
+        g = (x^2 + y^2 + 1)^2 * (x+1) * (y-2);
+        d = (x^2 + y^2 + 1)^2 * (x+1);
+        
+        m = double(feval(symengine, 'degree', f));
+        n = double(feval(symengine, 'degree', g));
+        t = double(feval(symengine, 'degree', d));
+        
+        
+        
+        fxy_pwr = double(rot90(coeffs(f,[x,y],'All'),2));
+        gxy_pwr = double(rot90(coeffs(g,[x,y],'All'),2));
+        dxy_pwr = double(rot90(coeffs(d,[x,y],'All'),2));
+        
+        fxy = Power2Bernstein_Bivariate(fxy_pwr);
+        gxy = Power2Bernstein_Bivariate(gxy_pwr);
+        dxy = Power2Bernstein_Bivariate(dxy_pwr);
+        
+    otherwise
+        error('err')
+        
+end
+end
 
 function cellArr = mult_roots_x(root_mult_mat)
 % given the root and multiplicity matrix

@@ -33,22 +33,16 @@ function [dxy_calc] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_ra
 
 % %
 % Set Variables
-SetGlobalVariables(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_method)
 global SETTINGS
+SetGlobalVariables(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_method)
+
+addpath('Examples','Low Rank Approx');
+
 
 % %
 % Get Example
 
-[fxy_matrix_exact, gxy_matrix_exact,...
-    uxy_matrix_exact,vxy_matrix_exact,...
-    dxy_matrix_exact,...
-    m,m1,m2,...
-    n,n1,n2,...
-    t_exact,t1_exact,t2_exact] = Examples_GCD(ex_num);
-
-display(fxy_matrix_exact)
-display(gxy_matrix_exact)
-display(dxy_matrix_exact)
+[fxy_exact, gxy_exact,dxy_exact,m,n,t_exact] = Examples_GCD(ex_num);
 
 DegreeStructure()
 
@@ -58,8 +52,8 @@ DegreeStructure()
 
 
 % Add noise to the coefficients of f and g
-[fxy_matrix, ~] = Noise2(fxy_matrix_exact,emin,emax);
-[gxy_matrix, ~] = Noise2(gxy_matrix_exact,emin,emax);
+[fxy_matrix, ~] = Noise2(fxy_exact,emin,emax);
+[gxy_matrix, ~] = Noise2(gxy_exact,emin,emax);
 
 
 
@@ -79,13 +73,10 @@ upper_limit = min(m,n);
 
 % % Results.
 
-PrintoutCoefficients('u',uxy_calc,uxy_matrix_exact)
-PrintoutCoefficients('v',vxy_calc,vxy_matrix_exact)
-PrintoutCoefficients('d',dxy_calc,dxy_matrix_exact)
 
-error.dxy = GetDistance('d',dxy_calc,dxy_matrix_exact);
-error.uxy = GetDistance('u',uxy_calc,uxy_matrix_exact);
-error.vxy = GetDistance('v',vxy_calc,vxy_matrix_exact);
+PrintoutCoefficients('d',dxy_calc,dxy_exact)
+
+error.dxy = GetDistance('d',dxy_calc,dxy_exact);
 PrintToFile(m,n,error);
 
 
@@ -93,7 +84,9 @@ end
 
 
 function [] = PrintoutCoefficients(name,matrix_calc,matrix_exact)
-fprintf('----------------------------------------------------------------')
+% Print out coefficients
+
+LineBreakLarge();
 fprintf('\n')
 fprintf('Compare Exact Coefficients with Computed Coefficients of %s(x,y):',name)
 
@@ -121,9 +114,10 @@ end
 
 function []= PrintToFile(m,n,error)
 
+% Global settings
 global SETTINGS
 
-
+% File name
 fullFileName = 'Results_o_gcd.txt';
 
 
@@ -134,8 +128,6 @@ if exist('Results_o_gcd.txt', 'file')
         num2str(m),...
         num2str(n),...
         error.dxy,...
-        error.uxy,...
-        error.vxy,...
         SETTINGS.BOOL_ALPHA_THETA,...
         SETTINGS.EMIN);
     fclose(fileID);

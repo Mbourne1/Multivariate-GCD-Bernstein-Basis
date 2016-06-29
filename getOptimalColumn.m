@@ -57,6 +57,6 @@ end
 [~,opt_col] = min(log10(residuals_QR));
 
 % Print out optimal column for removal.
-fprintf('Optimal column for removal is given by %i \n',opt_col)
+fprintf([mfilename ' : ' sprintf('Optimal column for removal is : %i \n',opt_col)]);
 
 end

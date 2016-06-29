@@ -109,8 +109,9 @@ switch SETTINGS.BOOL_ALPHA_THETA
         
         PrintToFile(m1,m2,n1,n2,k1,k2,max_fww,min_fww,max_gww,min_gww,alpha,th1,th2,lambda,mu);
         
-        display(cond(BuildDTQ(fxy,gxy,k1,k2)));
-        display(cond(BuildDTQ(fww,alpha.*gww,k1,k2)));
+        fprintf([mfilename ' : ' sprintf('Condition S(f(x,y),g(x,y)) : %2.4f \n',cond(BuildDTQ(fxy,gxy,k1,k2)))]);
+        fprintf([mfilename ' : ' sprintf('Condition S(f(w),alpha.*g(w)) : %2.4f \n',cond(BuildDTQ(fww,alpha.*gww,k1,k2)))]);
+        
         
     case 'n'
         alpha = 1;

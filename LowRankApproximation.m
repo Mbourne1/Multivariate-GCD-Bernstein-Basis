@@ -34,7 +34,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         fxy_matrix = GetWithoutThetas(fww_matrix,th1,th2);
         gxy_matrix = GetWithoutThetas(gww_matrix,th1,th2) ./ alpha;
         
-        display('')
+        
         
     case 'None'
         % Dont Apply SNTLN improvements
