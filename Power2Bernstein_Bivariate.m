@@ -1,5 +1,8 @@
 function [fxy_Bb] = Power2Bernstein_Bivariate(fxy_matrix)
-
+% Given the coefficients of a bivariate polynomial f(x,y) in power basis,
+% return the coefficients of the same polynomial in Bernstein basis.
+%
+% > Power2Bernstein_Bivariate([1 1; 1 0])
 
 [m1,m2] = GetDegree(fxy_matrix);
 
@@ -11,7 +14,7 @@ fxy_Bb = A * fxy_matrix * B;
 for i = 0:1:m1
     for j = 0:1:m1
         if i >= j
-            A(i+1,j+1) = nchoosek(i,j) ./ nchoosek(m1,j)
+            A(i+1,j+1) = nchoosek(i,j) ./ nchoosek(m1,j);
         end
     end
 end
@@ -24,7 +27,7 @@ for i = 0:1:m2
     end
 end
 
-fxy_Bb = A* fxy_matrix * B'
+fxy_Bb = A* fxy_matrix * B';
 
 
 

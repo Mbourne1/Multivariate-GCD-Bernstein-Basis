@@ -3,27 +3,24 @@ function [ fxy_output,gxy_output,X_output] = ...
 % Obtain the low rank approximation by method of SNTLN (Structured
 % Non-Linear Total Least Norm) of the Sylvester matrix S(f,g).
 %
-%                             Inputs.
+% % Inputs.
 %
+% fxy_matrix : Coefficients of polynomial f, in standard bernstein basis.
 %
-% fxy_matrix :    Coefficients of polynomial f, in standard bernstein basis.
+% gxy_matrix : Coefficients of polynomial g, in standard bernstein basis.
 %
-% gxy_matrix :    Coefficients of polynomial g, in standard bernstein basis.
+% t1 : Degree of AGCD with respect to x.
 %
-% t1 :   Degree of AGCD with respect to x.
+% t2 : Degree of AGCD with respect to y.
 %
-% t2 :   Degree of AGCD with respect to y.
+% lambda : Geometric mean of entries of f(x,y)
 %
-% lambda : 
-%
-% mu :
+% mu : Geometric mean of entries of g(x,y)
 %
 % opt_col : Optimal column for removal from the sylvester matrix, such that col
 %           is the column which is most likely a linear combination of the others.
 %
-%
-%                           Outputs.
-%
+% % Outputs.
 %
 % fx_output :- Coefficients of fx on output, in standard bernstein basis,
 % including added structured perturbations.
@@ -31,13 +28,12 @@ function [ fxy_output,gxy_output,X_output] = ...
 % gx_output :- Coefficients of fx on output, in standard bernstein basis,
 % including added structured perturbations.
 %
-%
 % X_output :-
 %
 %
 
-% Global Variables
 
+% Global Variables
 global SETTINGS
 
 
@@ -132,7 +128,6 @@ binomials_f = GetWithBinomials(ones(m1+1,m2+1));
 
 % Get the binomials of f(x,y) as a vector.
 vBinomials_f = GetAsVector(binomials_f);
-
 
 % Build the matrix of binomials corresponding to polynomial g(x,y)
 binomials_g = GetWithBinomials(ones(n1+1,n2+1));

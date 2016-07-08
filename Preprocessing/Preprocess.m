@@ -46,7 +46,6 @@ gxy_n = gxy./mu;
 switch SETTINGS.BOOL_ALPHA_THETA
     case 'y'
         
-        
         % %
         % Get maximum and minimum entries of f and g in the unprocessed
         % form without normalization by geometric mean.
@@ -78,10 +77,6 @@ switch SETTINGS.BOOL_ALPHA_THETA
         % preprocessed form
         a_gww = alpha.*gww;
         
-        [max_mtrx_fww, min_mtrx_fww] = GetMaxMin(fww, n1-k1, n2-k2);
-        [max_mtrx_gww, min_mtrx_gww] = GetMaxMin(a_gww, m1-k1, m2-k2);
-        
-        
         switch SETTINGS.PLOT_GRAPHS
             case 'y'
                 
@@ -109,14 +104,15 @@ switch SETTINGS.BOOL_ALPHA_THETA
         
         PrintToFile(m1,m2,n1,n2,k1,k2,max_fww,min_fww,max_gww,min_gww,alpha,th1,th2,lambda,mu);
         
-        fprintf([mfilename ' : ' sprintf('Condition S(f(x,y),g(x,y)) : %2.4f \n',cond(BuildDTQ(fxy,gxy,k1,k2)))]);
-        fprintf([mfilename ' : ' sprintf('Condition S(f(w),alpha.*g(w)) : %2.4f \n',cond(BuildDTQ(fww,alpha.*gww,k1,k2)))]);
+        %fprintf([mfilename ' : ' sprintf('Condition S(f(x,y),g(x,y)) : %2.4f \n',cond(BuildDTQ(fxy,gxy,k1,k2)))]);
+        %fprintf([mfilename ' : ' sprintf('Condition S(f(w),alpha.*g(w)) : %2.4f \n',cond(BuildDTQ(fww,alpha.*gww,k1,k2)))]);
         
         
     case 'n'
         alpha = 1;
         th1 = 1;
         th2 = 1;
+        
     otherwise
         error('err')
 end

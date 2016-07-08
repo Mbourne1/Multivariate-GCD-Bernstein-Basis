@@ -36,7 +36,11 @@ function [dxy_calc] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_ra
 global SETTINGS
 SetGlobalVariables(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_method)
 
-addpath('Examples','Low Rank Approx');
+% Add subfolders
+addpath('Examples',...
+    'Formatting',...
+    'Low Rank Approx',...
+    'Preprocessing');
 
 
 % %
@@ -55,8 +59,6 @@ DegreeStructure()
 [fxy_matrix, ~] = Noise2(fxy_exact,emin,emax);
 [gxy_matrix, ~] = Noise2(gxy_exact,emin,emax);
 
-
-
 % Plot the surfaces of the two polynomials fxy and gxy
 
 if SETTINGS.PLOT_GRAPHS == 'y'
@@ -72,8 +74,6 @@ upper_limit = min(m,n);
     m,n,[lower_limit,upper_limit]);
 
 % % Results.
-
-
 PrintoutCoefficients('d',dxy_calc,dxy_exact)
 
 error.dxy = GetDistance('d',dxy_calc,dxy_exact);
@@ -100,13 +100,19 @@ display(matrix_exact)
 end
 
 function [dist] = GetDistance(name,matrix_calc,matrix_exact)
+% Given two matrices, get the distance between them.
 
+% Normalise coefficients 
 matrix_calc = normalise(matrix_calc);
 matrix_exact = normalise(matrix_exact);
 
-fprintf([mfilename sprintf('Analysis of Coefficients of %s(x,y) computed vs %s(x,y) exact: \n',name,name)])
-fprintf([mfilename sprintf('Distance between exact and calculated matrix: \n')])
+% Get Distance between f(x,y) computed and f(x,y) exact.
 dist = (norm(matrix_exact,'fro') - norm(matrix_calc,'fro') )./ norm(matrix_exact,'fro');
+
+% Printout
+fprintf([mfilename ' : ' sprintf('Analysis of Coefficients of %s(x,y) computed vs %s(x,y) exact: \n',name,name)])
+fprintf([mfilename ' : ' sprintf('Distance between exact and calculated matrix: %2.4e \n',dist)])
+
 
 
 end

@@ -17,7 +17,7 @@ function [fxy,gxy,dxy,uxy, vxy,t,t1,t2] = o_gcd_mymethod(fxy,gxy,...
 
 % %
 % % Get the degree of the GCD d(x,y)
-degree_calc_method = 'respective';
+DEGREE_CALC_METHOD = 'Respective';
 
 input_fxy = fxy;
 input_gxy = gxy;
@@ -58,10 +58,8 @@ opt_col = GetOptimalColumn(fww_matrix_n,a_gww_matrix_n,t1,t2);
 % % Get Quotients u(x,y) and v(x,y)
 % Calc method is either total or respective
 
-
-
-switch degree_calc_method
-    case 'respective'
+switch DEGREE_CALC_METHOD
+    case 'Respective'
         
         fww = GetWithThetas(fxy_matrix_n,th1,th2);
         gww = GetWithThetas(gxy_matrix_n,th1,th2);
@@ -73,7 +71,7 @@ switch degree_calc_method
         uxy = GetWithoutThetas(uww,th1,th2);
         vxy = GetWithoutThetas(vww,th1,th2);
         
-    case 'total'
+    case 'Total'
         [uxy, vxy] ...
             = GetQuotients_total(fww_matrix_n, alpha.*gww_matrix_n,m,n,t);
     otherwise
@@ -85,11 +83,11 @@ end
 
 % % Get the GCD
 % % Get d(x,y) from the polynomials u(x,y) and v(x,y).
-switch degree_calc_method
-    case 'respective'
+switch DEGREE_CALC_METHOD
+    case 'Respective'
         dww_calc_matrix = GetGCD_Coefficients(uww,vww,...
             fww,alpha.*gww,t1,t2);
-    case 'total'
+    case 'Total'
         dww_calc_matrix = GetGCD_Coefficients_total(uww,vww,...
             fww_matrix,gww_matrix,m,n,t);
     otherwise
@@ -110,23 +108,31 @@ gw_preproc = GetWithThetas(input_gxy,th1,th2);
 % Build the 0th subresultants
 S_preproc = BuildDTQ(fw_preproc,alpha.*gw_preproc,0,0);
 
+% Build the Sylvester matrix with preprocessed coefficients
 fw_lr = GetWithThetas(fxy,th1,th2);
 gw_lr = GetWithThetas(gxy,th1,th2);
 S_lowrank = BuildDTQ(fw_lr,alpha.*gw_lr,0,0);
 
+% Get singular values of S(f,g), S(f,g) and S(f,g)
 vSingularValues_unproc = svd(S_unproc);
 vSingularValues_preproc = svd(S_preproc);
 vSingularValues_lowrank = svd(S_lowrank);
 
-figure_name = sprintf('%s - Sylvester Matrices',mfilename);
-figure('name',figure_name)
-hold on
-plot(log10(vSingularValues_unproc),'DisplayName','S(f(x,y),g(x,y))')
-plot(log10(vSingularValues_preproc),'DisplayName','S(f(\omega,\omega),g(\omega,\omega))')
-plot(log10(vSingularValues_lowrank),'DisplayName','Low Rank Approx')
-legend(gca,'show');
-hold off
-
+global SETTINGS
+switch SETTINGS.PLOT_GRAPHS
+    case 'y'
+        figure_name = sprintf('%s - Sylvester Matrices',mfilename);
+        figure('name',figure_name)
+        hold on
+        plot(log10(vSingularValues_unproc),'DisplayName','S(f(x,y),g(x,y))')
+        plot(log10(vSingularValues_preproc),'DisplayName','S(f(\omega,\omega),g(\omega,\omega))')
+        plot(log10(vSingularValues_lowrank),'DisplayName','Low Rank Approx')
+        legend(gca,'show');
+        hold off
+    case 'n'
+    otherwise
+        error('err')
+end
 end
 
 

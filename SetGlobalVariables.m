@@ -35,7 +35,7 @@ SETTINGS.LOW_RANK_APPROXIMATION_METHOD = low_rank_approx_method;
 %       y - plot graphs
 %       n - exclude plotting
 
-SETTINGS.PLOT_GRAPHS = 'n';
+SETTINGS.PLOT_GRAPHS = 'y';
 
 % seed - SEED Number for noise generation
 SETTINGS.SEED = 1024;

@@ -3,7 +3,7 @@ function [t1,t2,lambda,mu,alpha,th1,th2] = GetGCDDegree_Relative(fxy,gxy,...
 % Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two
 % polynomials f(x,y) and g(x,y)
 %
-%   Inputs.
+% % Inputs.
 %
 %   fxy : Coefficient matrix of polynomial f(x,y)
 %
@@ -14,6 +14,12 @@ function [t1,t2,lambda,mu,alpha,th1,th2] = GetGCDDegree_Relative(fxy,gxy,...
 %   n : Total degree of polynomial g(x,y)
 %
 %   t : Total degree of GCD d(x,y)
+%
+% % Outputs 
+%
+%   t1 : Degree of d(x,y) with respect to x
+% 
+%   t2 : Degree of d(x,y) with respect to y
 %
 %   lambda : Geometric mean of entries in first partition of Syvlester
 %   matrix

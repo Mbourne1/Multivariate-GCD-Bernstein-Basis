@@ -1,7 +1,40 @@
 function [fxy_matrix,gxy_matrix,alpha,th1,th2] = LowRankApproximation...
     (fxy_matrix_n,gxy_matrix_n,alpha,th1,th2,t1,t2,opt_col)
+% Compute low rank approximation of the Sylvester matrix S(f,g) either
+% SNTLN or STLN.
+%
+% % Inputs.
+%
+% fxy_matrix_n : Coefficients of polynomial f(x,y)
+%
+% gxy_matrix_n : Coefficients of polynomial g(x,y)
+%
+% alpha : \alpha
+%
+% th1 : \theta_{1}
+%
+% th2 : \theta_{2}
+%
+% t1 : Degree of d(x,y) with respect to x
+% 
+% t2 : Degree of d(x,y) with respect to y
+%
+% opt_col : Index of optimal column to be removed from S(f,g)
+%
+% % Outputs
+%
+% fxy_matrix : Coefficients of f(x,y) with perturbations
+%
+% gxy_matrix : Coefficients of g(x,y) with perturbations
+%
+% alpha : Refined \alpha
+%
+% th1 : Refined \theta_{1}
+%
+% th2 : Refined \theta_{2}
 
 
+% Initialise global settings
 global SETTINGS
 
 switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
