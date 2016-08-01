@@ -54,6 +54,7 @@ opt_col = GetOptimalColumn(fww_matrix_n,a_gww_matrix_n,t1,t2);
 
 % % Get Quotients u(x,y) and v(x,y)
 % Calc method is either total or respective
+global SETTINGS
 
 switch SETTINGS.CALC_METHOD
     case 'Relative'
@@ -116,7 +117,7 @@ vSingularValues_unproc = svd(S_unproc);
 vSingularValues_preproc = svd(S_preproc);
 vSingularValues_lowrank = svd(S_lowrank);
 
-global SETTINGS
+
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
         figure_name = sprintf('%s - Sylvester Matrices',mfilename);
