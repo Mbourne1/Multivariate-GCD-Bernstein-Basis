@@ -40,7 +40,8 @@ SetGlobalVariables(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_meth
 addpath('Examples',...
     'Formatting',...
     'Low Rank Approx',...
-    'Preprocessing');
+    'Preprocessing',...
+    'Results');
 
 
 % %
@@ -73,10 +74,18 @@ upper_limit = min(m,n);
 [fxy_calc,gxy_calc,dxy_calc,uxy_calc, vxy_calc,t,t1,t2] = o_gcd_mymethod(fxy_matrix,gxy_matrix,...
     m,n,[lower_limit,upper_limit]);
 
-% % Results.
+% %
+% %
+% %
+% Results.
+
+% Print coefficients of computed d(x,y)
 PrintoutCoefficients('d',dxy_calc,dxy_exact)
 
+% Get error d(x,y)
 error.dxy = GetDistance('d',dxy_calc,dxy_exact);
+
+% Output to file
 PrintToFile(m,n,error);
 
 
@@ -124,11 +133,11 @@ function []= PrintToFile(m,n,error)
 global SETTINGS
 
 % File name
-fullFileName = 'Results_o_gcd.txt';
+fullFileName = 'Results/Results_o_gcd.txt';
 
 
-if exist('Results_o_gcd.txt', 'file')
-    fileID = fopen('Results_o_gcd.txt','a');
+if exist('Results/Results_o_gcd.txt', 'file')
+    fileID = fopen('Results/Results_o_gcd.txt','a');
     fprintf(fileID,'%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s \n',...
         SETTINGS.EX_NUM,...
         num2str(m),...

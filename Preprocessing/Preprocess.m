@@ -124,11 +124,11 @@ function [] = PrintToFile(m1,m2,n1,n2,k1,k2,max_f,min_f,max_g,min_g,alpha,th1,th
 global SETTINGS
 
 
-fullFileName = 'Results_Preprocessing.txt';
+fullFileName = 'Results/Results_Preprocessing.txt';
 
 
-if exist('Results_Preprocessing.txt', 'file')
-    fileID = fopen('Results_Preprocessing.txt','a');
+if exist('Results/Results_Preprocessing.txt', 'file')
+    fileID = fopen('Results/Results_Preprocessing.txt','a');
     fprintf(...
         fileID,...
         '%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s,  \t %s \n',...

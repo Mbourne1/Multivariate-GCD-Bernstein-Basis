@@ -10,6 +10,12 @@ function [] = SetGlobalVariables(ex_num,emin,mean_method,bool_alpha_theta,low_ra
 global SETTINGS
 SETTINGS.BOOL_Q = 'y';
 
+%
+% Total
+% Relative
+% Both
+%
+SETTINGS.CALC_METHOD = 'Relative';
 
 SETTINGS.MEAN_METHOD = mean_method;
 

@@ -15,9 +15,6 @@ function [fxy,gxy,dxy,uxy, vxy,t,t1,t2] = o_gcd_mymethod(fxy,gxy,...
 %
 % n : Total degree of polynomial g(x,y).
 
-% %
-% % Get the degree of the GCD d(x,y)
-DEGREE_CALC_METHOD = 'Respective';
 
 input_fxy = fxy;
 input_gxy = gxy;
@@ -33,7 +30,7 @@ t = t_new;
 fprintf([mfilename ' : ' sprintf('Degree of GCD : %i \n',t)])
 
 
-% Get degree t1 and t2
+% Get degree t_{1} and t_{2}
 [t1,t2,lambda,mu,alpha, th1,th2] = GetGCDDegree_Relative(fxy,gxy,m,n,t);
 
 fprintf([mfilename ' : ' sprintf('Degree of GCD : t1 = %i, t2 = %i \n',t1,t2)])
@@ -58,8 +55,8 @@ opt_col = GetOptimalColumn(fww_matrix_n,a_gww_matrix_n,t1,t2);
 % % Get Quotients u(x,y) and v(x,y)
 % Calc method is either total or respective
 
-switch DEGREE_CALC_METHOD
-    case 'Respective'
+switch SETTINGS.CALC_METHOD
+    case 'Relative'
         
         fww = GetWithThetas(fxy_matrix_n,th1,th2);
         gww = GetWithThetas(gxy_matrix_n,th1,th2);
@@ -75,6 +72,7 @@ switch DEGREE_CALC_METHOD
         [uxy, vxy] ...
             = GetQuotients_total(fww_matrix_n, alpha.*gww_matrix_n,m,n,t);
     otherwise
+        error([mfilename ':' 'Error degree Calc method is either (Relative) or (Total)']); 
         
 end
 
@@ -83,8 +81,8 @@ end
 
 % % Get the GCD
 % % Get d(x,y) from the polynomials u(x,y) and v(x,y).
-switch DEGREE_CALC_METHOD
-    case 'Respective'
+switch SETTINGS.CALC_METHOD
+    case 'Relative'
         dww_calc_matrix = GetGCD_Coefficients(uww,vww,...
             fww,alpha.*gww,t1,t2);
     case 'Total'
