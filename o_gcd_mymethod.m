@@ -47,8 +47,8 @@ opt_col = GetOptimalColumn(fww_matrix_n,a_gww_matrix_n,t1,t2);
 
 
 %
-[fxy,gxy,alpha,th1,th2] = LowRankApproximation...
-    (fxy_matrix_n,gxy_matrix_n,alpha,th1,th2,t1,t2,opt_col);
+%[fxy,gxy,alpha,th1,th2] = LowRankApproximation...
+%    (fxy_matrix_n,gxy_matrix_n,alpha,th1,th2,t1,t2,opt_col);
 
 
 
@@ -64,14 +64,14 @@ switch SETTINGS.CALC_METHOD
         a_gww = alpha.* gww;
         
         [uww, vww] ...
-            = GetQuotients(fww, a_gww,t1,t2);
+            = GetCofactors(fww, a_gww,t1,t2);
         
         uxy = GetWithoutThetas(uww,th1,th2);
         vxy = GetWithoutThetas(vww,th1,th2);
         
     case 'Total'
         [uxy, vxy] ...
-            = GetQuotients_total(fww_matrix_n, alpha.*gww_matrix_n,m,n,t);
+            = GetCofactors_total(fww_matrix_n, alpha.*gww_matrix_n,m,n,t);
     otherwise
         error([mfilename ':' 'Error degree Calc method is either (Relative) or (Total)']); 
         

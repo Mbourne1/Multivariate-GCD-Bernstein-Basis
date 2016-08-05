@@ -40,6 +40,8 @@ SetGlobalVariables(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_meth
 addpath(...
     'Examples',...
     'Formatting',...
+    'GetCofactors',...
+    'GetGCDDegree',...
     'Low Rank Approx',...
     'Plotting',...
     'Preprocessing',...
@@ -51,24 +53,23 @@ addpath(...
 
 [fxy_exact, gxy_exact,dxy_exact,m,n,t_exact] = Examples_GCD(ex_num);
 
-DegreeStructure()
-
-
 % %
 % Add Noise to the coefficients
-
 
 % Add noise to the coefficients of f and g
 [fxy_matrix, ~] = Noise2(fxy_exact,emin,emax);
 [gxy_matrix, ~] = Noise2(gxy_exact,emin,emax);
 
+% %
 % Plot the surfaces of the two polynomials fxy and gxy
 
 if SETTINGS.PLOT_GRAPHS == 'y'
     plot_fxy_gxy(fxy_matrix,gxy_matrix);
 end
 
-% % Calculate GCD
+% %
+% %
+% Calculate GCD
 lower_limit = 1;
 upper_limit = min(m,n);
 

@@ -1,5 +1,5 @@
 function u_roots = GetQuotient(f_roots,d_roots)
-% Fet the roots of quotient polynomial u(x) given the roots of polynomial 
+% Get the roots of quotient polynomial u(x) given the roots of polynomial 
 % f(x), and the roots of polynomial d(x), where d(x) is the GCD of f(x) and
 % g(x) and where f(x)/u(x) = d(x)
 

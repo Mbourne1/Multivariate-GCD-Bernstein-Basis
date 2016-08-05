@@ -27,7 +27,8 @@ min_mtrx = zeros(m1+1,m2+1);
 
 for i1=0:1:m1
     for i2 = 0:1:m2
-        % This gives the i1,i2 coefficient of f
+        
+        % This gives the a_{i1,i2} coefficient of f
         [maximum,minimum] = GetMaxMin2(fxy(i1+1,i2+1),i1,i2,m1,m2,n1_k1,n2_k2);
         
         max_mtrx(i1+1,i2+1) = maximum;
@@ -41,7 +42,9 @@ end
 end
 
 function [maximum,minimum] = GetMaxMin2(a_i1i2,i1,i2,m1,m2,n1_k1,n2_k2)
-% Note this function assumes the inclusion of Q in the coefficient matrix.
+% 
+%
+%
 
 global SETTINGS
 

@@ -13,32 +13,45 @@ syms x y;
 switch ex_num
     case '1'
         
-        
-        f = (x^2 + y^2 + 1)^2 * (x+1) * (y-1) * (y-3);
-        g = (x^2 + y^2 + 1)^2 * (x+1) * (y-2);
-        d = (x^2 + y^2 + 1)^2 * (x+1);
+        d = (x^2 + y^2 + 0.95)^2 * (x-0.8624)^3;
+        u = (x + 0.89547)^2;
+        v = (y + 0.72531)^3;
+        f = d*u;
+        g = d*v;
         
     case '2'
         
-        f = (x+y+1) * (x+2) * (y-1);
-        g = (x+y+1) * (x+1) * (y-2);
-        d = (x+y+1);
+        d = (x + y - 0.29574)^3 * (x-2.7246);
+        u = (x+0.57432)^3 * (y-1.23145)^3;
+        v = (y-0.547321)^2 * (x-0.7891011)^2;
+        f = d*u;
+        g = d*v;
+        
     case '3'
-        f = (x + 1) * (x+y+1) * (y-0.2);
-        g = (x + 1) * (x+y+1) * (y-0.4) * (x-0.3);
-        d = (x + 1) * (x+y+1);
+        
+        d = (x + 2*y +0.5678652)^3;
+        u = (x-0.5678914)^2;
+        v = (x-0.1234565)^2;
+        f = u*d;
+        g = v*d;
+        
     case '4'
-        f = (x + 1) * (x+y+1)^2 * (y-0.2);
-        g = (x + 1) * (x+y+1)^2 * (y-0.4) * (x-0.3);
-        d = (x + 1) * (x+y+1)^2;
+        
+        d = (x + 2*y +0.5678652)^5;
+        u = (x-0.5678914)^2;
+        v = (x-0.1234565)^2;
+        f = u*d;
+        g = v*d;
+        
+        
     otherwise
         error('err')
         
 end
 
 % Display symbolic polynomials f and g
-display f
-display g
+display(f)
+display(g)
 
 % Get degree of f(x,y), g(x,y) and d(x,y)
 m = double(feval(symengine, 'degree', f));

@@ -59,42 +59,43 @@ PartFour = ...
     ];
 
 % Now build the vector b
-lambda_vec = GetAsVector(max_mtrx_f);
-mu_vec = GetAsVector(max_mtrx_g);
-rho_vec = GetAsVector(min_mtrx_f);
-tau_vec = GetAsVector(min_mtrx_g);
+lambda_vec = GetAsVector(abs(max_mtrx_f));
+mu_vec = GetAsVector(abs(max_mtrx_g));
+rho_vec = GetAsVector(abs(min_mtrx_f));
+tau_vec = GetAsVector(abs(min_mtrx_g));
 
 % % Find any zeros in the lambda vector
-indeces = find(~lambda_vec);
+indeces = find(lambda_vec==0);
 PartOne(indeces,:) = [];
 lambda_vec(indeces,:) = [];
 
 % Find any zeros in the mu vector
-indeces = find(~mu_vec);
+indeces = find(mu_vec==0);
 PartTwo(indeces,:) = [];
 mu_vec(indeces,:) = [];
 
 % Find any zeros in the rho vector
-indeces = find(~rho_vec);
+indeces = find(rho_vec==0);
 PartThree(indeces,:) = [];
 rho_vec(indeces,:) = [];
 
 % Find any zeros in the tau vector
-indeces = find(~tau_vec);
+indeces = find(tau_vec==0);
 PartFour(indeces,:) = [];
 tau_vec(indeces,:) = [];
 
 
-b = [log10(lambda_vec); log10(mu_vec); -log10(rho_vec);-log10(tau_vec)]';
+b = [log10(lambda_vec); log10(mu_vec); -log10(rho_vec);-log10(tau_vec)];
 
 A = [PartOne; PartTwo; PartThree; PartFour];
 
 x = linprog(f,-A,-b);
 
 try
-    alpha  = 10^x(5);
+    
     theta1 = 10^x(3);
     theta2 = 10^x(4);
+    alpha  = 10^x(5);
 catch
     alpha = 1;
     theta1 = 1;

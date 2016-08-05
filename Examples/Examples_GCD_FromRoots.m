@@ -1,6 +1,23 @@
-
 function [fxy,gxy,dxy,m,n,t] = Examples_GCD_FromRoots(ex_num)
-
+% Get a GCD example given an example number
+%
+% % Inputs.
+%
+% ex_num : Example Number as a string
+%
+% % Outputs.
+%
+% fxy : Coefficients of polynomial f(x,y)
+%
+% gxy : Coefficients of polynomial g(x,y)
+%
+% dxy : Coefficients of polynomial d(x,y)
+%
+% m : Total degree of f(x,y)
+%
+% n : Total degree of g(x,y)
+%
+% t : Total degree of d(x,y)
 
 f_roots_x = [];
 f_roots_y = [];
