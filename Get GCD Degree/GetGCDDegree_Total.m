@@ -1,4 +1,4 @@
-function [t, th1, th2] = GetGCDDegree_Total2(fxy_matrix,gxy_matrix,m,n, limits_t)
+function [t, th1, th2] = GetGCDDegree_Total(fxy_matrix,gxy_matrix,m,n, limits_t)
 % Get the total degree t of the two input polynomials f(x,y) and g(x,y)
 
 % Get degrees of polynomial f(x,y)
@@ -7,11 +7,21 @@ function [t, th1, th2] = GetGCDDegree_Total2(fxy_matrix,gxy_matrix,m,n, limits_t
 % Get degrees of polynomial g(x,y)
 [n1,n2] = GetDegree(gxy_matrix);
 
+bool_method = '1';
+switch bool_method 
+    case '1'
+        m = max(m1,m2);
+        n = max(n1,n2);
+        upper_lim = min(m,n);
+    case '2'
+        %m = m;
+        %n = n;
+        upper_lim = limits_t(2);
+end
+
 % Set the lower limit for the value of t
 lower_lim = limits_t(1);
 
-% Set the upper limit for the value of t
-upper_lim = limits_t(2);
 
 % Set the number of subresultants to be built
 n_subresultants = upper_lim - lower_lim +1;
@@ -97,7 +107,7 @@ if min(m,n) == 1
     
     
 else
-    PlotGetGCDDegreeGraphs()
+    PlotGraphs_TotalDegree2()
     t = GetGCDDegree_MultipleSubresultants(vMinimumSingularValues,[lower_lim,upper_lim]);
     
     
@@ -116,7 +126,7 @@ th1 = vTh1(t - lower_lim + 1);
 th2 = vTh2(t - lower_lim + 1);
 
 
-
+fprintf('%s : Total Degree of GCD : %i \n',mfilename,t)
 
 
 end

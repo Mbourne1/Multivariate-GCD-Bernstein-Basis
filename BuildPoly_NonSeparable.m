@@ -1,4 +1,4 @@
-function [fxy_matrix] = BuildPoly_NonSeparable(roots_f)
+function [fxy_matrix] = BuildPoly_NonSeparable(factors_fxy_array)
 % Given a set of roots for f build the polynomial so that we obtain a set
 % of coefficients for the polynomial in the Bernstein basis.
 % 
@@ -12,20 +12,20 @@ function [fxy_matrix] = BuildPoly_NonSeparable(roots_f)
 
 
 % get the number of roots
-[nEntries,~] = size(roots_f);
-num_roots = nEntries;
+[nFactors,~] = size(factors_fxy_array);
+nFactors = nFactors;
 
 % Initialise the product
-prod = roots_f{1,1};
+temp_prod = factors_fxy_array{1,1};
 
 % For every other root 2,...,
-for i = 2:1:num_roots
+for i = 2:1:nFactors
    % Multiply product by the new root
-   prod = Multiply_Bivariate(prod,roots_f{i,1}) ;
+   temp_prod = Multiply_Bivariate(temp_prod,factors_fxy_array{i,1}) ;
 end
 
 % Output the product of all roots : f(x,y) 
-fxy_matrix = prod;
+fxy_matrix = temp_prod;
 
 
 end

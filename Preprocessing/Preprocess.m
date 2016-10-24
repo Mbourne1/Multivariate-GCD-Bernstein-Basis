@@ -80,28 +80,31 @@ switch SETTINGS.BOOL_ALPHA_THETA
         switch SETTINGS.PLOT_GRAPHS
             case 'y'
                 
-                figure('name','Preproc')
-                
-                subplot(1,2,1)
-                hold on
-                nCoefficients_fxy = (m1+1)*(m2+1);
-                nCoefficients_gxy = (n1+1)*(n2+1);
-                
-                xvals_fxy = 1:1:nCoefficients_fxy;
-                xvals_gxy = 1:1:nCoefficients_gxy;
-                
-                plot(xvals_fxy,log10(GetAsVector(fxy)),'DisplayName','f(x,y)');
-                plot(xvals_fxy,log10(GetAsVector(fww)),'DisplayName','f(\omega,\omega)');
-                legend(gca,'show');
-                hold off
-                
-                subplot(1,2,2)
-                hold on
-                plot(xvals_gxy,log10(GetAsVector(gxy)),'DisplayName','g(x,y)');
-                plot(xvals_gxy,log10(GetAsVector(a_gww)),'DisplayName','\alpha g(\omega,\omega)');
-                legend(gca,'show');
-                hold off
+%                 figure('name','Preproc')
+%                 
+%                 subplot(1,2,1)
+%                 hold on
+%                 nCoefficients_fxy = (m1+1)*(m2+1);
+%                 nCoefficients_gxy = (n1+1)*(n2+1);
+%                 
+%                 xvals_fxy = 1:1:nCoefficients_fxy;
+%                 xvals_gxy = 1:1:nCoefficients_gxy;
+%                 
+%                 plot(xvals_fxy,log10(GetAsVector(fxy)),'DisplayName','f(x,y)');
+%                 plot(xvals_fxy,log10(GetAsVector(fww)),'DisplayName','f(\omega,\omega)');
+%                 legend(gca,'show');
+%                 hold off
+%                 
+%                 subplot(1,2,2)
+%                 hold on
+%                 plot(xvals_gxy,log10(GetAsVector(gxy)),'DisplayName','g(x,y)');
+%                 plot(xvals_gxy,log10(GetAsVector(a_gww)),'DisplayName','\alpha g(\omega,\omega)');
+%                 legend(gca,'show');
+%                 hold off
             case 'n'
+                
+            otherwise 
+                error('err');
         end
         
         
@@ -137,7 +140,8 @@ if exist('Results/Results_Preprocessing.txt', 'file')
     fileID = fopen('Results/Results_Preprocessing.txt','a');
     fprintf(...
         fileID,...
-        '%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s,  \t %s \n',...
+        '%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s,  \t %s \n',...
+        datetime(),...
         SETTINGS.EX_NUM,...
         num2str(m1),...
         num2str(m2),...

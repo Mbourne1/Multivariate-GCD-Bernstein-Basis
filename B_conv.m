@@ -14,7 +14,8 @@ function [t] = B_conv(rooot,mult)
 % Outputs:
 %
 %
-% t : Vector which stores the result from this convolution.
+% t : Vector which stores the coefficients of the polynomial obtained from
+% convolution of the factor m times.
 
 
 

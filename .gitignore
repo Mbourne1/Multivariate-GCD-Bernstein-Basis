@@ -1,3 +1,10 @@
+# My Custom Settings
+*.fig
+*.eps
+*.png
+*.jpg
+*.txt
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

@@ -1,14 +1,17 @@
 function H1 = BuildH1(m1,m2)
 % BuildH1(m1,m2)
 %
-% Build the diagonal matrix H1 consisting of binomials coefficients
+% Build the diagonal matrix H1 consisting of binomials coefficients,
+% Similar to function BuildD(). Used in computing d in the matrix vector 
+% problem H*[C(u);C(v)]*G *d = [f;g] 
 %
 %                               Inputs.
 %
 % m1 :  Degree of polynomial f with respect to x
 %
 % m2 :  Degree of polynomial f with respect to y
-%
+
+
 
 % Get Matrix of binomial coefficients
 Binom_matrix = GetWithBinomials(ones(m1+1,m2+1));

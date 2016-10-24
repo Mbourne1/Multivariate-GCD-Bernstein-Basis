@@ -1,4 +1,4 @@
-function [fxy_Bb] = Power2Bernstein_Bivariate(fxy_matrix)
+function [fxy_Bb] = PowerToBernstein_Bivariate(fxy_matrix)
 % Given the coefficients of a bivariate polynomial f(x,y) in power basis,
 % return the coefficients of the same polynomial in Bernstein basis.
 %

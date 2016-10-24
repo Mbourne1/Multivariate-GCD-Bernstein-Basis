@@ -86,7 +86,7 @@ if min(m,n) == 1
     t = GetGCDDegree_OneSubresultant(vSingularValues);
 else
     t = GetGCDDegree_MultipleSubresultants(vMinimumSingularValues,[lower_lim, upper_lim]);
-    PlotGraphs() 
+    PlotGraphs_TotalDegree() 
 end
 
 if t == 0

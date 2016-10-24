@@ -1,5 +1,4 @@
-function [t1,t2,lambda,mu,alpha,th1,th2] = GetGCDDegree_Relative(fxy,gxy,...
-    m,n,t)
+function [t1,t2,lambda,mu,alpha,th1,th2] = GetGCDDegree_Relative(fxy,gxy)
 % Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two
 % polynomials f(x,y) and g(x,y)
 %
@@ -8,12 +7,6 @@ function [t1,t2,lambda,mu,alpha,th1,th2] = GetGCDDegree_Relative(fxy,gxy,...
 %   fxy : Coefficient matrix of polynomial f(x,y)
 %
 %   gxy : Coefficient matrix of polynomial g(x,y)
-%
-%   m : Total degree of polynomial f(x,y)
-%
-%   n : Total degree of polynomial g(x,y)
-%
-%   t : Total degree of GCD d(x,y)
 %
 % % Outputs 
 %
@@ -44,7 +37,7 @@ global SETTINGS
 [n1,n2] = GetDegree(gxy);
 
 % Get all k1 k2 pairs
-k1k2Pairs = GetPairs(m,m1,m2,n,n1,n2,t);
+k1k2Pairs = GetPairs_All(m1,m2,n1,n2);
 
 % If only one entry in matrix of possible (k1,k2) pairs exist
 % then (t1,t2) = (k1,k2)
@@ -123,9 +116,16 @@ max_val = max(sumk1k2);
 % Get the number of possible sum values.
 nValues = max_val - min_val + 1;
 
+% Initialise a vector of k1
 v_k1 = zeros(nValues,1);
+
+% Initialise a vector of k2
 v_k2 = zeros(nValues,1);
+
+% Initialise a vector to store minimum singular values
 vMinimumSingularValues = zeros(nValues,1);
+
+
 vAlpha = zeros(nValues,1);
 vTheta1 = zeros(nValues,1);
 vTheta2 = zeros(nValues,1);

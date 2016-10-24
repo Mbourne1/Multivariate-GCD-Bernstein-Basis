@@ -21,17 +21,14 @@ input_gxy = gxy;
 
 % Get Degree by first finding the total degree, then obtain t1 and t2
 
-% Get total degreee
-%[t_old, ~, ~] = GetGCDDegree_Total(fxy_matrix, gxy_matrix,m,n);
-[t_new, ~, ~] = GetGCDDegree_Total2(fxy, gxy,m,n, t_limits);
+% Get total degreee of the GCD
+[t, ~, ~] = GetGCDDegree_Total(fxy, gxy, m, n,t_limits);
 
-
-t = t_new;
 fprintf([mfilename ' : ' sprintf('Degree of GCD : %i \n',t)])
 
 
 % Get degree t_{1} and t_{2}
-[t1,t2,lambda,mu,alpha, th1,th2] = GetGCDDegree_Relative(fxy,gxy,m,n,t);
+[t1,t2,lambda,mu,alpha, th1,th2] = GetGCDDegree_Relative(fxy,gxy);
 
 fprintf([mfilename ' : ' sprintf('Degree of GCD : t1 = %i, t2 = %i \n',t1,t2)])
 

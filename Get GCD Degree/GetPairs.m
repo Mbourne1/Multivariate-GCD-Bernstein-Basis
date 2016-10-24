@@ -1,4 +1,8 @@
-function [t1t2_Pairs] = GetPairs(m,m1,m2,n,n1,n2,t)
+function [t1t2_Pairs] = GetPairs(m,m1,m2,n,n1,n2)
+%
+%
+%
+
 
 method = 'All';
 

@@ -37,10 +37,14 @@ global SETTINGS
 SetGlobalVariables(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_method)
 
 % Add subfolders
+restoredefaultpath
+
 addpath(...
+    'BasisConversion',...
     'Examples',...
     'Formatting',...
     'GetCofactors',...
+    'GetGCDCoefficients',...
     'GetGCDDegree',...
     'Low Rank Approx',...
     'Plotting',...
@@ -51,7 +55,17 @@ addpath(...
 % %
 % Get Example
 
-[fxy_exact, gxy_exact,dxy_exact,m,n,t_exact] = Examples_GCD(ex_num);
+[fxy_exact, gxy_exact,dxy_exact,uxy_exact,vxy_exact,m,n,t_exact] = Examples_GCD(ex_num);
+
+[m1,m2] = GetDegree(fxy_exact);
+[n1,n2] = GetDegree(gxy_exact);
+%m = m1+m2;
+%n = n1+n2;
+
+[t1,t2] = GetDegree(dxy_exact);
+fprintf([mfilename ' : ' sprintf('Total Degree of GCD : %i \n',t_exact)]);
+fprintf([mfilename ' : ' sprintf('Deg_x of GCD : %i \n',t1)]);
+fprintf([mfilename ' : ' sprintf('Deg_y of GCD : %i \n',t2)]);
 
 % %
 % Add Noise to the coefficients
@@ -64,7 +78,7 @@ addpath(...
 % Plot the surfaces of the two polynomials fxy and gxy
 
 if SETTINGS.PLOT_GRAPHS == 'y'
-    plot_fxy_gxy(fxy_matrix,gxy_matrix);
+%    plot_fxy_gxy(fxy_matrix,gxy_matrix);
 end
 
 % %
@@ -74,7 +88,7 @@ lower_limit = 1;
 upper_limit = min(m,n);
 
 % Calculate the gcd, and quotient polynomials of f(x,y) and g(x,y)
-[fxy_calc,gxy_calc,dxy_calc,uxy_calc, vxy_calc,t,t1,t2] = o_gcd_mymethod(fxy_matrix,gxy_matrix,...
+[fxy_calc,gxy_calc,dxy_calc,uxy_calc, vxy_calc,t1,t2] = o_gcd_mymethod(fxy_matrix,gxy_matrix,...
     m,n,[lower_limit,upper_limit]);
 
 % %
@@ -83,10 +97,12 @@ upper_limit = min(m,n);
 % Results.
 
 % Print coefficients of computed d(x,y)
-PrintoutCoefficients('d',dxy_calc,dxy_exact)
+%PrintoutCoefficients('d',dxy_calc,dxy_exact)
 
 % Get error d(x,y)
 error.dxy = GetDistance('d',dxy_calc,dxy_exact);
+error.uxy = GetDistance('u',uxy_calc,uxy_exact);
+error_vxy = GetDistance('v',vxy_calc,vxy_exact);
 
 % Output to file
 PrintToFile(m,n,error);
@@ -142,11 +158,13 @@ fullFileName = 'Results/Results_o_gcd.txt';
 if exist('Results/Results_o_gcd.txt', 'file')
     fileID = fopen('Results/Results_o_gcd.txt','a');
     fprintf(fileID,'%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s \n',...
+        datetime(),...
         SETTINGS.EX_NUM,...
         num2str(m),...
         num2str(n),...
         error.dxy,...
         SETTINGS.BOOL_ALPHA_THETA,...
+        SETTINGS.MEAN_METHOD,...
         SETTINGS.EMIN);
     fclose(fileID);
 else

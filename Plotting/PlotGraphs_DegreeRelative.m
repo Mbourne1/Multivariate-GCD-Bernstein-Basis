@@ -10,7 +10,7 @@ switch SETTINGS.PLOT_GRAPHS
         title('Minimum Singular Values in S_{t_{1},t_{2}}')
         xlabel('t_{1}')
         ylabel('t_{2}')
-        scatter3(data(:,1),data(:,2),data(:,4),'filled')
+        scatter3(data(:,1),data(:,2),log10(data(:,4)),'filled')
         grid('on')
         hold off
         
