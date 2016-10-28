@@ -1,5 +1,5 @@
 
-function [arr_factors] = GetFactors(f)
+function [arr_factors] = GetFactors(root_mult_arr)
 
 % Given the set of factors and multiplicities, get an array of the factors
 % where each factor is repeated m times.
@@ -7,18 +7,20 @@ function [arr_factors] = GetFactors(f)
 arr_factors = {};
 
 % Get number of unique factors
-nUniqueFactors = size(f,1);
+nUniqueFactors = size(root_mult_arr,1);
+
+
 
 % for each row
 for i = 1:1:nUniqueFactors
     
     % Get the symbolic factor
-    sym_factor = f(i,1);
+    sym_factor = root_mult_arr(i,1);
     
     % Get the multiplicity of the factor
-    mult = f(i,2);
+    mult = root_mult_arr(i,2);
     
-    arr_factors = [arr_factors repmat({sym_factor},1,mult)];
+    arr_factors = [arr_factors ; repmat({sym_factor},1,mult)'];
     
 end
 

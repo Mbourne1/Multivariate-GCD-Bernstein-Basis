@@ -24,19 +24,20 @@ function [fxy,gxy,dxy,uxy,vxy,m,n,t] = Examples_GCD_FromCoefficients(ex_num)
 syms x y;
 
 addpath('../Examples')
-[f,g,d,u,v] = Bivariate_GCD_Examples(ex_num);
+[f_root_mult_arr,g_root_mult_arr,d_root_mult_arr,...
+    u_root_mult_arr,v_root_mult_arr] = Bivariate_GCD_Examples(ex_num);
 
 
-fxy = GetCoefficients(f);
-gxy = GetCoefficients(g);
-dxy = GetCoefficients(d);
-uxy = GetCoefficients(u);
-vxy = GetCoefficients(v);
-
-
-symbolic_d = GetSymbolicPoly(d);
-symbolic_f = GetSymbolicPoly(f);
-symbolic_g = GetSymbolicPoly(g);
+fxy = GetCoefficientsFromSymbolicRoots(f_root_mult_arr);
+gxy = GetCoefficientsFromSymbolicRoots(g_root_mult_arr);
+dxy = GetCoefficientsFromSymbolicRoots(d_root_mult_arr);
+uxy = GetCoefficientsFromSymbolicRoots(u_root_mult_arr);
+vxy = GetCoefficientsFromSymbolicRoots(v_root_mult_arr);
+      
+             
+symbolic_d = GetSymbolicPolyFromSymbolicRoots(d_root_mult_arr);
+symbolic_f = GetSymbolicPolyFromSymbolicRoots(f_root_mult_arr);
+symbolic_g = GetSymbolicPolyFromSymbolicRoots(g_root_mult_arr);
 
 % Get degree of f(x,y), g(x,y) and d(x,y)
 m = double(feval(symengine, 'degree', symbolic_f));

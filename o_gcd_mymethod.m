@@ -39,9 +39,6 @@ fww_matrix_n = GetWithThetas(fxy_matrix_n ,th1,th2);
 gww_matrix_n = GetWithThetas(gxy_matrix_n ,th1,th2);
 a_gww_matrix_n = alpha.* gww_matrix_n;
 
-% Get Optimal column for removal from S_{t_{1},t_{2}}
-opt_col = GetOptimalColumn(fww_matrix_n,a_gww_matrix_n,t1,t2);
-
 
 %
 %[fxy,gxy,alpha,th1,th2] = LowRankApproximation...
