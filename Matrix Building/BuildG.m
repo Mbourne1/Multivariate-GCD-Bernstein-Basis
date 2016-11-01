@@ -1,13 +1,7 @@
 function G = BuildG(t1,t2)
-% Build the matrix G.
+% Build the matrix G used in the APF 
+% H [C(u); C(v)] G d = [f;g]
 
-G_mat = GetWithBinomials(ones(t1+1,t2+1));
-
-% Get matrix G as a vector
-G_vec = GetAsVector(G_mat);
-
-% Diagonalise G
-G = diag(G_vec);
-
+G = BuildQ1(t1,t2);
 
 end
