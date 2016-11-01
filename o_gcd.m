@@ -73,8 +73,8 @@ fprintf([mfilename ' : ' sprintf('Deg_y of GCD : %i \n',t2)]);
 % Add Noise to the coefficients
 
 % Add noise to the coefficients of f and g
-[fxy_matrix, ~] = Noise2(fxy_exact,emin,emax);
-[gxy_matrix, ~] = Noise2(gxy_exact,emin,emax);
+[fxy_matrix, ~] = AddNoiseToPoly2(fxy_exact,emin,emax);
+[gxy_matrix, ~] = AddNoiseToPoly2(gxy_exact,emin,emax);
 
 % %
 % Plot the surfaces of the two polynomials fxy and gxy

@@ -79,7 +79,7 @@ plot_fxy(fxy_matrix)
 switch bool_noise
     case 'y'
         % Add noise to the coefficients of polynomial f(x,y)
-        [fxy_matrix,~] = Noise2(fxy_matrix,el);
+        [fxy_matrix,~] = AddNoiseToPoly2(fxy_matrix,el);
         
     case 'n'
         % Dont add noise to coefficients of polynomial f(x,y)

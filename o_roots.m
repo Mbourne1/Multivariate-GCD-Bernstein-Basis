@@ -76,7 +76,7 @@ end
 
 
 % Add noise to the coefficients of polynomial f(x,y)
-[fxy_matrix,~] = Noise2(fxy_matrix,emin,emax);
+[fxy_matrix,~] = AddNoiseToPoly2(fxy_matrix,emin,emax);
 
 
 o_roots_mymethod(fxy_matrix,M)
