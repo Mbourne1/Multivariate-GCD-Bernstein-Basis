@@ -11,9 +11,8 @@ function [fxy_matrix] = BuildPoly_NonSeparable(factors_fxy_array)
 % fxy_matrix : Coefficients of the polynomial f(x,y)
 
 
-% get the number of roots
+% Get the number of distinct roots.
 [nFactors,~] = size(factors_fxy_array);
-nFactors = nFactors;
 
 % Initialise the product
 temp_prod = factors_fxy_array{1,1};
@@ -21,7 +20,7 @@ temp_prod = factors_fxy_array{1,1};
 % For every other root 2,...,
 for i = 2:1:nFactors
    % Multiply product by the new root
-   temp_prod = Multiply_Bivariate(temp_prod,factors_fxy_array{i,1}) ;
+   temp_prod = Bernstein_Multiply_Bivariate(temp_prod,factors_fxy_array{i,1}) ;
 end
 
 % Output the product of all roots : f(x,y) 

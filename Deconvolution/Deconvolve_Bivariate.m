@@ -1,6 +1,17 @@
 function [hxy_matrix] = Deconvolve_Bivariate(fxy_matrix,gxy_matrix)
+% Deconvolve_Bivariate(fxy_matrix,gxy_matrix)
+%
 % Perform deconvolution f/g by the matrix multiplication C(g) * h = f.
 %
+% Inputs.
+%
+% fxy_matrix : Coefficients of polynomial f(x,y)
+%
+% gxy_matrix : Coefficients of polynomial g(x,y)
+%
+% Outputs.
+%
+% hxy_matrix : Coefficients of the polynomial h(x,y)
 
 
 % Get degrees of polynomial f(x,y)
@@ -9,7 +20,7 @@ function [hxy_matrix] = Deconvolve_Bivariate(fxy_matrix,gxy_matrix)
 % Get the degrees of polynomial g(x,y)
 [n1,n2] = GetDegree(gxy_matrix);
 
-% Build the matrix C(g) 
+% Build the matrix C_{m1-n1,m2-n2}(g) 
 C1 = BuildT1(gxy_matrix,m1-n1,m2-n2);
 
 % Get the polynomial f in vector form

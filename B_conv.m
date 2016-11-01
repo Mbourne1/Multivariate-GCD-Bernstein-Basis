@@ -1,4 +1,4 @@
-function [t] = B_conv(rooot,mult)
+function [t] = B_conv(root,mult)
 % B_conv(rooot,mult)
 %
 % This function convolves the vector [-r 1-r] with itself m times, where r
@@ -24,19 +24,19 @@ function [t] = B_conv(rooot,mult)
 % scaled Bernstein basis.
 
 
-if mult==1
-    t=[-rooot;1-rooot];
+if mult == 1 
+    t=[-root;1-root];
 else
     
     q =...
         [...
-        -rooot;
-        1-rooot
+        -root;
+        1-root
         ];
     t =...
         [...
-        -rooot;
-        1-rooot
+        -root;
+        1-root
         ];
     for k=2:1:mult
         t=conv(t,q);
