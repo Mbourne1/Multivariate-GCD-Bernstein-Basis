@@ -1,4 +1,6 @@
 function [max_mtrx,min_mtrx] = GetMaxMin(fxy,n1_k1,n2_k2)
+% GetMaxMin(fxy,n1_k1,n2_k2)
+%
 % Get the maximum and minimum of each entry of f(x,y) in the Sylvester
 % matrix.
 %
@@ -12,12 +14,12 @@ function [max_mtrx,min_mtrx] = GetMaxMin(fxy,n1_k1,n2_k2)
 %
 % n2_k2 : Degree of v(x,y) with respect to y
 
+
 % Get the degree of polynomial f(x,y)
 [m1,m2] = GetDegree(fxy);
 
 % Take the absolute values of the coefficients
 fxy = abs(fxy);
-
 
 % Build a matrix which stores the maximum values of each coefficient
 max_mtrx = zeros(m1+1,m2+1);
@@ -42,7 +44,11 @@ end
 
 end
 
-function [maximum,minimum] = GetMaxMin2(a_i1i2,i1,i2,m1,m2,n1_k1,n2_k2)
+
+% % The next three functions compute max and minimum entries by three
+% different methods.
+
+function [maximum,minimum] = GetMaxMin2a(a_i1i2,i1,i2,m1,m2,n1_k1,n2_k2)
 % 
 %
 %

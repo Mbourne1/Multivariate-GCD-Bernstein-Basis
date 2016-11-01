@@ -1,5 +1,29 @@
 function [theta1,theta2] = OptimalTheta(max_mtrx_f,min_mtrx_f, max_mtrx_g,min_mtrx_g)
-% Obtain the optimal value of theta
+% OptimalTheta(max_mtrx_f,min_mtrx_f, max_mtrx_g,min_mtrx_g)
+%
+% Obtain the optimal value of \theta_{1} and \theta_{2} in
+% preprocessing the Sylvester matrix
+% S_{k_{1},k_{2}}(f,g)
+%
+% Inputs.
+%
+% max_mtrx_f : Matrix containing entries of maximum magnitude of each
+% coefficient of f(x,y) in the Sylvester matrix S_{k1,k2}
+%
+% min_mtrx_f : Matrix containing entries of maximum magnitude of each
+% coefficient of f(x,y) in the Sylvester matrix S_{k1,k2}
+%
+% max_mtrx_g : Matrix containing entries of maximum magnitude of each
+% coefficient of g(x,y) in the Sylvester matrix S_{k1,k2}
+%
+% min_mtrx_g : Matrix containing entries of maximum magnitude of each
+% coefficient of g(x,y) in the Sylvester matrix S_{k1,k2}
+%
+% Outputs
+%
+% th1 : Optiml value of \theta_{1}
+%
+% th2 : Optimal value of \theta_{2}
 
 % define vector f
 f = [1 -1 0 0];
@@ -94,12 +118,13 @@ b = [log10(abs(lambda_vec)); log10(abs(mu_vec)); -log10(abs(rho_vec));-log10(abs
 
 
 x = linprog(f,-A,-b);
+
 try
-theta1 = 10^x(3);
-theta2 = 10^x(4);
+    theta1 = 10^x(3);
+    theta2 = 10^x(4);
 catch
-theta1 = 1;
-theta2 = 1;
+    theta1 = 1;
+    theta2 = 1;
 end
 
 

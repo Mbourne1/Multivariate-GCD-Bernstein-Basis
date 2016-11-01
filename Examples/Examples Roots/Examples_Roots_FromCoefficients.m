@@ -12,7 +12,7 @@ root_mult_arr = Bivariate_Roots_Examples(ex_num);
 fxy = GetCoefficientsFromSymbolicRoots(root_mult_arr);
 
 % Get the symbolic polynomial in power basis
-symbolic_fxy = GetSymbolicPoly(root_mult_arr);
+symbolic_fxy = GetSymbolicPolyFromSymbolicRoots(root_mult_arr);
 
 % Get the total degree of f(x,y)
 m = double(feval(symengine, 'degree', symbolic_fxy));

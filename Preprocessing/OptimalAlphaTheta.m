@@ -1,7 +1,34 @@
-function [alpha, theta1,theta2] = OptimalAlphaTheta(max_mtrx_f,min_mtrx_f, max_mtrx_g,min_mtrx_g)
-% Obtain the optimal value of alpha and theta
+function [alpha, th1, th2] = OptimalAlphaTheta(max_mtrx_f,min_mtrx_f, max_mtrx_g,min_mtrx_g)
+% OptimalAlphaTheta(max_mtrx_f,min_mtrx_f, max_mtrx_g,min_mtrx_g)
+%
+% Obtain the optimal value of alpha, \theta_{1} and \theta_{2} in
+% preprocessing the Sylvester matrix
+% S_{k_{1},k_{2}}(f,g)
+%
+% Inputs.
+%
+% max_mtrx_f : Matrix containing entries of maximum magnitude of each
+% coefficient of f(x,y) in the Sylvester matrix S_{k1,k2}
+%
+% min_mtrx_f : Matrix containing entries of maximum magnitude of each
+% coefficient of f(x,y) in the Sylvester matrix S_{k1,k2}
+%
+% max_mtrx_g : Matrix containing entries of maximum magnitude of each
+% coefficient of g(x,y) in the Sylvester matrix S_{k1,k2}
+%
+% min_mtrx_g : Matrix containing entries of maximum magnitude of each
+% coefficient of g(x,y) in the Sylvester matrix S_{k1,k2}
+%
+% Outputs
+%
+% alpha : Optimal value \alpha such that the two partitions of
+% S_{k_{1},k_{2}} are balanced.
+%
+% th1 : Optiml value of \theta_{1}
+%
+% th2 : Optimal value of \theta_{2}
 
-% define vector f
+% Define vector f
 f = [1 -1 0 0 0];
 
 % Get the degree of polynomial f(x,y)
@@ -93,15 +120,13 @@ x = linprog(f,-A,-b);
 
 try
     
-    theta1 = 10^x(3);
-    theta2 = 10^x(4);
+    th1 = 10^x(3);
+    th2 = 10^x(4);
     alpha  = 10^x(5);
 catch
     alpha = 1;
-    theta1 = 1;
-    theta2 = 1;
-
-
+    th1 = 1;
+    th2 = 1;
 end
 
 end

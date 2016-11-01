@@ -1,4 +1,6 @@
 function [lambda, mu, alpha, th1,th2] = Preprocess(fxy,gxy,k1,k2)
+% Preprocess(fxy,gxy,k1,k2)
+%
 % Get lamda,mu, alpha, theta_{1} and theta_{2}
 %
 % Inputs.
@@ -175,8 +177,10 @@ function [f_max,f_min,g_max,g_min] = GetMaxMinPairs(fxy,gxy,k1,k2)
 % g(x,y) as appearing in the Sylvester subresultant S_{k_{1},k_{2}}(f,g)
 
 
-% Get Degree of f(x,y)
+% Get degree of f(x,y)
 [m1,m2] = GetDegree(fxy);
+
+% Get degree of g(x,y)
 [n1,n2] = GetDegree(gxy);
 
 % Get the maximum and minimum of each entry of f(x,y) in S_{k_{1},k_{2}}

@@ -1,15 +1,24 @@
 function [wx,vDegt_wx] = o_roots_mymethod_x(fxy_matrix,M)
+% o_roots_mymethod_x(fxy_matrix,M)
+%
+% Inputs
+%
+% fxy_matrix : Coefficients of polynomial f(x,y)
+%
+% M : Degree of f(x,y)
+
+
 % Set the first entry of q to be the input polynomial f(x,y)
 fx{1} = fxy_matrix;
 
 % Get degree of polynomial f(x,y)
-[m1,m2] = GetDegree(fxy_matrix);
+%[m1,m2] = GetDegree(fxy_matrix);
 
 % Get degree of polynomial f(x,y) with respect to x
-vDeg1_fx(1) = m1;
+%vDeg1_fx(1) = m1;
 
 % Get degree of polynomial f(x,y) with respect to y
-vDeg2_fx(1) = m2;
+%vDeg2_fx(1) = m2;
 
 % Get total degree of polynomial f(x,y)
 vDegt_fx(1) = M;
@@ -30,10 +39,10 @@ while vDeg1_fx(ite) > 0
         ux{ite+1} = Deconvolve_Bivariate(fx{ite},fx{ite+1});
         
         % Get degree of d(x,y) with respect to x
-        vDeg1_fx(ite+1) = 0;
+        %vDeg1_fx(ite+1) = 0;
         
         % Get degree of d(x,y) with respect to y
-        vDeg2_fx(ite+1) = vDeg2_fx(ite);
+        %vDeg2_fx(ite+1) = vDeg2_fx(ite);
         
         % Get total degree of d(x,y)
         vDegt_fx(ite+1) = 0;
@@ -68,10 +77,10 @@ while vDeg1_fx(ite) > 0
     [fx{ite},gxy,fx{ite+1},uxy,vxy,t,t1,t2] = o_gcd_mymethod(fx{ite},gxy,m,n,[lower_lim,upper_lim]);
     
     % Set the degree of q{i} with respect to x
-    vDeg1_fx(ite+1) = t1;
+    %vDeg1_fx(ite+1) = t1;
     
     % Set the degree of q{i} with respect to y
-    vDeg2_fx(ite+1) = t2;
+    %vDeg2_fx(ite+1) = t2;
     
     % Set the total degree of q{i}
     vDegt_fx(ite+1) = t;
@@ -101,8 +110,8 @@ nEntries_hx = nEntries_qx - 1;
 hx = cell(1,nEntries_hx);
 
 % Initialise vectors to store the degrees of h(x).
-vDeg1_hx = zeros(1,nEntries_hx);
-vDeg2_hx = zeros(1,nEntries_hx);
+%vDeg1_hx = zeros(1,nEntries_hx);
+%vDeg2_hx = zeros(1,nEntries_hx);
 vDegt_hx = zeros(1,nEntries_hx);
 
 % For each pair of consecutive polynomials in qx perform deconvolution
@@ -112,10 +121,10 @@ for i = 1:1:nEntries_hx
     hx{i} = Deconvolve_Bivariate(fx{i},fx{i+1});
     
     % Set the degree of h with respect to x
-    vDeg1_hx(i) = vDeg1_fx(i) - vDeg1_fx(i+1);
+    %vDeg1_hx(i) = vDeg1_fx(i) - vDeg1_fx(i+1);
     
     % Set the degree of h with respect to y
-    vDeg2_hx(i) = vDeg2_fx(i) - vDeg2_fx(i+1);
+    %vDeg2_hx(i) = vDeg2_fx(i) - vDeg2_fx(i+1);
     
     % Set the total degree of h
     vDegt_hx(i) = vDegt_fx(i) - vDegt_fx(i+1);
@@ -134,8 +143,8 @@ nEntries_wx = nEntries_hx -1;
 wx = cell(1,nEntries_wx);
 
 % Initialise vectors to store the degrees of w(x).
-vDeg1_wx = zeros(1,nEntries_wx);
-vDeg2_wx = zeros(1,nEntries_wx);
+%vDeg1_wx = zeros(1,nEntries_wx);
+%vDeg2_wx = zeros(1,nEntries_wx);
 vDegt_wx = zeros(1,nEntries_wx);
 
 % For each pair, perform a deconvolution to obtain w_{x}
@@ -145,10 +154,10 @@ if nEntries_hx > 1
         wx{i} = Deconvolve_Bivariate(hx{i},hx{i+1});
         
         % Set the degree of w with respect to x
-        vDeg1_wx(i) = vDeg1_hx(i) - vDeg1_hx(i+1);
+        %vDeg1_wx(i) = vDeg1_hx(i) - vDeg1_hx(i+1);
         
         % Set the degree of w with respect to y
-        vDeg2_wx(i) = vDeg2_hx(i) - vDeg2_hx(i+1);
+        %vDeg2_wx(i) = vDeg2_hx(i) - vDeg2_hx(i+1);
         
         % Set the total degree
         vDegt_wx(i) = vDegt_hx(i) - vDegt_hx(i+1);
@@ -158,10 +167,10 @@ if nEntries_hx > 1
     wx{i+1} = hx{i+1};
     
     % Set its degree with respect to x
-    vDeg1_wx(i+1) = vDeg1_hx(i+1);
+    %vDeg1_wx(i+1) = vDeg1_hx(i+1);
     
     % Set its degree with respect to y
-    vDeg2_wx(i+1) = vDeg2_hx(i+1);
+    %vDeg2_wx(i+1) = vDeg2_hx(i+1);
     
     % Set the total degree
     vDegt_wx(i+1) = vDegt_hx(i+1);
@@ -172,10 +181,10 @@ else
     wx{1} = hx{1};
     
     % Set the degree with respect to x
-    vDeg1_wx(1) = vDeg1_hx(1);
+    %vDeg1_wx(1) = vDeg1_hx(1);
     
     % Set the degree with respect to y
-    vDeg2_wx(1) = vDeg2_hx(1);
+    %vDeg2_wx(1) = vDeg2_hx(1);
     
     % Set the total degree
     vDegt_wx(1) = vDegt_hx(1);

@@ -1,6 +1,21 @@
 function lambda = GetGeometricMean_MyMethod(fxy,n1_k1,n2_k2)
+% GetGeometricMean_MyMethod(fxy,n1_k1,n2_k2)
+%
+% Inputs.
+%
+% fxy : Coefficients of polynomial f(x,y)
+%
+% n1_k1 : Degree of polynomial v(x,y) with respect to x
+%
+% n2_k2 : Degree of polynomial v(x,y) with respect to y
+%
+% Outputs.
+%
+% lamda : Geometric mean of non-zero entries of the first partition of the
+% Sylvester subresultant matrix S_{k_{1},k_{2}}
 
 
+% Get the degree of polynomial f(x,y)
 [m1,m2] = GetDegree(fxy);
 
 % Get the geometric mean of the coefficient parts only

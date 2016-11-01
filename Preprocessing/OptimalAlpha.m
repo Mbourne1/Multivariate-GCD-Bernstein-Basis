@@ -1,11 +1,31 @@
 function [alpha] = OptimalAlpha(max_mtrx_f,min_mtrx_f, max_mtrx_g,min_mtrx_g)
-% Obtain the optimal value of alpha
+% Obtain the optimal value of alpha in preprocessing the Sylvester matrix
+% S_{k_{1},k_{2}}(f,g)
+%
+% Inputs.
+%
+% max_mtrx_f : Matrix containing entries of maximum magnitude of each
+% coefficient of f(x,y) in the Sylvester matrix S_{k1,k2}
+%
+% min_mtrx_f : Matrix containing entries of maximum magnitude of each
+% coefficient of f(x,y) in the Sylvester matrix S_{k1,k2}
+%
+% max_mtrx_g : Matrix containing entries of maximum magnitude of each
+% coefficient of g(x,y) in the Sylvester matrix S_{k1,k2}
+%
+% min_mtrx_g : Matrix containing entries of maximum magnitude of each
+% coefficient of g(x,y) in the Sylvester matrix S_{k1,k2}
+%
+% Outputs
+%
+% alpha : Optimal value \alpha such that the two partitions of 
+% S_{k_{1},k_{2}} are balanced.
 
-% define vector f
+
+% Define vector f (unrelated to coefficients of polynomial f)
 f = [1 -1 0];
 
-% get the degree of polynomial f and g
-
+% get the degree of polynomial f(x,y) and g(x,y)
 [m1,m2] = GetDegree(max_mtrx_f);
 [n1,n2] = GetDegree(max_mtrx_g);
 
