@@ -1,5 +1,5 @@
 function [fxy_matrix,gxy_matrix,alpha,th1,th2] = LowRankApproximation...
-    (fxy_matrix_n,gxy_matrix_n,alpha,th1,th2,t1,t2,opt_col)
+    (fxy_matrix_n,gxy_matrix_n,alpha,th1,th2,k1,k2,idx_col)
 % Compute low rank approximation of the Sylvester matrix S(f,g) either
 % SNTLN or STLN.
 %
@@ -15,11 +15,11 @@ function [fxy_matrix,gxy_matrix,alpha,th1,th2] = LowRankApproximation...
 %
 % th2 : \theta_{2}
 %
-% t1 : Degree of d(x,y) with respect to x
+% k1 : Degree of d(x,y) with respect to x
 % 
-% t2 : Degree of d(x,y) with respect to y
+% k2 : Degree of d(x,y) with respect to y
 %
-% opt_col : Index of optimal column to be removed from S(f,g)
+% idx_col : Index of optimal column to be removed from S(f,g)
 %
 % % Outputs
 %
@@ -43,7 +43,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         
         % Apply SNTLN improvements
         [ fxy_matrix,gxy_matrix,alpha,th1,th2,x] = ...
-            SNTLN( fxy_matrix_n,gxy_matrix_n, alpha, th1, th2,t1,t2, opt_col);
+            SNTLN( fxy_matrix_n,gxy_matrix_n, alpha, th1, th2,k1,k2, idx_col);
         
         fprintf('Input Polynomial f(x,y)')
         
@@ -61,7 +61,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         gww_matrix = GetWithThetas(gxy_matrix_n,th1,th2);
         
         % Perform STLN Computation.
-        [fww_matrix, gww_matrix, ~] = STLN(fww_matrix, alpha.*gww_matrix,t1,t2,opt_col);
+        [fww_matrix, gww_matrix, ~] = STLN(fww_matrix, alpha.*gww_matrix,k1,k2,idx_col);
         
         % Scale outputs to obtain f(x,y) and g(x,y).
         fxy_matrix = GetWithoutThetas(fww_matrix,th1,th2);

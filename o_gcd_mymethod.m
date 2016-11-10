@@ -14,6 +14,26 @@ function [fxy,gxy,dxy,uxy, vxy,t,t1,t2] = o_gcd_mymethod(fxy,gxy,...
 % m : Total degree of polynomial f(x,y).
 %
 % n : Total degree of polynomial g(x,y).
+%
+% t_limits : 
+%
+% % Outputs
+%
+% fxy : 
+%
+% gxy : 
+%
+% dxy : 
+%
+% uxy : 
+%
+% vxy :
+% 
+% t
+% 
+% t1 : 
+% 
+% t2 :
 
 
 input_fxy = fxy;
@@ -39,10 +59,13 @@ fww_matrix_n = GetWithThetas(fxy_matrix_n ,th1,th2);
 gww_matrix_n = GetWithThetas(gxy_matrix_n ,th1,th2);
 a_gww_matrix_n = alpha.* gww_matrix_n;
 
+% Get optimal column
+St1t2 = BuildDTQ(fww_matrix_n,a_gww_matrix_n,t1,t2);
+idx_col = GetOptimalColumn(St1t2);
 
-%
-%[fxy,gxy,alpha,th1,th2] = LowRankApproximation...
-%    (fxy_matrix_n,gxy_matrix_n,alpha,th1,th2,t1,t2,opt_col);
+% Get low rank approximation of the Sylvester matrix S_{t_{1},t_{2}}
+[fxy,gxy,alpha,th1,th2] = LowRankApproximation...
+    (fxy_matrix_n,gxy_matrix_n,alpha,th1,th2,t1,t2,idx_col);
 
 
 
@@ -114,12 +137,14 @@ vSingularValues_lowrank = svd(S_lowrank);
 
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
-        figure_name = sprintf('%s - Sylvester Matrices',mfilename);
+        figure_name = sprintf([mfilename ' : ' 'Sylvester Matrices']);
         figure('name',figure_name)
         hold on
-        plot(log10(vSingularValues_unproc),'DisplayName','S(f(x,y),g(x,y))')
-        plot(log10(vSingularValues_preproc),'DisplayName','S(f(\omega,\omega),g(\omega,\omega))')
-        plot(log10(vSingularValues_lowrank),'DisplayName','Low Rank Approx')
+        xlabel('k')
+        ylabel('log_{10}')
+        plot(log10(vSingularValues_unproc),'-s','DisplayName','S(f(x,y),g(x,y))')
+        plot(log10(vSingularValues_preproc),'-s','DisplayName','S(f(\omega,\omega),g(\omega,\omega))')
+        plot(log10(vSingularValues_lowrank),'-s','DisplayName','Low Rank Approx')
         legend(gca,'show');
         hold off
     case 'n'

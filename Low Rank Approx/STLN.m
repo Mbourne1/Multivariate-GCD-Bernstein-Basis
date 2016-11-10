@@ -323,14 +323,6 @@ switch SETTINGS.PLOT_GRAPHS
         error('err')
 end
 
-%%
-if ite == SETTINGS.MAX_ITERATIONS_SNTLN
-    fprintf('SNTLN Failed to converge, default to input values\n')
-    fxy_output = fxy_matrix;
-    gxy_output = gxy_matrix;
-    X_output = x_ls;
-    return;
-end
 
 % Once iterations are complete, assign fx output, gx output, solution X
 % output, alpha output and theta output.

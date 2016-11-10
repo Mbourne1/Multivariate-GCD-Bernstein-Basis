@@ -1,16 +1,16 @@
-function [uxy_matrix_calc, vxy_matrix_calc] = GetQuotients(fxy_matrix, gxy_matrix, t1,t2)
+function [uxy_matrix_calc, vxy_matrix_calc] = GetCofactors(fxy_matrix, gxy_matrix, t1,t2)
 % Given two input polynomials and the degree of the GCD return the quotient
 % polynomials u(x,y) and v(x,y)
 %
 %   Inputs.
 %
-%   fxy_matrix :
+%   fxy_matrix : Coefficients of polynomial f(x,y)
 %
-%   gxy_matrix :
+%   gxy_matrix : Coefficients of polynomial g(x,y)
 %
-%   t1 :
+%   t1 : Degree of d(x,y) with respect to x
 %
-%   t2 :
+%   t2 : Degree of d(x,y) with respect to y
 %
 
 % Initialise Global Variables
@@ -26,20 +26,20 @@ global SETTINGS
 % Build the (t1,t2)-th subresultant
 
 
-St1t2 = BuildDTQ(fxy_matrix, gxy_matrix,t1,t2);
+Sk1k2 = BuildDTQ(fxy_matrix, gxy_matrix,t1,t2);
 
 
 %% Find Optimal column for removal from St
 % given that t1 and t2 have been calculated build the sylvester matrix and
 % find the optimal column such that a residual is minimized
-opt_col_index = GetOptimalColumn(fxy_matrix,gxy_matrix,t1,t2);
+opt_col_index = GetOptimalColumn(Sk1k2);
 
 % Get the matrix A_{t_{1},t_{2}} 
-At = St1t2;
+At = Sk1k2;
 At(:,opt_col_index) = [];
 
 % Get the vector c_{t_{1},t_{2}} removed from S_{t_{1},t_{2}}
-ct = St1t2(:,opt_col_index);
+ct = Sk1k2(:,opt_col_index);
 
 
 %% Get the coefficients for u(x,y) and v(x,y)
@@ -63,7 +63,7 @@ uww_calc = -vecx(num_coeff_v+1:end);
 
 
 %% Get the value of fv-gu
-norm(St1t2 * [vww_calc ;-uww_calc])
+norm(Sk1k2 * [vww_calc ;-uww_calc])
 
 %% Obtain u(x,y) in its matrix form
 % Arrange uw into a matrix form based on its dimensions.

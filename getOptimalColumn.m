@@ -1,62 +1,42 @@
-function opt_col = GetOptimalColumn(fxy_matrix_n,gxy_matrix_n,t1,t2)
+function idx_col = GetOptimalColumn(Sk)
 %% Find Optimal column for removal from S_{t_{1},t_{2}}
 % Given that t1 and t2 have been calculated build the sylvester matrix and
 % find the optimal column such that a residual is minimized
-
-% Inputs
-
-% fxy_matrix : Matrix of coefficients of polynomial f(x,y)
 %
-% gxy_matrix : Matrix of coefficients of polynomial g(x,y)
+% % Inputs
 %
-% t1         : Degree of GCD d(x,y) with respect to x
+% Sk : Sylvester subresultant matrix S_{k}(f,g)
 %
-% t2         : Degree of GCD d(x,y) with respect to y
+% % Outputs
+%
+% idx_col : Index of optimal column
 
 
-% Get the degree of polynomial g(x,y)
-[n1,n2] = GetDegree(gxy_matrix_n);
+% Get the number of columns in S_{k}(f,g)
+[~,nCols_Sk] = size(Sk);
 
-St1t2 = BuildDTQ(fxy_matrix_n,gxy_matrix_n,t1,t2);
+% Initialise vector 
+vResiduals = zeros(nCols_Sk,1);
 
-%% Find Optimal column for removal from St
-% given that t1 and t2 have been calculated build the sylvester matrix and
-% find the optimal column such that a residual is minimized
-
-% Get the number
-[~,ncolsSt1t2] = size(St1t2);
-
-% QR Decomposition of the Sylvester Matrix S_{k}
-[Qk,Rk] = qr(St1t2);
-
-n = n1+n2;
-
-% For each column of S_{t_{1},t_{2}}, move the column to the RHS, to obtain
-% Ax=b, where A consists of the remaining columns of S_{t_{1},t_{2}} and b
-% is the removed column c_{k}
-
-for k = 1 : 1 : ncolsSt1t2
+for k = 1 : 1 : nCols_Sk
     
     % Get column for removal
-    ck = St1t2(:,k);
+    ck = Sk(:,k);
+    Ak = Sk;
+    Ak(:,k) = [];
     
-    % Perform QR delete to remove k column from QR decomposition of 
-    % S_{t_{1},t_{2}}
-    [Q,~] = qrdelete(Qk,Rk,k);
-    
-    cd = Q'*ck;
-    
-    d = cd(n+1:end,:);
+    % Get the vector x.
+    x = SolveAx_b(Ak,ck);
     
     % Get Residuals
-    residuals_QR(k) = norm(d);
+    vResiduals(k) = norm(ck - Ak*x);
     
 end
 
 %Obtain the column for which the residual is minimal.
-[~,opt_col] = min(log10(residuals_QR));
+[~,idx_col] = min(log10(vResiduals));
 
 % Print out optimal column for removal.
-fprintf([mfilename ' : ' sprintf('Optimal column for removal is : %i \n',opt_col)]);
+fprintf([mfilename ' : ' sprintf('Optimal column for removal is : %i \n',idx_col)]);
 
 end
