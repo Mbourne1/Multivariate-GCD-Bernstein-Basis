@@ -1,5 +1,5 @@
-function [fxy,gxy,dxy,uxy, vxy,t,t1,t2] = o_gcd_mymethod(fxy,gxy,...
-    m,n,t_limits)
+function [fxy_o, gxy_o, dxy_o, uxy_o, vxy_o, t, t1, t2] = ...
+    o_gcd_mymethod(fxy, gxy, m, n, t_limits)
 % o1(fxy_matrix,gxy_matrix,m,n)
 %
 % Given two input polynomials, calculate the GCD and its degree structure
@@ -7,15 +7,15 @@ function [fxy,gxy,dxy,uxy, vxy,t,t1,t2] = o_gcd_mymethod(fxy,gxy,...
 % % Inputs.
 %
 %
-% fxy_matrix : Matrix of coefficients of f(x,y)
+% fxy_matrix : Matrix of coefficients of f(x,y) in the Bernstein basis.
 %
-% gxy_matrix : Matrix of coefficients of g(x,y)
+% gxy_matrix : Matrix of coefficients of g(x,y) in the Bernstein basis
 %
-% m : Total degree of polynomial f(x,y).
+% m : Total degree of polynomial f(x,y)
 %
-% n : Total degree of polynomial g(x,y).
+% n : Total degree of polynomial g(x,y)
 %
-% t_limits : 
+% t_limits : Limits on degree of GCD.
 %
 % % Outputs
 %
@@ -36,90 +36,61 @@ function [fxy,gxy,dxy,uxy, vxy,t,t1,t2] = o_gcd_mymethod(fxy,gxy,...
 % t2 :
 
 
-input_fxy = fxy;
-input_gxy = gxy;
+
 
 % Get Degree by first finding the total degree, then obtain t1 and t2
 
 % Get total degreee of the GCD
 [t, ~, ~] = GetGCDDegree_Total(fxy, gxy, m, n,t_limits);
-
 fprintf([mfilename ' : ' sprintf('Degree of GCD : %i \n',t)])
 
-
-% Get degree t_{1} and t_{2}
+% Get degree of the GCD with respect to x and y (t_{1} and t_{2})
 [t1,t2,lambda,mu,alpha, th1,th2] = GetGCDDegree_Relative(fxy,gxy);
-
 fprintf([mfilename ' : ' sprintf('Degree of GCD : t1 = %i, t2 = %i \n',t1,t2)])
 
-fxy_matrix_n = fxy./lambda;
-gxy_matrix_n = gxy./mu;
+fxy_n = fxy./lambda;
+gxy_n = gxy./mu;
 
-fww_matrix_n = GetWithThetas(fxy_matrix_n ,th1,th2);
-gww_matrix_n = GetWithThetas(gxy_matrix_n ,th1,th2);
-a_gww_matrix_n = alpha.* gww_matrix_n;
+fww_n = GetWithThetas(fxy_n ,th1,th2);
+gww_n = GetWithThetas(gxy_n ,th1,th2);
+a_gww_n = alpha.* gww_n;
 
 % Get optimal column
-St1t2 = BuildDTQ(fww_matrix_n,a_gww_matrix_n,t1,t2);
+St1t2 = BuildDTQ(fww_n,a_gww_n,t1,t2);
 idx_col = GetOptimalColumn(St1t2);
 
-% Get low rank approximation of the Sylvester matrix S_{t_{1},t_{2}}
-[fxy,gxy,alpha,th1,th2] = LowRankApproximation...
-    (fxy_matrix_n,gxy_matrix_n,alpha,th1,th2,t1,t2,idx_col);
+% % Get coefficients of u(x,y) and v(x,y).
+[fxy_lr,gxy_lr,uxy_lr,vxy_lr,alpha_lr,th1_lr,th2_lr] = ...
+    LowRankApproximation(fxy_n, gxy_n, alpha, th1, th2, m,n,t,t1, t2, idx_col);
 
 
+% % Get coefficients of d(x,y)
+[fxy_lra,gxy_lra,uxy_lra,vxy_lra,dxy_lra,alpha_lra,th1_lra,th2_lra] = ...
+    APF(fxy_lr, gxy_lr, uxy_lr, vxy_lr, m, n, t, t1, t2, alpha_lr, th1_lr, th2_lr);
 
-% % Get Quotients u(x,y) and v(x,y)
-% Calc method is either total or respective
-global SETTINGS
 
-switch SETTINGS.CALC_METHOD
-    case 'Relative'
-        
-        fww = GetWithThetas(fxy_matrix_n,th1,th2);
-        gww = GetWithThetas(gxy_matrix_n,th1,th2);
-        a_gww = alpha.* gww;
-        
-        [uww, vww] ...
-            = GetCofactors(fww, a_gww,t1,t2);
-        
-        uxy = GetWithoutThetas(uww,th1,th2);
-        vxy = GetWithoutThetas(vww,th1,th2);
-        
-    case 'Total'
-        [uxy, vxy] ...
-            = GetCofactors_total(fww_matrix_n, alpha.*gww_matrix_n,m,n,t);
-    otherwise
-        error([mfilename ':' 'Error degree Calc method is either (Relative) or (Total)']); 
-        
-end
+% % 
+% Outputs
+fxy_o = fxy_lra;
+gxy_o = gxy_lra;
+uxy_o = uxy_lra;
+vxy_o = vxy_lra;
+dxy_o = dxy_lra;
 
 
 
 
-% % Get the GCD
-% % Get d(x,y) from the polynomials u(x,y) and v(x,y).
-switch SETTINGS.CALC_METHOD
-    case 'Relative'
-        dww_calc_matrix = GetGCD_Coefficients(uww,vww,...
-            fww,alpha.*gww,t1,t2);
-    case 'Total'
-        dww_calc_matrix = GetGCD_Coefficients_total(uww,vww,...
-            fww_matrix,gww_matrix,m,n,t);
-    otherwise
-        error('error')
-end
 
-dxy = GetWithoutThetas(dww_calc_matrix,th1,th2);
+
 
 % % Compare Singular values of S(f(x,y),g(x,y)) and S(f+\delta f, g+ \delta g)
-S_unproc = BuildDTQ(input_fxy,input_gxy,0,0);
+S_unproc = BuildDTQ(fxy,gxy,0,0);
 
 % Preprocess f(x,y) to obtain f(w,w)
-fw_preproc = GetWithThetas(input_fxy,th1,th2);
+fw_preproc = GetWithThetas(fxy,th1,th2);
 
 % Preprocess g(x,y) to obtain g(w,w)
-gw_preproc = GetWithThetas(input_gxy,th1,th2);
+gw_preproc = GetWithThetas(gxy,th1,th2);
 
 % Build the 0th subresultants
 S_preproc = BuildDTQ(fw_preproc,alpha.*gw_preproc,0,0);
@@ -134,7 +105,7 @@ vSingularValues_unproc = svd(S_unproc);
 vSingularValues_preproc = svd(S_preproc);
 vSingularValues_lowrank = svd(S_lowrank);
 
-
+global SETTINGS
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
         figure_name = sprintf([mfilename ' : ' 'Sylvester Matrices']);

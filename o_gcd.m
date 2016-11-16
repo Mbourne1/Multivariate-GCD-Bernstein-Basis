@@ -1,4 +1,4 @@
-function [dxy_calc] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method)
+function [dxy_calc] = o_gcd(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method)
 % o_gcd(ex_num,el,mean_method,bool_alpha_theta,low_rank_approx_method)
 %
 % Given an example number and set of parameters, obtain GCD of the two
@@ -22,19 +22,30 @@ function [dxy_calc] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_ra
 %       'y' : Include Preprocessing
 %       'n' : Exclude Preprocessing
 %
-% low_rank_approx_method :
+% low_rank_approx_method 
 %       'Standard SNTLN' : Include SNTLN
 %       'Standard STLN : Include STLN
 %       'None' : Exclude SNTLN
 %
+% apf_method
+%       'None'
+%       'Standard APF Nonlinear'
+%       'Standard APF Linear'
+%
+% sylvester_build_method 
+%       'T'
+%       'DT'
+%       'DTQ'
+%       'TQ'
+%
 % % Examples
 %
-% >> o_gcd('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','None')
+% >> o_gcd('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','None','DTQ')
 
 % %
 % Set Variables
-global SETTINGS
-SetGlobalVariables(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_method)
+
+SetGlobalVariables(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,sylvester_build_method,apf_method)
 
 % Add subfolders
 restoredefaultpath
@@ -43,26 +54,24 @@ addpath(...
     'Basis Conversion',...
     'Bernstein Methods',...
     'Build Matrices',...
-    'Examples',...
-    'Examples/Examples GCD',...
     'Formatting',...
     'Get Cofactors',...
     'Get GCD Coefficients',...
     'Get GCD Degree',...
-    'Low Rank Approx',...
     'Plotting',...
     'Preprocessing',...
-    'Results');
+    'Results',...
+    'Sylvester Matrix');
+
+addpath(genpath('APF'));
+addpath(genpath('Examples'));
+addpath(genpath('Low Rank Approx'));
 
 
 % %
 % Get Example
 
 [fxy_exact, gxy_exact,dxy_exact,uxy_exact,vxy_exact,m,n,t_exact] = Examples_GCD(ex_num);
-
-
-%m = m1+m2;
-%n = n1+n2;
 
 [t1,t2] = GetDegree(dxy_exact);
 fprintf([mfilename ' : ' sprintf('Total Degree of GCD : %i \n',t_exact)]);
@@ -76,12 +85,6 @@ fprintf([mfilename ' : ' sprintf('Deg_y of GCD : %i \n',t2)]);
 [fxy_matrix, ~] = AddNoiseToPoly2(fxy_exact,emin,emax);
 [gxy_matrix, ~] = AddNoiseToPoly2(gxy_exact,emin,emax);
 
-% %
-% Plot the surfaces of the two polynomials fxy and gxy
-
-if SETTINGS.PLOT_GRAPHS == 'y'
-%    plot_fxy_gxy(fxy_matrix,gxy_matrix);
-end
 
 % %
 % %
@@ -104,7 +107,7 @@ upper_limit = min(m,n);
 % Get error d(x,y)
 error.dxy = GetDistance('d',dxy_calc,dxy_exact);
 error.uxy = GetDistance('u',uxy_calc,uxy_exact);
-error_vxy = GetDistance('v',vxy_calc,vxy_exact);
+error.vxy = GetDistance('v',vxy_calc,vxy_exact);
 
 % Output to file
 PrintToFile(m,n,error);
@@ -112,22 +115,6 @@ PrintToFile(m,n,error);
 
 end
 
-
-function [] = PrintoutCoefficients(name,matrix_calc,matrix_exact)
-% Print out coefficients
-
-LineBreakLarge();
-fprintf('\n')
-fprintf('Compare Exact Coefficients with Computed Coefficients of %s(x,y):',name)
-
-matrix_calc  = normalise(matrix_calc);
-matrix_exact = normalise(matrix_exact);
-
-display(matrix_calc)
-display(matrix_exact)
-
-
-end
 
 function [dist] = GetDistance(name,matrix_calc,matrix_exact)
 % Given two matrices, get the distance between them.
@@ -159,14 +146,18 @@ fullFileName = 'Results/Results_o_gcd.txt';
 
 if exist('Results/Results_o_gcd.txt', 'file')
     fileID = fopen('Results/Results_o_gcd.txt','a');
-    fprintf(fileID,'%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s \n',...
+    fprintf(fileID,'%s, \t %s, \t %s,  \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s \n',...
         datetime(),...
         SETTINGS.EX_NUM,...
         num2str(m),...
         num2str(n),...
+        error.uxy,...
+        error.vxy,...
         error.dxy,...
         SETTINGS.BOOL_ALPHA_THETA,...
         SETTINGS.MEAN_METHOD,...
+        SETTINGS.LOW_RANK_APPROXIMATION_METHOD,...
+        SETTINGS.APF_METHOD,...
         SETTINGS.EMIN);
     fclose(fileID);
 else

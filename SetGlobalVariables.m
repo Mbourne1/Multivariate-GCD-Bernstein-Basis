@@ -1,4 +1,4 @@
-function [] = SetGlobalVariables(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_method)
+function [] = SetGlobalVariables(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,sylvester_build_method)
 
 
 global SETTINGS
@@ -24,13 +24,7 @@ SETTINGS.PLOT_GRAPHS = 'y';
 %
 %
 
-% BOOL_Q ('y'/'n')
-%       'y' - Include the matrix Q in the Sylvester matrix such that it is
-%       given by D^{-1}T(f,g)Q
-%       'n' - Exclude the matrix Q from the Sylvester matrix such that it is
-%       given by D^{-1}T(f,g)
-
-SETTINGS.BOOL_Q = 'y';
+SETTINGS.SYLVESTER_BUILD_METHOD = sylvester_build_method;
 
 % -------------------------------------------------------------------------
 %
@@ -101,10 +95,21 @@ SETTINGS.LOW_RANK_APPROXIMATION_METHOD = low_rank_approx_method;
 
 
 % Variables related to Low rank approximation
-SETTINGS.MAX_ERROR_SNTLN = 1e-14;
+SETTINGS.MAX_ERROR_SNTLN = 1e-11;
 
 % Set maximum number of iterations for STLN
 SETTINGS.MAX_ITERATIONS_SNTLN = 50;
+
+%-------------------------------------------------------------------------
+% 
+% APF METHOD
+
+SETTINGS.APF_METHOD = apf_method;
+
+%-------------------------------------------------------------------------
+%
+% 
+
 
 
 end

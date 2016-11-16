@@ -116,8 +116,9 @@ b = [log10(lambda_vec); log10(mu_vec); -log10(rho_vec);-log10(tau_vec)];
 
 A = [PartOne; PartTwo; PartThree; PartFour];
 
+warning('off')
 x = linprog(f,-A,-b);
-
+warning('on')
 try
     
     th1 = 10^x(3);
