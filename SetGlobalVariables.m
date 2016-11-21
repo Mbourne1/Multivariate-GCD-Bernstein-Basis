@@ -1,5 +1,20 @@
-function [] = SetGlobalVariables(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,sylvester_build_method)
-
+function [] = SetGlobalVariables(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method)
+%
+% % Inputs
+%
+% ex_num
+%
+% [emin, emax]
+%
+% mean_method
+%
+% bool_alpha_theta
+%
+% low_rank_approx_method
+%
+% apf_method
+%
+% sylvester_build_method
 
 global SETTINGS
 
@@ -79,7 +94,7 @@ SETTINGS.SEED = 1024;
 
 % Set lower Noise level
 SETTINGS.EMIN = emin;
-
+SETTINGS.EMAX = emax;
 %--------------------------------------------------------------------------
 %
 %       Low Rank Approx Settings

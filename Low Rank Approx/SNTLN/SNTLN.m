@@ -105,7 +105,7 @@ M(:,idx_col) = [];
 % removed from the Sylvester subresultant.
 e = I(:,idx_col);
 
-%% Preprocessing
+% % Preprocessing
 
 % Get the polynomial f(\omega_{1},\omega_{2})
 fww = GetWithThetas(fxy,th1,th2);
@@ -113,7 +113,7 @@ fww = GetWithThetas(fxy,th1,th2);
 % Get the polynomial g(\omega_{1},\omega_{2})
 gww = GetWithThetas(gxy,th1,th2);
 
-%% Form the Coefficient Matrix T = [C(f)|C(g)] such that DTQ * x = [col]
+% % Form the Coefficient Matrix T = [C(f)|C(g)] such that DTQ * x = [col]
 DTQ_fg = BuildDTQ(fww,alpha.*gww,k1,k2);
 
 % Get partial derivative of f(\omega_{1},\omega_{2}) with respect to \alpha
@@ -482,7 +482,7 @@ while (condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
        
     
     % Get residual as a vector
-    rk = (ck+hk) - DTNQ*M*xk ;
+    res_vec = (ck+hk) - DTNQ*M*xk ;
     
     % Create the matrix C. This is made up of five submatrices, HZ, Hx,
     % H_alpha and H_theta1 and H_theta2.
@@ -501,18 +501,22 @@ while (condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     
     % Calculate the new right hand vector
     ek = ck + hk;
-    
-    % Update gnew - used in lse problem
-    res_vec = rk;
-    
+     
     % Calculate the normalised residual of the solution.
-    condition(ite) = norm(rk) / norm(ek);
+    condition(ite) = norm(res_vec) / norm(ek);
     
     % Update fnew - used in LSE Problem.
     f = -(yy-start_point);
     
     
 end
+
+% Print the number of iterations
+LineBreakLarge()
+fprintf([mfilename ' : ' sprintf('Iterations over SNTLN fucnction for low rank approximation : %i \n', ite)]);
+LineBreakLarge()
+SETTINGS.LOW_RANK_APPROX_REQ_ITE = ite;
+
 
 % Plot Graphs
 PlotSNTLN();
@@ -546,9 +550,11 @@ x = [first_part ; -1 ; second_part];
 v_vww = x(1:nCoeffs_vxy);
 v_uww = -1.*x(nCoeffs_vxy+1:end);
 
+% Get v(\omega_{1},\omega_{2}) and u(\omega_{1},\omega_{2})
 vww = GetAsMatrix(v_vww,n1-k1,n2-k2);
 uww = GetAsMatrix(v_uww,m1-k1,m2-k2);
 
+% Get v(x,y) and u(x,y)
 vxy_lr = GetWithoutThetas(vww,th1(ite),th2(ite));
 uxy_lr = GetWithoutThetas(uww,th1(ite),th2(ite));
 
@@ -561,10 +567,6 @@ th1_lr = th1(ite);
 th2_lr = th2(ite);
 
 
-% Print the number of iterations
-LineBreakLarge()
-fprintf([mfilename ' : ' sprintf('Iterations over SNTLN fucnction for low rank approximation : %i \n', ite)]);
-LineBreakLarge()
 end
 
 

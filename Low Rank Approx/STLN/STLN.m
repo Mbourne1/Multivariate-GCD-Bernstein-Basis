@@ -269,8 +269,14 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     
 end
 
-% Plot Graphs
 
+% Print the number of iterations
+LineBreakLarge()
+fprintf([mfilename ' : ' sprintf('Iterations over STLN fucnction for low rank approximation : %i \n', ite)]);
+LineBreakLarge()
+SETTINGS.LOW_RANK_APPROX_REQ_ITE = ite;
+
+% Plot Graphs
 PlotSNTLN()
 
 
@@ -302,10 +308,6 @@ vec_uxy = -1.*x(nCoeffs_vxy+1:end);
 vxy_lr = GetAsMatrix(vec_vxy,n1-k1,n2-k2);
 uxy_lr = GetAsMatrix(vec_uxy,m1-k1,m2-k2);
 
-% Print the number of iterations
-LineBreakLarge();
-fprintf('Iterations over STLN() function for Low Rank Approximation of Sylvester Matrix : %i \n', ite);
-LineBreakLarge();
 
 end
 

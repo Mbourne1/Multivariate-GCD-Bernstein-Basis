@@ -110,6 +110,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         th1_lr = th1;
         th2_lr = th2;
         
+        SETTINGS.LOW_RANK_APPROX_REQ_ITE = 0;
         
     otherwise
         error('bool_SNTLN is either (Standard SNTLN) or (None)')

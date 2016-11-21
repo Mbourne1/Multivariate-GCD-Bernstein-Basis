@@ -1,4 +1,4 @@
-function Y = BuildDYG_SNTLN(m1,m2,n1,n2,k1,k2,x,alpha,th1,th2)
+function DYQ = BuildDYG_SNTLN(m1,m2,n1,n2,k1,k2,x,alpha,th1,th2)
 % BuildY(m1,m2,n1,n2,k1,k2,idx_col,x_ls,alpha,th1,th2)
 %
 %
@@ -28,6 +28,10 @@ function Y = BuildDYG_SNTLN(m1,m2,n1,n2,k1,k2,x,alpha,th1,th2)
 % th1 :
 %
 % th2 :
+%
+% % Outputs
+%
+% DYQ :
 
 % Get degree of polynomial u(x,y)
 m1_k1 = m1 - k1;
@@ -52,9 +56,16 @@ x2_vec = x(nCoeffs_x1+1:end);
 x1_ww = GetAsMatrix(x1_vec,n1_k1,n2_k2);
 x2_ww = GetAsMatrix(x2_vec,m1_k1,m2_k2);
 
+% Build the matrix D^{-1}_{m1+n1-k1,m2+n2-k2}
+D = BuildD(m1,m2,n1-k1,n2-k2);
+
 % Construct T1(x1) and T2(x2).
-DY1Q1 = BuildDT1Q1(x1_ww,m1,m2);
-DY2Q2 = BuildDT1Q1(x2_ww,n1,n2);
+Y1 = BuildT1(x1_ww,m1,m2);
+Y2 = BuildT1(x2_ww,n1,n2);
+
+% Build the matrices Q_{m1,m2} and Q_{n1,n2}
+Q1 = BuildQ1(m1,m2);
+Q2 = BuildQ1(n1,n2);
 
 % Get the matrix of thetas corresponding to (and exlcluding) coefficients
 % of f(x,y)
@@ -68,5 +79,5 @@ th_gww = diag(th_gww);
 
 
 % multiply by the alpha of g
-Y = [DY1Q1*th_fww alpha*DY2Q2*th_gww];
+DYQ = [D*Y1*Q1*th_fww alpha.*D*Y2*Q2*th_gww];
 end

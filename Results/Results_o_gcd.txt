@@ -109,3 +109,6 @@ date, ex_num, m,n,error, bool_preproc, mean_method, noise
 14-Nov-2016 12:12:17, 	 1, 	 7, 	 7, 	 -1.803203e-05, 	 y, 	 Geometric Mean Matlab Method, 	 1.000000e-12 
 14-Nov-2016 12:13:53, 	 1, 	 7, 	 7, 	 1.905944e-13, 	 y, 	 Geometric Mean Matlab Method, 	 1.000000e-12 
 14-Nov-2016 12:18:08, 	 1, 	 7, 	 7, 	 1.903805e-13, 	 y, 	 Geometric Mean Matlab Method, 	 1.000000e-12 
+16-Nov-2016 17:20:20,1,7,7,1.1173e-13,-9.0421e-14,1.9059e-13,y,Geometric Mean Matlab Method,Standard SNTLN,None,DTQ,1.000000e-12,1.000000e-12 
+16-Nov-2016 17:23:49,1,7,7,-3.1893e-06,-2.3737e-05,-6.7798e-06,y,Geometric Mean Matlab Method,Standard SNTLN,None,DTQ,1.000000e-08,1.000000e-12 
+16-Nov-2016 17:24:24,1,7,7,4.8375e-05,-0.00028089,9.0237e-05,y,Geometric Mean Matlab Method,Standard SNTLN,None,DTQ,1.000000e-10,1.000000e-12 
