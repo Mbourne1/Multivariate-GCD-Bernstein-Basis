@@ -58,17 +58,15 @@ vecx =[
     x_ls(opt_col_index:end);
     ];
 
-nCoeffs_v = (n1-t1+1) * (n2-t2+1);
-nCoeffs_u = (m1-t1+1) * (m2-t2+1);
+nCoeffs_vxy = (n1-t1+1) * (n2-t2+1);
+nCoeffs_uxy = (m1-t1+1) * (m2-t2+1);
 
 
 % Get coefficients of u(x,y) as a vector 
-v_vxy = vecx(1:nCoeffs_v);
+v_vxy = vecx(1:nCoeffs_vxy);
 
 % Get coefficients of v(w,w) as a vector
-v_uxy = -vecx(nCoeffs_v+1:end);
-
-
+v_uxy = -1 .* vecx(nCoeffs_vxy+1:end);
 
 % % Get the value of fv-gu
 norm(Sk1k2 * [v_vxy ;-v_uxy])

@@ -99,8 +99,8 @@ fprintf([mfilename ' : ' sprintf('Deg_y of GCD : %i \n',t2)]);
 % Add Noise to the coefficients
 
 % Add noise to the coefficients of f and g
-[fxy_matrix, ~] = AddNoiseToPoly(fxy_exact,emin);
-[gxy_matrix, ~] = AddNoiseToPoly(gxy_exact,emin);
+[fxy_matrix, ~] = AddVariableNoiseToPoly(fxy_exact,emin,emax);
+[gxy_matrix, ~] = AddVariableNoiseToPoly(gxy_exact,emin,emax);
 
 
 % %
@@ -127,7 +127,7 @@ error.uxy = GetDistance('u',uxy_calc,uxy_exact);
 error.vxy = GetDistance('v',vxy_calc,vxy_exact);
 
 % Output to file
-PrintToFile(m,n,error);
+PrintToFile(m,n,t1,t2,error);
 
 
 end
@@ -142,7 +142,7 @@ matrix_exact = normalise(matrix_exact);
 
 try
     % Get Distance between f(x,y) computed and f(x,y) exact.
-    dist = (norm(matrix_exact,'fro') - norm(matrix_calc,'fro') )./ norm(matrix_exact,'fro');
+    dist = norm(matrix_exact-matrix_calc,'fro') ./ norm(matrix_exact,'fro');
 catch
     dist = 1000;
 end
@@ -156,7 +156,7 @@ fprintf([mfilename ' : ' sprintf('Distance between exact and calculated matrix: 
 end
 
 
-function []= PrintToFile(m,n,error)
+function []= PrintToFile(m,n,t1,t2,error)
 % Print the results to a file
 %
 % % Inputs
@@ -190,11 +190,13 @@ else % File doesnt exist so create it
 end
 
     function WriteNewLine()
-        fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s \n',...
+        fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s \n',...
             datetime(),...
             SETTINGS.EX_NUM,...
             num2str(m),...
             num2str(n),...
+            num2str(t1),...
+            num2str(t2),...
             num2str(error.uxy),...
             num2str(error.vxy),...
             num2str(error.dxy),...
@@ -211,7 +213,7 @@ end
     end
 
     function WriteHeader()
-        fprintf(fileID,'DATE,EX_NUM,m,n,ERROR_UX,ERROR_VX,ERROR_DX,MEAN_METHOD,BOOL_ALPHA_THETA, EMIN, EMAX, LOW_RANK_APPROX_METHOD,LOW_RANK_ITE, APF_METHOD, APF_ITE,sylvester_build_method \n');
+        fprintf(fileID,'DATE,EX_NUM,m,n,t1,t2,ERROR_UX,ERROR_VX,ERROR_DX,MEAN_METHOD,BOOL_ALPHA_THETA, EMIN, EMAX, LOW_RANK_APPROX_METHOD,LOW_RANK_ITE, APF_METHOD, APF_ITE,sylvester_build_method \n');
     end
 
 
