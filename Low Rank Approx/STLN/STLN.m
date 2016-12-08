@@ -94,7 +94,7 @@ e = I(:,idx_col);
 % Form the Coefficient Matrix T = [C(f)|C(g)] such that DTQ * x = [col]
 
 % % Build the Sylvester matrix D*T(f,g)*Q
-DTQ = BuildDTQ(fxy,gxy,k1,k2);
+DTQ = BuildDTQ_2Polys(fxy, gxy, k1, k2);
 
 % Get the matrix A_{t}(f,g), which is the subresultant matrix S(f,g) with
 % an opitmal column removed
@@ -154,7 +154,7 @@ E = eye(nEntries);
 
 % %
 % Create the matrix D(T+N)Q, initially N is empty so this is the same as T.
-DTNQ = BuildDTQ(fxy,gxy,k1,k2);
+DTNQ = BuildDTQ_2Polys(fxy, gxy, k1, k2);
 
 % %
 % Create the matrix C for input into iteration
@@ -217,21 +217,21 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     xk = xk + delta_xk;
     
     % Construct the Sylvester subresultant matrix DTQ.
-    DTQ = BuildDTQ(fxy,gxy,k1,k2);
+    DTQ = BuildDTQ_2Polys(fxy,gxy,k1,k2);
        
     % Calculate the column c_{k} of DTQ that is moved to the right hand side
     ck = DTQ*e;
     
     % Build the coefficient Matrix N = [T(z1) T(z2)], of structured perturbations, with
     % same structure as DTQ.
-    DNQ = BuildDTQ(z_fxy,z_gxy,k1,k2);
+    DNQ = BuildDTQ_2Polys(z_fxy,z_gxy,k1,k2);
 
     % Calculate the column of DNQ that is moved to the right hand side, which
     % has the same structure as c_{k} the column of S_{k} moved to the RHS
     hk = DNQ*e;
        
     % Build the matrix (T+N)
-    DTNQ = BuildDTQ((fxy + z_fxy), (gxy + z_gxy), k1, k2);
+    DTNQ = BuildDTQ_2Polys((fxy + z_fxy), (gxy + z_gxy), k1, k2);
 
     % Calculate the matrix DY where Y is the Matrix such that E_{k}x = Y_{k}z.
     % Insert a zero into the position of the optimal_column.
