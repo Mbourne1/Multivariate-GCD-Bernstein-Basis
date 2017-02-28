@@ -1,10 +1,10 @@
-function exp3 = ScaledBernsteinToPower(fxy_matrix_bi)
+function exp3 = ScaledBernsteinToPower_Bivariate(fxy_matrix_bi)
 % Given a matrix fxy_matrix_bi whose entries are
 % fxy_matrix_bi(i+1,j+1) = a_{i,j} \binom{m1}{i}\binom{m2}{j} 
 % get the polynomial in the power basis.
 
 % Get the degree of fxy wrt x and y
-[m1,m2] = GetDegree(fxy_matrix_bi);
+[m1, m2] = GetDegree(fxy_matrix_bi);
 
 % %
 % Initialise some symbolic variables
@@ -15,6 +15,7 @@ y = sym('y');
 % % Build Matrix R
 
 % for each row
+R = zeros(m+1,1);
 for i = 0:1:m1
     R(i+1) = x^i * (1-x)^(m1-i);
 end

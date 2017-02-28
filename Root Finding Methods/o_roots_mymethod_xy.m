@@ -8,19 +8,19 @@ function [wx,wy,wxy] = o_roots_mymethod_xy(wx,wy,vDegt_wx,vDegt_wy)
 %
 
 % Get the number of entries in the set of polynomials w(x)
-[~,num_entries_wx] = size(wx);
+[~,nEntries_wx] = size(wx);
 
 % Get the number of entries in the set of polynomials w(y)
-[~,num_entries_wy] = size(wy);
+[~,nEntries_wy] = size(wy);
 
 
 wxy = 1;
 
 % For each of the polynomials w(x)
-for i = 1:1:num_entries_wx
+for i = 1:1:nEntries_wx
     
     % Get the degree of w(x) with respect to y.
-    [~,m2] = GetDegree(wx{i});
+    [~,m2] = GetDegree_Bivariate(wx{i});
     
     % If the polynomial has a y component (is Bivariate), then must
     % deconvolve with the corresponding polynomial wy_{i}. This will result
@@ -33,7 +33,7 @@ for i = 1:1:num_entries_wx
         upper_lim = min(vDegt_wx(i),vDegt_wy(i));
         
         [fxy_calc_matrix,gxy_calc_matrix, dxy_calc_matrix, uxy_calc_matrix, vxy_calc_matrix,t,t1,t2]  =...
-            o_gcd_mymethod(wx{i},wy{i},vDegt_wx(i),vDegt_wy(i),[lower_lim, upper_lim]);
+            o_gcd_mymethod_2Polys(wx{i},wy{i},vDegt_wx(i),vDegt_wy(i),[lower_lim, upper_lim]);
         
         % Overwrite wx and wy with new values
         % Assign the GCD to the non-Separable part

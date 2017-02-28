@@ -83,7 +83,7 @@ for k = 1:1:nFactors_xy
     
     coef_matrix = polys_xy{k};
     
-    [m1,m2] = GetDegree(coef_matrix);
+    [m1,m2] = GetDegree_Bivariate(coef_matrix);
     
     % Get the number of diagonals in the matrix of coefficients of f(x,y)
     nDiags_fx = (m1+1)+(m2+1)-1;

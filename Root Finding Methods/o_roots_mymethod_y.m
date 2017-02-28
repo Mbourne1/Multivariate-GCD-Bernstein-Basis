@@ -1,9 +1,9 @@
-function [wy, vDegt_wy] = o_roots_mymethod_y(fxy_matrix,M)
+function [wy, vDegt_wy] = o_roots_mymethod_y(fxy, M)
 % Set the first entry of q to be the input polynomial f(x,y)
-fy{1} = fxy_matrix;
+fy{1} = fxy;
 
 % Get degree of polynomial f(x,y)
-[m1,m2] = GetDegree(fxy_matrix);
+[m1,m2] = GetDegree_Bivariate(fxy);
 
 % Get degree of polynomial f(x,y) with respect to x
 vDeg1_fy(1) = m1;
@@ -66,7 +66,7 @@ while vDeg2_fy(ite) > 0
     fprintf([mfilename ' : ' sprintf('Maximum degree of f_{%i}: %i \n', ite+1, upper_lim)]);
     
     % GCD is only a scalar with respect to y so set equal to g(x,y).
-    [fy{ite},gxy,fy{ite+1},uxy,vxy,t,t1,t2] = o_gcd_mymethod(fy{ite},gxy,m,n,[lower_lim,upper_lim]);
+    [fy{ite},gxy,fy{ite+1},uxy,vxy,t,t1,t2] = o_gcd_mymethod_2Polys(fy{ite}, gxy, m, n, [lower_lim,upper_lim]);
       
     % Set the degree of q{i} with respect to x
     vDeg1_fy(ite+1) = t1;

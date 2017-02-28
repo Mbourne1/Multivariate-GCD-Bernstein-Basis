@@ -1,6 +1,6 @@
 global SETTINGS
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
+if(SETTINGS.PLOT_GRAPHS)
+
         %% plot the minimum singular values
         figure_name = sprintf('%s : Minimum Singular Values',mfilename);
         figure('name',figure_name)
@@ -26,7 +26,5 @@ switch SETTINGS.PLOT_GRAPHS
         legend(gca,'show')
         hold off
 
-    case 'n'
-    otherwise
-        error('error: plot_graphs must be either (y) or (n)')
+ 
 end

@@ -26,11 +26,11 @@ global SETTINGS
 % Example Number
 SETTINGS.EX_NUM = ex_num;
 
-% bool_plotgraphs ('y'/'n')
-%       y - plot graphs
-%       n - exclude plotting
+% bool_plotgraphs (true/false)
+%       true - plot graphs
+%       false - exclude plotting
 
-SETTINGS.PLOT_GRAPHS = 'y';
+SETTINGS.PLOT_GRAPHS = true;
 
 
 % ------------------------------------------------------------------------
@@ -61,6 +61,12 @@ SETTINGS.THRESHOLD = 1;
 
 SETTINGS.THRESHOLD_RANK = 1;
 
+% Metric used to compute the degree of the GCD
+% R1 Row Norms
+% R1 Row Diagonals
+% Singular Values
+% Residuals
+SETTINGS.RANK_REVEALING_METRIC = 'Singular Values';
 
 %--------------------------------------------------------------------------
 %
@@ -69,9 +75,9 @@ SETTINGS.THRESHOLD_RANK = 1;
 
 SETTINGS.MEAN_METHOD = mean_method;
 
-% bool_alpha_theta ('y'/'n')
-%       'y' - Include the three preprocessing operations.
-%       'n' - Exclude the three preprocessing operations.
+% bool_alpha_theta true/false
+%       true - Include the three preprocessing operations.
+%       false - Exclude the three preprocessing operations.
 
 SETTINGS.BOOL_ALPHA_THETA = bool_alpha_theta;
 
@@ -82,11 +88,6 @@ SETTINGS.BOOL_ALPHA_THETA = bool_alpha_theta;
 %
 %
 
-
-% BOOL_NOISE ('y'/'n')
-%       'y' - Add noise to the coefficients of input polynomial f
-%       'n' - Use exact form of input polynomial f
-SETTINGS.BOOL_NOISE = 'y';
 
 
 % seed - SEED Number for noise generation

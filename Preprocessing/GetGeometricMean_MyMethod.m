@@ -16,7 +16,7 @@ function lambda = GetGeometricMean_MyMethod(fxy,n1_k1,n2_k2)
 
 
 % Get the degree of polynomial f(x,y)
-[m1,m2] = GetDegree(fxy);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 % Get the geometric mean of the coefficient parts only
 prod_a = 1;

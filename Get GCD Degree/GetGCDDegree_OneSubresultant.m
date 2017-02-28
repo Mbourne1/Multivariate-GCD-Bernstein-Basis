@@ -1,8 +1,10 @@
-function t = GetGCDDegree_OneSubresultant(vSingularValues)
+function t = GetGCDDegree_OneSubresultant(vSingularValues, limits)
 % Given the vector of values from either minimum singular values or max:min
 % R diagonals.
 % Get the rank, where only one subresultant exists.
 
+lowerLimit = limits(0);
+upperLimit = limits(1);
 
 global SETTINGS
 
@@ -14,15 +16,15 @@ calling_function = St(2).name;
 fprintf([calling_function ' - ' mfilename ' : ' 'Only one subresultant exists. \n'])
 
 
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
+if(SETTINGS.PLOT_GRAPHS)
+    
         figure_name = sprintf([calling_function ' : Singular values of S_{1} \n']);
         figure('name',figure_name)
         hold on
         title('Singular values of S_{1}')
         plot(log10(vSingularValues))
         hold off
-    case 'n'
+    
 end
 
 [deltaSingularValues,~] = Analysis(vSingularValues);
@@ -39,7 +41,7 @@ if deltaSingularValues < SETTINGS.THRESHOLD
 else % val > threshold
     
     % The subresultant S_{1} is rank deficient, in which case t = 1
-    t = 1;
+    t = upperLimit;
     fprintf([calling_function ' : ' 'The only Subresultant S_{1} appears to be Singular \n']);
     return
     

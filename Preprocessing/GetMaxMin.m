@@ -1,5 +1,5 @@
-function [max_mtrx,min_mtrx] = GetMaxMin(fxy,n1_k1,n2_k2)
-% GetMaxMin(fxy,n1_k1,n2_k2)
+function [max_mtrx,min_mtrx] = GetMaxMin(fxy, n1_k1, n2_k2)
+% GetMaxMin(fxy, n1_k1, n2_k2)
 %
 % Get the maximum and minimum of each entry of f(x,y) in the Sylvester
 % matrix.
@@ -16,16 +16,16 @@ function [max_mtrx,min_mtrx] = GetMaxMin(fxy,n1_k1,n2_k2)
 
 
 % Get the degree of polynomial f(x,y)
-[m1,m2] = GetDegree(fxy);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 % Take the absolute values of the coefficients
 fxy = abs(fxy);
 
 % Build a matrix which stores the maximum values of each coefficient
-max_mtrx = zeros(m1+1,m2+1);
+max_mtrx = zeros(m1+1, m2+1);
 
 % Build a matrix which stores the minimum values of each coefficient
-min_mtrx = zeros(m1+1,m2+1);
+min_mtrx = zeros(m1+1, m2+1);
 
 for i1=0:1:m1
     for i2 = 0:1:m2
@@ -33,7 +33,7 @@ for i1=0:1:m1
         % This gives the a_{i1,i2} coefficient of f
         %[maximum,minimum] = GetMaxMin2(fxy(i1+1,i2+1),i1,i2,m1,m2,n1_k1,n2_k2);
 
-        [maximum,minimum] = GetMaxMin2c(fxy(i1+1,i2+1),i1,i2,m1,m2,n1_k1,n2_k2);
+        [maximum,minimum] = GetMaxMin2c(fxy(i1+1,i2+1), i1, i2, m1, m2, n1_k1, n2_k2);
         max_mtrx(i1+1,i2+1) = maximum;
         min_mtrx(i1+1,i2+1) = minimum;
         

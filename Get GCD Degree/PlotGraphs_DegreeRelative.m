@@ -1,6 +1,6 @@
 global SETTINGS
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
+if(SETTINGS.PLOT_GRAPHS)
+
        
        
         % Plot 3d data points
@@ -14,7 +14,5 @@ switch SETTINGS.PLOT_GRAPHS
         grid('on')
         hold off
         
-    case 'n'
-    otherwise
-        error('plot_graphs is either y or n')
+
 end

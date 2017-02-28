@@ -26,8 +26,8 @@ function [alpha] = OptimalAlpha(max_mtrx_f,min_mtrx_f, max_mtrx_g,min_mtrx_g)
 f = [1 -1 0];
 
 % get the degree of polynomial f(x,y) and g(x,y)
-[m1,m2] = GetDegree(max_mtrx_f);
-[n1,n2] = GetDegree(max_mtrx_g);
+[m1, m2] = GetDegree_Bivariate(max_mtrx_f);
+[n1, n2] = GetDegree_Bivariate(max_mtrx_g);
 
 nEntries_f = (m1 + 1) * (m2 + 1);
 nEntries_g = (n1 + 1) * (n2 + 1);

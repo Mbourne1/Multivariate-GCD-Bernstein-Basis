@@ -21,7 +21,7 @@ function [fx_Pwr] = BernsteinToPower_Univariate(fx_Brn)
 %
 
 % Get the degree of input polynomial f(x) in Bernstein basis.
-m = GetDegree(fx_Brn);
+m = GetDegree_Bivariate(fx_Brn);
 
 
 % Build the conversion Matrix
@@ -29,7 +29,7 @@ mat = zeros(m+1,m+1);
 % for each row
 for i = 0:1:m
     for j = 0:1:m
-        if j>= i;
+        if j>= i
             mat(i+1,j+1) = nchoosek(m-i,j-i) ./ nchoosek(m,j);
         end
     end
@@ -38,6 +38,7 @@ end
 % Obtain the Bernstein Coefficients by multiplying the power coefficients
 % by the basis conversion matrix.
 mat = pinv(mat');
+
 fx_Pwr =  mat * fx_Brn  ;
 
 

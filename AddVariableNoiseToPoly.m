@@ -1,4 +1,4 @@
-function [fxy_noisy,noise_matrix] = AddVariableNoiseToPoly(fxy, el, eu)
+function [fxy_noisy, noise_matrix] = AddVariableNoiseToPoly(fxy, el, eu)
 %
 % Add noise to the coefficients of polynomial f(x,y)
 %
@@ -21,7 +21,7 @@ global SETTINGS
 rng(SETTINGS.SEED)
 
 % get the degree of input polynomial f
-[m1,m2] = GetDegree(fxy);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 
 % Get random variables

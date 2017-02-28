@@ -1,29 +1,29 @@
-function [t1,t2,lambda,mu,alpha,th1,th2] = GetGCDDegree_Relative(fxy,gxy)
+function [t1,t2,lambda,mu,alpha,th1,th2] = GetGCDDegree_Relative_Given_t(fxy, gxy)
 % Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two
 % polynomials f(x,y) and g(x,y)
 %
 % % Inputs.
 %
-%   fxy : Coefficient matrix of polynomial f(x,y)
+% fxy : (Matrix) Coefficient matrix of polynomial f(x,y)
 %
-%   gxy : Coefficient matrix of polynomial g(x,y)
+% gxy : (Matrix) Coefficient matrix of polynomial g(x,y)
 %
 % % Outputs 
 %
-%   t1 : Degree of d(x,y) with respect to x
+% t1 : Degree of d(x,y) with respect to x
 % 
-%   t2 : Degree of d(x,y) with respect to y
+% t2 : Degree of d(x,y) with respect to y
 %
-%   lambda : Geometric mean of entries in first partition of Syvlester
+% GM_fx : Geometric mean of entries in first partition of Syvlester
 %   matrix
 %
-%   mu : Geometric mean of Entries in second partition of Sylvester matrix
+% GM_gx : Geometric mean of Entries in second partition of Sylvester matrix
 %
-%   alpha : Optimal value of alpha
+% alpha : Optimal value of alpha
 %
-%   th1 : Optimal value of theta_{1}
+% th1 : Optimal value of theta_{1}
 %
-%   th2 : Optimal value of theta_{2}
+% th2 : Optimal value of theta_{2}
 
 
 %
@@ -31,10 +31,10 @@ global SETTINGS
 
 
 % Get the degree structure of polynomial f(x,y)
-[m1,m2] = GetDegree(fxy);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 % Get the degree structure of polynomial g(x,y)
-[n1,n2] = GetDegree(gxy);
+[n1, n2] = GetDegree_Bivariate(gxy);
 
 % Get all k1 k2 pairs
 k1k2Pairs = GetPairs_All(m1,m2,n1,n2);

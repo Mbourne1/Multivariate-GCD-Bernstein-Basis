@@ -15,7 +15,7 @@ function [C] = PowerToBernstein_Univariate(fx)
 
 
 % Get the degree of f(x)
-m = GetDegree(fx);
+m = GetDegree_Univariate(fx);
 
 C = zeros(m+1,1);
 

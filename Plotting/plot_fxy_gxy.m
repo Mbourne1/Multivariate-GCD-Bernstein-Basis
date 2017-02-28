@@ -92,13 +92,17 @@ end
 
 function [fxy_coordinates] = getCoordinates_CP(fxy_matrix_Brn)
 %% Get the (x,y,z) coordinates of each of the control points
+%
+% % Inputs
+%
+% fxy_matrix_Brn : (Matrix) Coefficients of f(x,y)
 
 % get dimensions of f(x,y)
-[m1,m2] = GetDegree(fxy_matrix_Brn);
+[m1, m2] = GetDegree_Bivariate(fxy_matrix_Brn);
 
 % Initialise a matrix to store all of the coordinates
 num_coordinates = (m1+1) * (m2+1);
-fxy_coordinates = zeros(num_coordinates,3);
+fxy_coordinates = zeros(num_coordinates, 3);
 
 
 count = 1;
@@ -127,8 +131,13 @@ end
 function fxy_coordinates_Curve = get_Coordinates_Curve(fxy_matrix_Brn)
 % Given a set of coefficients for a surface f(x,y) obtain a set of (x,y,z)
 % values for points on the curve.
+%
+% % Inputs
+%
+% fxy_matrix_Brn : (Matrix) Coefficients of f(x,y)
 
-[m1,m2] = GetDegree(fxy_matrix_Brn);
+
+[m1, m2] = GetDegree_Bivariate(fxy_matrix_Brn);
 
 % Initialise empty vector
 fxy_coordinates_Curve = [];

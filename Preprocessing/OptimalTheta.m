@@ -29,8 +29,8 @@ function [theta1,theta2] = OptimalTheta(max_mtrx_f,min_mtrx_f, max_mtrx_g,min_mt
 f = [1 -1 0 0];
 
 % get the degree of polynomial f and g
-[m1,m2] = GetDegree(max_mtrx_f);
-[n1,n2] = GetDegree(max_mtrx_g);
+[m1, m2] = GetDegree_Bivariate(max_mtrx_f);
+[n1, n2] = GetDegree_Bivariate(max_mtrx_g);
 
 % Assemble the four submatrices of Matrix A
 PartOne = zeros((m1+1)*(m2+1),4);
