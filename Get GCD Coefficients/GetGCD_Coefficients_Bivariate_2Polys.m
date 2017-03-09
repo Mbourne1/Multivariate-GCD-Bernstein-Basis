@@ -6,9 +6,15 @@ function [dxy] = GetGCD_Coefficients_Bivariate_2Polys(uxy, vxy, fxy, gxy, t1, t2
 %
 % % Inputs 
 %
-% [uxy, vxy] : (Matrix) Coefficients of polynomial u(x,y) and v(x,y)
+% uxy : (Matrix) Coefficients of polynomial u(x,y), the quotient polynomial
+% such that f(x,y) / u(x,y) = d(x,y)
 %
-% [fxy, gxy] : (Matrix) Coefficients of polynomial f(x,y) and g(x,y)
+% vxy : (Matrix) Coefficients of polynomial v(x,y), the quotient polynomial
+% such that g(x,y) / v(x,y) = d(x,y)
+%
+% fxy : (Matrix) Coefficients of polynomial f(x,y) 
+%
+% gxy : (Matrix) Coefficients of polynomial g(x,y)
 %
 % t1 : (Int) Degree of d(x,y) with respect to x
 %
@@ -16,34 +22,12 @@ function [dxy] = GetGCD_Coefficients_Bivariate_2Polys(uxy, vxy, fxy, gxy, t1, t2
 %
 % % Outputs
 %
-% dxy : (Matrix) Coefficients of polynomial d(x,y)
+% dxy : (Matrix) Coefficients of polynomial d(x,y), the greatest common
+% divisor of f(x,y) and g(x,y)
 
 
-% Get the degrees of polynomial f(x,y)
-[m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get the degrees of polynomial g(x,y)
-[n1, n2] = GetDegree_Bivariate(gxy);
-
-% % Assemble the Subresultant S_{t1,t2}
-
-% Build matrix H
-H = BuildH_Bivariate(m1, m2, n1, n2);
-
-% Build the matrix C_{}(u(x,y))
-C1_u = BuildT1_Bivariate(uxy, t1, t2);
-
-% Build Matrix C_{}(v(x,y)
-C2_v = BuildT1_Bivariate(vxy, t1, t2);
-
-C = [ C1_u;
-    C2_v ];
-
-% Buid matrix G
-G = BuildG_Bivariate(t1, t2);
-
-% Build the Coefficient Matrix HCG 
-HCG = H*C*G;
+% % Assemble the factorisation matrix 
+C_uv = BuildFactorisationMatrix(uxy, vxy, t1, t2);
 
 % Get f(x,y) as a vector
 fxy_vec = GetAsVector(fxy);
@@ -59,7 +43,7 @@ rhs_vec = [...
 
 
 % Obtain vector x
-x_ls = SolveAx_b(HCG,rhs_vec);
+x_ls = SolveAx_b(C_uv,rhs_vec);
 
 
 %
@@ -70,4 +54,5 @@ dxy = GetAsMatrix(x_ls, t1, t2);
 
 
 end
+
 

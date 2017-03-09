@@ -14,28 +14,26 @@ function [hxy] = Deconvolve_Bivariate(fxy, gxy)
 % hxy : (Matrix) Coefficients of the polynomial h(x,y)
 
 
-% Get degrees of polynomial f(x,y)
+% Get degrees of polynomials f(x,y) and g(x,y) 
 [m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get the degrees of polynomial g(x,y)
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Build the matrix C_{m1-n1,m2-n2}(g) 
-C1 = BuildT1_bivar(gxy, m1-n1, m2-n2);
+C1 = BuildT1_Bivariate(gxy, m1-n1, m2-n2);
 
 % Get the polynomial f in vector form
-vec_f = GetAsVector(fxy);
+vec_fxy = GetAsVector(fxy);
 
 % Build the matrix D^{-1}
-D = BuildD_bivar(0,0,m1,m2);
+D = BuildD_Bivariate_2Polys(0, 0, m1, m2);
 
 % Build the Matrix G
-G = BuildG_bivar(m1-n1,m2-n2);
+G = BuildG_Bivariate(m1-n1, m2-n2);
 
 % Get coefficients vector h containing coefficients of polynomial h(x,y)
-h = SolveAx_b(D*C1*G,vec_f);
+h = SolveAx_b(D*C1*G, vec_fxy);
 
 % Get vector h as a matrix of coefficients of h(x,y)
-hxy = GetAsMatrix(h,m1-n1,m2-n2);
+hxy = GetAsMatrix(h, m1-n1, m2-n2);
 
 end

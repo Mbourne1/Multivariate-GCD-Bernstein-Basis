@@ -41,8 +41,8 @@ fprintf('Parametric representation of f in Power Basis:\n')
 f_x_pwr_sym = Brn2Pwr_Sym(CP_f(1,:));
 f_y_pwr_sym = Brn2Pwr_Sym(CP_f(2,:));
 
-f_x_pwr = Bern2Power_Univariate(CP_f(1,:));
-f_y_pwr = Bern2Power_Univariate(CP_f(2,:));
+f_x_pwr = Bernstein2Power_Univariate(CP_f(1,:));
+f_y_pwr = Bernstein2Power_Univariate(CP_f(2,:));
 
 % Get the parametric expressions of polynomial g in the pwr basis
 fprintf('Parametric representation of g in Power Basis:\n')

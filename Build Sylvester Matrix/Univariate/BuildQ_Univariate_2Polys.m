@@ -2,20 +2,17 @@ function Q = BuildQ_Univariate_2Polys(m,n,k)
 % Build the diagonal matrix Q corresponding to the binomial coefficients
 % of coprime polynomials u and v.
 %
-%
-%
 % Inputs
 %
-% m : Degree of polynomial f(x)
+% m : (Int) Degree of polynomial f(x)
 %
-% n : Degree of polynomial g(x)
+% n : (Int) Degree of polynomial g(x)
 %
-% k : Index of subresultant S_{k} to be formed.
-%
+% k : (Int) Index of subresultant S_{k} to be formed.
 %
 % Outputs.
 %
-% Q : The diagonal matrix of binomial coefficients corresponding to coprime
+% Q : (Matrix) The diagonal matrix of binomial coefficients corresponding to coprime
 %       polynomials u and v.
 %
 %

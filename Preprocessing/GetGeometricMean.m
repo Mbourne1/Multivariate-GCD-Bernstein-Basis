@@ -1,25 +1,25 @@
-function [lambda] = GetGeometricMean(fxy_matrix,n1_k1,n2_k2)
+function [GM_fx] = GetGeometricMean(fxy, n1_k1, n2_k2)
 % Given the polynomial f(x,y) and g(x,y), get the geometric mean of their
 % entries in the Sylvester matrix S_{k_{1},k_{2})(f,g).
 %
 % Inputs
 %
-% fxy_mtrx : Coefficients of the polynomial f(x,y)
+% fxy_mtrx : (Matrix) Coefficients of the polynomial f(x,y)
 %
-% n1_k1 : Degree of common divisor v(x,y)
+% n1_k1 : (Int) Subscript of matrix T_{n1-k1,n2-k2}, the first partition of S_{k1,k2}
 %
-% n2_k2 : Degree of common divisor v(x,y)
+% n2_k2 : (Int) Subscript of matrix T_{n1-k1,n2-k2}, the first partition of S_{k1,k2}
 %
 % Outputs
 %
-% lambda : Geometric mean of entries in T(f)
+% GM_fx : (Float) Geometric mean of entries in T_{n1-k1,n2-k2}(f)
 
 % Build the matrix D^{-1}T_{n_{1}-k_{1},n_{2}-k_{2}}Q, the first partition
 % of the Sylvester subresultant matrix
-DT1Q1 = BuildDT1Q1_Bivariate(fxy_matrix,n1_k1,n2_k2);
+DT1Q1 = BuildDT1Q1_Bivariate(fxy,n1_k1,n2_k2);
 
 % Get geometric mean of the nonzero entries
-lambda = geomean(reshape(abs(DT1Q1(DT1Q1~=0)),1,[]));
+GM_fx = geomean(reshape(abs(DT1Q1(DT1Q1~=0)),1,[]));
 
 
 end

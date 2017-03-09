@@ -7,17 +7,13 @@ function [fx_Pwr] = BernsteinToPower_Univariate(fx_Brn)
 %
 % % Input:
 %
-% fx_Brn : Column vector of coefficients of polynomial f(x) in Bernstein form.
-%                __
-%     B^{m}_{0} |__|    
-%     B^{m}_{1} |__|
-%       ...     |__|
-%     B^{m}_{m} |__|
+%
+% fx_Brn : (Vector) Coefficients of polynomial f(x) in Bernstein form.
 %
 % % Outputs : 
 %
-% fx_Pwr : Column vector of coefficients of polynomial f(x) in Power form.
 %
+% fx_Pwr : Column vector of coefficients of polynomial f(x) in Power form.
 %
 
 % Get the degree of input polynomial f(x) in Bernstein basis.

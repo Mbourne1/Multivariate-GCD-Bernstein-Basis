@@ -1,12 +1,23 @@
-function [fxy_Bb] = PowerToBernstein_Bivariate(fxy_matrix)
+function [fxy_Bb] = PowerToBernstein_Bivariate(fxy)
 % Given the coefficients of a bivariate polynomial f(x,y) in power basis,
 % return the coefficients of the same polynomial in Bernstein basis.
 %
-% > Power2Bernstein_Bivariate([1 1; 1 0])
+% % Inputs
+%
+%
+% fxy : (Matrix) Coefficients of polynomial f(x,y) in the power basis.
+%
+% % Outputs
+%
+%
+% fxy_Bb : (Matrix) Coefficients of polynomial f(x,y) in Bernstien form.
+%
+
+
 
 % Get the degree of polynomial f(x,y) with respect to x (m1) and with
 % respect to y (m2)
-[m1, m2] = GetDegree_Bivariate(fxy_matrix);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 
 % Build the matrices A and B such that A * f(x,y) * B gives the
@@ -30,7 +41,7 @@ for i = 0:1:m2
     end
 end
 
-fxy_Bb = A* fxy_matrix * B';
+fxy_Bb = A* fxy * B';
 
 
 

@@ -6,7 +6,9 @@ function DTQ = BuildDTQ_Bivariate_2Polys(fxy, gxy, k1, k2)
 % % Inputs.
 %
 %
-% [fxy, gxy] : (Matrix) Coefficients of the polynomial f(x,y)
+% fxy : (Matrix) Coefficients of the polynomial f(x,y)
+%
+% gxy : (Matrix) Coefficients of the polynomial g(x,y)
 %
 % k1 : (Int) The degree k_{1} with respect to x of the polynomial d_{k_{1},k_{2}}
 %

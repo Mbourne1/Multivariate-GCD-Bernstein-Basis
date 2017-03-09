@@ -1,4 +1,4 @@
-function [] = o_gcd__bivar_3Polys_batch()
+function [] = o_gcd_Bivariate_3Polys_batch()
 
 ex_num_arr = {'1','2','3','4','5','6','7','8','9','10'};
 emin_arr = {1e-8,1e-10,1e-12};
@@ -35,7 +35,7 @@ parfor i1 = 1:1:length(ex_num_arr)
                             close all
                             clc
                             try
-                                o_gcd_bivar_3Polys(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,sylvester_build_method);
+                                o_gcd_bivar_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method);
                                 fileId = fopen('log.txt','a')
                                 fprintf(fileId,'%s \n','success');
                                 fclose(fileId);

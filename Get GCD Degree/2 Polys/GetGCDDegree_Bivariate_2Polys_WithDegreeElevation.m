@@ -5,9 +5,14 @@ function [t_star, th1, th2] = GetGCDDegree_Bivariate_2Polys_WithDegreeElevation(
 %
 % % Inputs
 %
-% [fxy, gxy] : Coefficients of the polynomial f(x,y) and g(x,y)
+% fxy : Coefficients of the polynomial f(x,y)
 %
-% [m, n] : Total degree of f(x,y) and g(x,y)
+% gxy : Coefficients of the polynomial g(x,y)
+%
+% m : Total degree of f(x,y)
+%
+% n : Total degree of g(x,y)
+%
 %
 % limits_t :
 %
@@ -21,18 +26,7 @@ function [t_star, th1, th2] = GetGCDDegree_Bivariate_2Polys_WithDegreeElevation(
 
 global SETTINGS
 
-% Get degrees of polynomial f(x,y)
-[m1, m2] = GetDegree_Bivariate(fxy);
 
-% Get degrees of polynomial g(x,y)
-[n1, n2] = GetDegree_Bivariate(gxy);
-
-
-
-
-%fprintf('Degree Elevations for f(x) : p1 = %i \t p2 = %i \n', p1, p2);
-%fprintf('Degree Elevations for g(x) : q1 = %i \t q2 = %i \n', q1, q2);
-%fprintf('Max Degree Elevations for d(x) : r1 = %i \t r2 = %i \n', min(p1,q1), min(p2,q2));
 
 % Degree elevate f(x,y) so that its coefficients are contained in a square
 fxy_matrix_delv = DegreeElevate_Bivariate(fxy, p1, p2);
@@ -46,17 +40,17 @@ gxy_matrix_delv = DegreeElevate_Bivariate(gxy, q1, q2);
 
 % Set my_limits : Always compute all Sylvester subresultant matrices. Use
 % limits_t as an indicator of where the GCD degree should be.
-my_limits = [0 min(m_star, n_star)];
-%my_limits = [0 min(n1,n2)];
-lowerLimit = my_limits(1);
-upperLimit = my_limits(2);
+myLimits = [0 min(m_star, n_star)];
+
+myLowerLimit = myLimits(1);
+myUpperLimit = myLimits(2);
 
 % Set the number of subresultants to be built
-nSubresultants = upperLimit - lowerLimit + 1;
+nSubresultants = myUpperLimit - myLowerLimit + 1;
 
 % if upper limit is equal to lower limit
-if upperLimit == lowerLimit
-    t_star = upperLimit;
+if myUpperLimit == myLowerLimit
+    t_star = myUpperLimit;
     th1 = 1;
     th2 = 1;
     return;
@@ -82,7 +76,7 @@ arr_SingularValues = cell(nSubresultants, 1);
 % for each possible total degree
 for i = 1:1:nSubresultants
     
-    k = lowerLimit + (i-1);
+    k = myLowerLimit + (i-1);
     
     % Apply preprocessing
     [vGM_fx(i),vGM_gx(i),vAlpha(i), vTh1(i),vTh2(i)] = ...
@@ -137,8 +131,10 @@ switch SETTINGS.RANK_REVEALING_METRIC
         metric = vMinimumSingularValues;
         
         % Plot Graphs
-        %plotSingularValues_TotalDegree(arr_SingularValues);
-        plotMinimumSingularValues_TotalDegree(vMinimumSingularValues, my_limits);
+        if(SETTINGS.PLOT_GRAPHS)
+            %plotSingularValues_TotalDegree(arr_SingularValues);
+            plotMinimumSingularValues_TotalDegree(vMinimumSingularValues, myLimits);
+        end
         
     case 'R1 Row Norms'
         
@@ -180,8 +176,10 @@ switch SETTINGS.RANK_REVEALING_METRIC
         metric = vMinDiagonal_R1 ./ vMaxDiagonal_R1;
         
         % Plot graphs
-        plotMaxMinDiagonals_R1_Total(vMaxDiagonal_R1, vMinDiagonal_R1, my_limits, limits_t);
-        %plotDiagonals_R1(arr_R1_diag);
+        if(SETTINGS.PLOT_GRAPHS)
+            plotMaxMinDiagonals_R1_Total(vMaxDiagonal_R1, vMinDiagonal_R1, myLimits, limits_t);
+            %plotDiagonals_R1(arr_R1_diag);
+        end
         
     case 'Residuals'
         error('Code not complete')
@@ -192,15 +190,15 @@ end
 
 
 
-if upperLimit == lowerLimit
+if myUpperLimit == myLowerLimit
     
-    t_star = GetGCDDegree_OneSubresultant(metric, my_limits);
+    t_star = GetGCDDegree_OneSubresultant(metric, myLimits);
     
-  
+    
     
 else
     
-    t_star = GetGCDDegree_MultipleSubresultants(metric, my_limits);
+    t_star = GetGCDDegree_MultipleSubresultants(metric, myLimits);
     
     
     
@@ -215,8 +213,8 @@ end
 
 
 % Set the optimal theta 1 and theta 2
-th1 = vTh1(t_star - lowerLimit + 1);
-th2 = vTh2(t_star - lowerLimit + 1);
+th1 = vTh1(t_star - myLowerLimit + 1);
+th2 = vTh2(t_star - myLowerLimit + 1);
 
 LineBreakLarge();
 fprintf('%s : Value of t* is given by : %i \n', mfilename, t_star)

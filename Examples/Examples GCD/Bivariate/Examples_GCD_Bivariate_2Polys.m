@@ -6,17 +6,21 @@ function [fxy,gxy,dxy,uxy,vxy,m,n,t] = Examples_GCD_Bivariate_2Polys(ex_num)
 %
 % % Outputs
 %
-% [fxy, gxy] : Coefficients of polynomial f(x,y) and g(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% dxy : Coefficients of polynomial d(x,y)
+% gxy : (Matrix) Coefficients of polynomial g(x,y)
 %
-% [uxy, vxy] : Coefficients of polynomial u(x,y) and v(x,y)
+% dxy : (Matrix) Coefficients of polynomial d(x,y)
 %
-% m : Degree of polynomial f(x,y)
+% uxy : (Matrix) Coefficients of polynomial u(x,y)
 %
-% n : Degree of polynomial g(x,y)
+% vxy : (Matrix) Coefficients of polynomial v(x,y)
 %
-% t : Degree of polynomial d(x,y)
+% m : (Int) Total degree of polynomial f(x,y)
+%
+% n : (Int) Total degree of polynomial g(x,y)
+%
+% t : (Int) Total degree of polynomial d(x,y)
 
 
 

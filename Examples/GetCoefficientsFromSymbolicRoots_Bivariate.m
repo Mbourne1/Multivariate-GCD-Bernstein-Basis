@@ -4,12 +4,12 @@ function [fxy] = GetCoefficientsFromSymbolicRoots_Bivariate(root_mult_arr_f)
 %
 % % Inputs
 %
-% root_mult_arr_f : Matrix of symbolic factors f_{i} and corresponding
+% root_mult_arr_f : (Matrix) of symbolic factors f_{i} and corresponding
 % multiplicities m_{i}.
 %
 % % Outputs
 %
-% fxy : Matrix of coefficients of polynomial f(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 
 
 % Get array of symbolic factors of the polynomial

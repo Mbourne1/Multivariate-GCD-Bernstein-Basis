@@ -6,15 +6,15 @@ function DT1Q1 = BuildDT1Q1_Bivariate(fxy, n1_k1, n2_k2)
 % Inputs.
 %
 %
-% fxy : Coefficients of the polynomial f(x,y) in the Bernstein basis
+% fxy : (Matrix) Coefficients of the polynomial f(x,y) in the Bernstein basis
 %
-% n1_k1 : The degree of polynomial v(x,y) with respect to x
+% n1_k1 : (Int) The degree of polynomial v(x,y) with respect to x
 %
-% n2_k2 : The degree of polynomial v(x,y) with respect to y
+% n2_k2 : (Int) The degree of polynomial v(x,y) with respect to y
 %
 % % Outputs
 %
-% DT1Q1 : The matrix
+% DT1Q1 : (Matrix) Convolution matrix
 
 % Get the degree of f(x,y) with respect to x and y
 [m1, m2] = GetDegree_Bivariate(fxy);

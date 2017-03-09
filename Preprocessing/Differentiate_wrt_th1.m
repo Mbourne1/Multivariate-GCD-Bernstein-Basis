@@ -6,8 +6,7 @@ function fww_wrt_th1 = Differentiate_wrt_th1(fww, th1)
 %
 % fww : (Matrix) Coefficients of polynomial f(\omega_{1},\omega_{2})
 %
-% th1 : Optimal value of \theta_{1}
-%
+% th1 : (Float) Optimal value of \theta_{1}
 %
 % % Outputs
 %

@@ -7,16 +7,17 @@ function T1 = BuildT1_Symbolic_Bivariate(m1, m2, n1_k1, n2_k2)
 %
 % % Inputs.
 %
-% fxy_matrix : Coefficients of polynomial f(x,y)
+% fxy_matrix : (Matrix) Coefficients of polynomial f(x,y)
 %
-% n1_k1 : Degree of polynomial v(x,y) with respect to x
+% n1_k1 : (Int) Degree of polynomial v(x,y) with respect to x
 %
-% n2_k2 : Degree of polynomial v(x,y) with repsect to y
+% n2_k2 : (Int) Degree of polynomial v(x,y) with repsect to y
 %
 % % Outputs
 %
-% T1 : Matrix T_{n1-k1,n2-k2}(f)
+% T1 : (Matrix) T_{n1-k1,n2-k2}(f)
 
+% Get symbolic polynomial
 fxy = sym('A', [m1+1 m2+1]);
 
 % Get the degree of f(x,y) with respect to x and y

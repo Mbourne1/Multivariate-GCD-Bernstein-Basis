@@ -1,12 +1,14 @@
-function [] = o_gcd_2Polys_batch()
+function [] = o_gcd_Bivariate_2Polys_batch()
 
 ex_num_arr = {'1','2','3','4','5','6','7','8','9','10'};
 emin_arr = {1e-8,1e-10,1e-12};
 mean_method_arr = {'Geometric Mean Matlab Method','None'};
-bool_alpha_theta_arr = {'y','n'};
-low_rank_approx_method_arr = {'None','Standard STLN', 'Standard SNTLN'};
+bool_alpha_theta_arr = {true, false};
+low_rank_approx_method_arr = {'None', 'Standard STLN', 'Standard SNTLN'};
 apf_method_arr = {'None'};
 sylvester_build_method_arr = {'DTQ'};
+factorisation_build_method = 'HCG';
+
 
 parfor i1 = 1:1:length(ex_num_arr)
     ex_num = ex_num_arr{i1};
@@ -35,7 +37,7 @@ parfor i1 = 1:1:length(ex_num_arr)
                             close all
                             clc
                             try
-                                o_gcd_2Polys(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,sylvester_build_method);
+                                o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method);
                                 fileId = fopen('log.txt','a')
                                 fprintf(fileId,'%s \n','success');
                                 fclose(fileId);

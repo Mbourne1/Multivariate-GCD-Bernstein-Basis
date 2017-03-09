@@ -1,17 +1,24 @@
-function [fxy, gxy, dxy, uxy, vxy, m, n, t] = Examples_GCD_FromRoots_bivar_2Polys(ex_num)
+function [fxy, gxy, dxy, uxy, vxy, m, n, t] = Examples_GCD_FromRoots_Bivariate_2Polys(ex_num)
 % Get a GCD example given an example number
 %
 % % Inputs.
 %
-% ex_num : Example Number as a string
+% ex_num : (String) Example Number as a string
 %
 % % Outputs.
 %
-% [fxy, gxy] : Coefficients of polynomial f(x,y) and g(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y) 
 %
-% dxy : Coefficients of polynomial d(x,y)
+% gxy : (Matrix) Coefficients of polynomial g(x,y)
 %
-% [uxy, vxy] : Coefficients of polynomial u(x,y) and v(x,y)
+% dxy : (Matrix) Coefficients of polynomial d(x,y), the greatest common
+% divisor of f(x,y) and g(x,y)
+%
+% uxy : (Matrix) Coefficients of polynomial u(x,y), the quotient polynomial
+% such that f(x,y)/u(x,y) = d(x,y) 
+%
+% vxy : (Matrix) Coefficients of polynomial v(x,y), the quotient polynomial
+% such that g(x,y)/v(x,y) = d(x,y)
 %
 % m : Total degree of f(x,y)
 %

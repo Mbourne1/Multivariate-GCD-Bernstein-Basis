@@ -1,4 +1,4 @@
-function [t] = B_conv(root,mult)
+function [t] = B_conv(root, mult)
 % B_conv(rooot,mult)
 %
 % This function convolves the vector [-r 1-r] with itself m times, where r

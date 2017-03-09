@@ -6,8 +6,13 @@ function [m1, m2] = GetDegree_Bivariate(fxy)
 %
 % Inputs.
 %
-% fxy : Matrix of coefficients of polynomial f(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
+% % Outputs
+%
+% m1 : (Int) Degree with respect to x
+%
+% m2 : (Int) Degree with respect to y
 
 % Get the dimensions of the matrix of coefficients of f(x,y)
 [r,c] = size(fxy);

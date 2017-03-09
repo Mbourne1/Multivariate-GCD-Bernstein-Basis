@@ -5,20 +5,20 @@ function idx_col = GetOptimalColumn(Sk)
 %
 % % Inputs
 %
-% Sk : Sylvester subresultant matrix S_{k}(f,g)
+% Sk : (Matrix) Sylvester subresultant matrix S_{k}(f,g)
 %
 % % Outputs
 %
-% idx_col : Index of optimal column
+% idx_col : (Int) Index of optimal column
 
 
 % Get the number of columns in S_{k}(f,g)
-[~,nCols_Sk] = size(Sk);
+[~,nColumns_Sk] = size(Sk);
 
 % Initialise vector 
-vResiduals = zeros(nCols_Sk,1);
+vResiduals = zeros(nColumns_Sk,1);
 
-for k = 1 : 1 : nCols_Sk
+for k = 1 : 1 : nColumns_Sk
     
     % Get column for removal
     ck = Sk(:,k);
@@ -34,7 +34,7 @@ for k = 1 : 1 : nCols_Sk
 end
 
 %Obtain the column for which the residual is minimal.
-[~,idx_col] = min(log10(vResiduals));
+[~, idx_col] = min(log10(vResiduals));
 
 % Print out optimal column for removal.
 fprintf([mfilename ' : ' sprintf('Optimal column for removal is : %i \n',idx_col)]);

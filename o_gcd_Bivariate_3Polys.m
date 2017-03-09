@@ -1,5 +1,5 @@
 function [dxy_calc] = o_gcd_Bivariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method)
-% o_gcd(ex_num,el,mean_method,bool_alpha_theta,low_rank_approx_method)
+% o_gcd(ex_num, el, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method)
 %
 % Given an example number and set of parameters, obtain GCD of the two
 % polynomials f(x,y) and g(x,y) in the given example file.
@@ -8,31 +8,31 @@ function [dxy_calc] = o_gcd_Bivariate_3Polys(ex_num, emin, emax, mean_method, bo
 %
 % % Inputs
 %
-% ex_num - Example Number
+% ex_num (String) Example Number
 %
-% emin - Lower noise level
+% emin : (Float) Lower noise level
 %
-% emax - Upper noise level
+% emax - (Float) Upper noise level
 %
-% mean_method
+% mean_method (String)
 %       'None'
 %       'Geometric Mean Matlab Method'
 %
-% bool_alpha_theta (true/ false)
-%       'true' : Include Preprocessing
-%       'false' : Exclude Preprocessing
+% bool_alpha_theta (Boolean)
+%       true : Include Preprocessing
+%       false : Exclude Preprocessing
 %
-% low_rank_approx_method
+% low_rank_approx_method (String)
 %       'Standard SNTLN' : Include SNTLN
 %       'Standard STLN : Include STLN
 %       'None' : Exclude SNTLN
 %
-% apf_method
+% apf_method (String)
 %       'None'
 %       'Standard APF Nonlinear'
 %       'Standard APF Linear'
 %
-% sylvester_build_method
+% sylvester_build_method (String)
 %       'T'
 %       'DT'
 %       'DTQ'
@@ -60,23 +60,25 @@ SetGlobalVariables(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
 % Add subfolders
 restoredefaultpath
 
-addpath(...
+addpath(genpath(...
+    'APF',...
     'Basis Conversion',...
     'Bernstein Functions',...
+    'Build Factorisation Matrix',...
     'Build Matrices',...
+    'Build Sylvester Matrix',...
+    'Deconvolution',...
+    'Examples',...
     'Formatting',...
+    'Get Cofactor Coefficients',...
     'Get GCD Coefficients',...
+    'Get GCD Degree',...
+    'Low Rank Approximation',...
     'Plotting',...
     'Preprocessing',...
     'Results',...
-    'Scaling');
-
-addpath(genpath('APF'));
-addpath(genpath('Build Sylvester Matrix'));
-addpath(genpath('Examples'));
-addpath(genpath('Get Cofactor Coefficients'));
-addpath(genpath('Get GCD Degree'));
-addpath(genpath('Low Rank Approximation'));
+    'Root Finding Methods',...
+    'Scaling'));
 
 % Print Parameters to console
 fprintf('INPUTS. \n')

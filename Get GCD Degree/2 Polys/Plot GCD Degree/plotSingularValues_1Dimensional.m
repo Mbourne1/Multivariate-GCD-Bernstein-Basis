@@ -1,4 +1,4 @@
-function [] = plotSingularValues_1Dimensional(arrSingularValues, my_limits_t1)
+function [] = plotSingularValues_1Dimensional(arrSingularValues, myLimits_t1, limits_t1)
 %
 %
 % % Input
@@ -13,11 +13,14 @@ function [] = plotSingularValues_1Dimensional(arrSingularValues, my_limits_t1)
 global SETTINGS
 
 % Get lower and upper bound
-lowerLimit_t1 = my_limits_t1(1);
-upperLimit_t1 = my_limits_t1(2);
+myLowerLimit_t1 = myLimits_t1(1);
+myUpperLimit_t1 = myLimits_t1(2);
+
+lowerLimit_t1 = limits_t1(1);
+upperLimit_t1 = limits_t1(2);
 
 % Get number of Sylvester subresultants
-nSubresultants_t1 = upperLimit_t1 - lowerLimit_t1 +1;
+nSubresultants_t1 = myUpperLimit_t1 - myLowerLimit_t1 +1;
 
 % Plot Figure
 figure_name = sprintf('Singular Values of %s', SETTINGS.SYLVESTER_BUILD_METHOD);
@@ -27,7 +30,7 @@ hold on
 for i1 = 1:1:nSubresultants_t1
    
 
-        k1 = lowerLimit_t1 + (i1-1);
+        k1 = myLowerLimit_t1 + (i1-1);
 
         % Get vector of singular values 
         vSingularValues = arrSingularValues{i1};
@@ -36,6 +39,8 @@ for i1 = 1:1:nSubresultants_t1
         
 
 end
+vline(lowerLimit_t1);
+vline(upperLimit_t1);
 grid on
 hold off
 

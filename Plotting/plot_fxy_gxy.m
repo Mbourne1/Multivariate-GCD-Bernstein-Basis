@@ -1,24 +1,18 @@
-function [] = plot_fxy_gxy(fxy_matrix_Brn, gxy_matrix_Brn)
-
-% Given two bivariate polynomials, plot the surfaces of f(x,y) and g(x,y)
-
+function [] = plot_fxy_gxy(fxy, gxy)
+%
+%
 % % Inputs
-
-% fxy_matrix_Brn:
-
-%               B_{0}(y)  B_{1}(y) ....
-%                _______ _______
-%   B_{0}(x)    |_______|_______| .....
-%   B_{1}(x)    |_______|_______|
-%    ...        |_______|_______|
-%   B_{m1}(x)   |_______|_______|
+% 
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
+%
+% gxy : (Matrix) Coefficients of polynomial g(x,y)
 
 %%  Get the dimensions of f(x,y)
 
 
 % Plot the control points of the surface of f(x,y)
-fxy_coordinates_CP = getCoordinates_CP(fxy_matrix_Brn);
-gxy_coordinates_CP = getCoordinates_CP(gxy_matrix_Brn);
+fxy_coordinates_CP = getCoordinates_CP(fxy);
+gxy_coordinates_CP = getCoordinates_CP(gxy);
 
 % Plot the control points of the surface of g(x,y)
 % Plot the control points in a three dimensional scatter
@@ -34,8 +28,8 @@ hold off
 % % Plot the Bézier surface by evaluating at a series of points
 
 % Get the surface coordinates
-fxy_Surf_coord = get_Coordinates_Curve(fxy_matrix_Brn);
-gxy_Surf_coord = get_Coordinates_Curve(gxy_matrix_Brn);
+fxy_Surf_coord = get_Coordinates_Curve(fxy);
+gxy_Surf_coord = get_Coordinates_Curve(gxy);
 
 
 % % plot the exact Bernstein data and the noisy bernstein data

@@ -3,11 +3,13 @@ function [fxy_lr, gxy_lr, uxy_lr, vxy_lr, dxy_lr, alpha_lr, th1_lr, th2_lr] = ..
 %
 % % Inputs
 %
-% [fxy, gxy] : [(Matrix) (Matrix)]: Coefficients of the polynomials f(x,y) 
-%                                   and g(x,y)
+% fxy : (Matrix) Coefficients of the polynomial f(x,y) 
 %
-% [uxy, vxy] : [(Matrix) (Matrix)]: Coefficients of the polynomials u(x,y) 
-%                                   and v(x,y)
+% gxy : (Matrix) Coefficients of the polynomial g(x,y)
+%
+% uxy : (Matrix) Coefficients of the polynomial u(x,y) 
+%
+% vxy : (Matrix) Coefficients of the polynomial v(x,y)
 %
 % [t1, t2] : [(Int) (Int)] : Relative degrees of d(x,y)
 %

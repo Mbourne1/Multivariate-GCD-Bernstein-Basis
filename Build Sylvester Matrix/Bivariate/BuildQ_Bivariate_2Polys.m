@@ -10,13 +10,13 @@ function Q = BuildQ_Bivariate_2Polys(n1_k1, n2_k2, m1_k1, m2_k2)
 %
 % Inputs.
 %
-% n1_k1 : Degree of polynomial v(x,y) with respect to x
+% n1_k1 : (Int) Degree of polynomial v(x,y) with respect to x
 %
-% n2_k2 : Degree of polynomial v(x,y) with respect to y
+% n2_k2 : (Int) Degree of polynomial v(x,y) with respect to y
 %
-% m1_k1 : Degree of polynomial u(x,y) with respect to x
+% m1_k1 : (Int) Degree of polynomial u(x,y) with respect to x
 %
-% m2_k2 : Degree of polynomial u(x,y) with respect to y
+% m2_k2 : (Int) Degree of polynomial u(x,y) with respect to y
 
 % Build the matrix Q_{1}
 Q1 = BuildQ1_Bivariate(n1_k1,n2_k2);

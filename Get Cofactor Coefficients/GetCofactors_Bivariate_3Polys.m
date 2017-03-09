@@ -4,15 +4,27 @@ function [uxy, vxy, wxy] = GetCofactors_Bivariate_3Polys(fxy, gxy, hxy, t1, t2)
 %
 % % Inputs
 %
-% [fxy, gxy, wxy] : Coefficients of polynomial f(x,y), g(x,y) and h(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% t1 : Degree of d(x,y) with respect to x
+% gxy : (Matrix) Coefficients of polynomial g(x,y)
 %
-% t2 : Degree of d(x,y) with respect to y
+% wxy : (Matrix) Coefficients of polynomial h(x,y)
+%
+% t1 : (Int) Degree of d(x,y) with respect to x
+%
+% t2 : (Int) Degree of d(x,y) with respect to y
 %
 % % Outputs
 %
-% [uxy, vxy, wxy] : Coefficients of polynomial u(x,y), v(x,y) and w(x,y)
+% uxy : Coefficients of polynomial u(x,y), the quotient polynomial such
+% that f(x,y)/u(x,y) = d(x,y)
+%
+% vxy : Coefficients of polynomial u(x,y), the quotient polynomial such
+% that g(x,y)/v(x,y) = d(x,y)
+%
+% wxy : Coefficients of polynomial u(x,y), the quotient polynomial such
+% that h(x,y)/w(x,y) = d(x,y)
+
 
 
 % Initialise Global Variables
@@ -34,8 +46,8 @@ global SETTINGS
 Sk1k2 = BuildDTQ_Bivariate_3Polys(fxy, gxy, hxy, t1, t2);
 
 
-%% Find Optimal column for removal from St
-% given that t1 and t2 have been calculated build the sylvester matrix and
+% Find Optimal column for removal from S_{t1,t2}
+% Given that t1 and t2 have been calculated build the sylvester matrix and
 % find the optimal column such that a residual is minimized
 opt_col_index = GetOptimalColumn(Sk1k2);
 
@@ -58,18 +70,18 @@ vecx =[
     x_ls(opt_col_index:end);
     ];
 
-nCoeffs_vxy = (n1-t1+1) * (n2-t2+1);
+nCoefficients_vxy = (n1-t1+1) * (n2-t2+1);
 
-nCoeffs_wxy = (o1-t1+1) * (o2-t2+1);
+nCoefficients_wxy = (o1-t1+1) * (o2-t2+1);
 
 
 % Get coefficients of u(x,y) as a vector 
-v_vxy = vecx(1:nCoeffs_vxy);
+v_vxy = vecx(1:nCoefficients_vxy);
 
-v_wxy = vecx(nCoeffs_vxy + 1 : nCoeffs_vxy + nCoeffs_wxy);
+v_wxy = vecx(nCoefficients_vxy + 1 : nCoefficients_vxy + nCoefficients_wxy);
 
 % Get coefficients of v(w,w) as a vector
-v_uxy = -1 .* vecx(nCoeffs_vxy + nCoeffs_wxy + 1 : end);
+v_uxy = -1 .* vecx(nCoefficients_vxy + nCoefficients_wxy + 1 : end);
 
 
 % Get u(x,y) as a matrix of coefficients

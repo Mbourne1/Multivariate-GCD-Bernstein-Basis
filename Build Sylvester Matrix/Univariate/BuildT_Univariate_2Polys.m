@@ -5,27 +5,27 @@ function T = BuildT_Univariate_2Polys(fx, gx, k)
 %
 % % Input
 %
-% fx: vector of coefficients of f(x) in the standard bernstein basis. a_{i}
+% fx: (Vector) Coefficients of f(x) in the standard bernstein basis. a_{i}
 %
-% gx: vector of coefficients of g(x) in the standard Bernstein basis. b_{i}
+% gx: (Vector) Coefficients of g(x) in the standard Bernstein basis. b_{i}
 %
-% k : index of subresultant S_{k} to be formed. (Also degree of GCD)
+% k : (Int) Index of subresultant S_{k} to be formed. (Also degree of GCD)
 %
 % % Output
 %
-% T : the partitioned matrix T = [T(f) T(g)].
+% T : The partitioned matrix T = [T(f) T(g)].
 
 
-% Get degree of polynomail f
+% Get degree of polynomail f(x)
 m = GetDegree_Univariate(fx);
 
-% Get degree of polynomial g.
+% Get degree of polynomial g(x)
 n = GetDegree_Univariate(gx);
 
-% Build Toeplitz matrix of f, the first partiton.
+% Build Toeplitz matrix of f(x), the first partiton.
 T1 = BuildT1_univar(fx,n-k);
 
-% Build Toeplitz matrix of g, the second partition.
+% Build Toeplitz matrix of g(x), the second partition.
 T2 = BuildT1_univar(gx,m-k);
 
 % Concatenate the partitions.

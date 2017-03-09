@@ -1,5 +1,14 @@
-function [fxy_matrix,m] = Examples_Roots_FromRoots(ex_num)
-
+function [fxy, m] = Examples_Roots_FromRoots_Bivariate(ex_num)
+%
+% % Inputs
+%
+% ex_num : (String) Example number as string
+%
+% % Outputs
+%
+% fxy : Coefficients of polynomial f(x,y)
+%
+% m : Total degree of f(x,y)
 
 
 root_mult_array_f_x = [];
@@ -196,6 +205,6 @@ factors_y = mult_roots_y(root_mult_array_f_y);
 factors_f = [factors_x; factors_y; factor_f_xy];
 
 % Get the coefficients of the polynomail f(x,y) from the set of roots
-fxy_matrix_exact = BuildPoly_NonSeparable(factors_f);            
+fxy = BuildPoly_NonSeparable(factors_f);            
 
 end

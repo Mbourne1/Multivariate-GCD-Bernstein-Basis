@@ -1,17 +1,17 @@
-function lambda = GetGeometricMean_MyMethod(fxy,n1_k1,n2_k2)
+function GM_fx = GetGeometricMean_MyMethod(fxy,n1_k1,n2_k2)
 % GetGeometricMean_MyMethod(fxy,n1_k1,n2_k2)
 %
 % Inputs.
 %
-% fxy : Coefficients of polynomial f(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% n1_k1 : Degree of polynomial v(x,y) with respect to x
+% n1_k1 : (Int) Degree of polynomial v(x,y) with respect to x
 %
-% n2_k2 : Degree of polynomial v(x,y) with respect to y
+% n2_k2 : (Int) Degree of polynomial v(x,y) with respect to y
 %
 % Outputs.
 %
-% lamda : Geometric mean of non-zero entries of the first partition of the
+% GM_fx : Geometric mean of non-zero entries of the first partition of the
 % Sylvester subresultant matrix S_{k_{1},k_{2}}
 
 
@@ -74,7 +74,7 @@ geo_mean_c = prod_c .^ (1./ ((m2+1)*(n2_k2+1)));
 % %
 % Compute geometric mean
 
-lambda = geo_mean_a * geo_mean_b * geo_mean_b * geo_mean_c * geo_mean_c ...
+GM_fx = geo_mean_a * geo_mean_b * geo_mean_b * geo_mean_c * geo_mean_c ...
     ./ (nchoosek(m1+n1_k1,n1_k1) * nchoosek(m2+n2_k2,n2_k2)); 
 
 

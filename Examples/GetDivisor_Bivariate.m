@@ -1,43 +1,48 @@
-function d_roots = GetDivisor_Bivariate(f_roots, g_roots)
+function d_root_mult_mat = GetDivisor_Bivariate(f_root_mult_mat, g_root_mult_mat)
 % Given the set of roots of f(x) and roots of f(x) and their multiplicities,
 % get the common roots of polynomials f(x) and g(x) given by d(x).
+%
+% f_root_mult : 
+%
 
-% get the number of roots in polynomial f
-num_roots_f = size(f_roots,1);
+
+% Get the number of distinct factors in polynomial f(x)
+nDistinctFactors_fx = size(f_root_mult_mat,1);
 
 % Initialise the set of roots of d(x)
-d_roots = [];
+d_root_mult_mat = [];
 
-% for each root in f(x), check to see if it exists in g(x)
-for i = 1:1:num_roots_f
+% For each distinct factor in f(x), check to see if it exists in g(x)
+for i = 1 : 1 : nDistinctFactors_fx
     
     % Get the root of f(x)
-    root = f_roots(i,1);
+    root = f_root_mult_mat(i, 1);
     
     % Get the multiplicity of root r_{i}
-    mult_root_in_f = f_roots(i,2);
+    rootMultiplicity_in_fx = f_root_mult_mat(i, 2);
     
     % Get the number of distinct roots in g
-    [distinct_roots_g,~] = size(g_roots);
-    if  distinct_roots_g == 0
+    [nDistinct_roots_g] = size(g_root_mult_mat, 1);
+    
+    if  nDistinct_roots_g == 0
         return
     end
     
     % Look if the root r_{i} exists in g(x)
-    if ~isempty(find(g_roots(:,1) == root));
+    if ~isempty(find(g_root_mult_mat(:,1) == root))
         
         % Get the index of the row which corresponds to the root r_{i} in
         % the matrix of roots of g(x)
-        [row_d,~] = find(g_roots(:,1) == root);
+        [row_d,~] = find(g_root_mult_mat(:,1) == root);
         
         % Get the multiplicity of the root r_{i} in g(x)
-        mult_root_in_g = g_roots(row_d,2);
+        mult_root_in_g = g_root_mult_mat(row_d,2);
         
         % Calculate the multiplicity of the root in d(x)
-        mult_root_in_d = min(mult_root_in_f,mult_root_in_g);
+        mult_root_in_d = min(rootMultiplicity_in_fx,mult_root_in_g);
         
         % Add the root to d(x)
-        d_roots = [d_roots ; root mult_root_in_d]; 
+        d_root_mult_mat = [d_root_mult_mat ; root mult_root_in_d]; 
     end
 end
 

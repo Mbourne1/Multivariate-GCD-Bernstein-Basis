@@ -5,57 +5,44 @@ function [GM_fx, GM_gx, alpha, th1, th2] = Preprocess_Bivariate_2Polys(fxy, gxy,
 %
 % Inputs.
 %
-% [fxy, gxy] : Coefficients of f(x,y) and g(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% k1 : Degree of GCD d(x,y) with respect to x
+% gxy : (Matrix) Coefficients of polynomial g(x,y)
 %
-% k2 : Degree of GCD d(x,y) with respect to y
+% k1 : (Int) Degree of GCD d(x,y) with respect to x
+%
+% k2 : (Int) Degree of GCD d(x,y) with respect to y
 %
 % Outputs.
 %
-% [GM_fx, GM_gx] : Geometric Mean of entries of f(x,y) and g(x,y) in k-th subresultant matrix.
+% GM_fx : (Float) Geometric Mean of entries of f(x,y) in k-th subresultant matrix.
 %
-% alpha : Optimal value of alpha
+% GM_gx : (Float) Geometric Mean of entries of g(x,y) in k-th subresultant matrix.
 %
-% th1 : Optimal value of \theta_{1}
+% alpha : (Float) Optimal value of alpha
 %
-% th2 : Optimal value of \theta_{2}
+% th1 : (Float) Optimal value of \theta_{1}
+%
+% th2 : (Float) Optimal value of \theta_{2}
 
 % Global variables
 global SETTINGS
 
-% Get degree of f(x,y)
+% Get degree of f(x,y) and g(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get degree of g(x,y)
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Preproecessor One - Normalise by geometric mean
 GM_fx = GetMean(fxy, n1-k1, n2-k2);
-
 GM_gx = GetMean(gxy, m1-k1, m2-k2);
 
 
-% Normalise f(x,y) by geometric mean
+% Normalise f(x,y) and g(x,y) by respective geometric means
 fxy_n = fxy./ GM_fx;
-
-% Normalise g(x,y) by geometric mean
 gxy_n = gxy./ GM_gx;
 
+
 if (SETTINGS.BOOL_ALPHA_THETA)
-    
-    % %
-    % Get maximum and minimum entries of f and g in the unprocessed
-    % form without normalization by geometric mean.
-    %[max_fxy, min_fxy, max_gxy, min_gxy] = GetMaxMinPairs(fxy,gxy,k1,k2);
-    %PrintToFile(m1,m2,n1,n2,k1,k2,max_fxy,min_fxy,max_gxy,min_gxy,1,1,1,1,1);
-    
-    % %
-    % Get Maximum and minimum Entries of f and g in the normalised but
-    % unprocessed form.
-    [max_fxy_n, min_fxy_n, max_gxy_n, min_gxy_n] = GetMaxMinPairs(fxy_n, gxy_n, k1, k2);
-    
-    PrintToFile(m1, m2, n1, n2, k1, k2, max_fxy_n, min_fxy_n, max_gxy_n, min_gxy_n, 1, 1, 1, GM_fx, GM_gx);
     
     
     % %
@@ -67,10 +54,6 @@ if (SETTINGS.BOOL_ALPHA_THETA)
     
     [alpha, th1, th2] = OptimalAlphaTheta(max_matrix_fxy, min_matrix_f, max_matrix_gxy, min_matrix_g);
     
-    %fprintf('Optimal Value of alpha : %f \n',alpha)
-    %fprintf('Optimal Value of theta1 : %f \n',th1)
-    %fprintf('Optimal Value of theta2 : %f \n',th2)
-    
     fww = GetWithThetas(fxy_n, th1, th2);
     gww = GetWithThetas(gxy_n, th1, th2);
     
@@ -78,43 +61,11 @@ if (SETTINGS.BOOL_ALPHA_THETA)
     % Get Maximum and minimum entries of f and g in the normalised and
     % preprocessed form
     a_gww = alpha.*gww;
-    
-    if( SETTINGS.PLOT_GRAPHS)
-        
-        
-        %                 figure('name','Preproc')
-        %
-        %                 subplot(1,2,1)
-        %                 hold on
-        %                 nCoefficients_fxy = (m1+1)*(m2+1);
-        %                 nCoefficients_gxy = (n1+1)*(n2+1);
-        %
-        %                 xvals_fxy = 1:1:nCoefficients_fxy;
-        %                 xvals_gxy = 1:1:nCoefficients_gxy;
-        %
-        %                 plot(xvals_fxy,log10(GetAsVector(fxy)),'DisplayName','f(x,y)');
-        %                 plot(xvals_fxy,log10(GetAsVector(fww)),'DisplayName','f(\omega,\omega)');
-        %                 legend(gca,'show');
-        %                 hold off
-        %
-        %                 subplot(1,2,2)
-        %                 hold on
-        %                 plot(xvals_gxy,log10(GetAsVector(gxy)),'DisplayName','g(x,y)');
-        %                 plot(xvals_gxy,log10(GetAsVector(a_gww)),'DisplayName','\alpha g(\omega,\omega)');
-        %                 legend(gca,'show');
-        %                 hold off
-        
-    end
-    
-    
-    
+  
     [max_fww,min_fww,max_gww,min_gww] = GetMaxMinPairs(fww, a_gww, k1, k2);
     
     PrintToFile(m1, m2, n1, n2, k1, k2, max_fww, min_fww, max_gww, min_gww, alpha, th1, th2, GM_fx, GM_gx);
-    
-    %fprintf([mfilename ' : ' sprintf('Condition S(f(x,y),g(x,y)) : %2.4f \n',cond(BuildDTQ(fxy,gxy,k1,k2)))]);
-    %fprintf([mfilename ' : ' sprintf('Condition S(f(w),alpha.*g(w)) : %2.4f \n',cond(BuildDTQ(fww,alpha.*gww,k1,k2)))]);
-    
+
 else
     
     alpha =1;

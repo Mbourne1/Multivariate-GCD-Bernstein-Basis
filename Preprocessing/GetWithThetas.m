@@ -1,4 +1,4 @@
-function fww = GetWithThetas(fxy,th1,th2)
+function fww = GetWithThetas(fxy, th1, th2)
 % Given the matrix in f(x,y) obtain the matrix of f(\theta_{1},\theta_{2})
 %
 % Inputs.
@@ -8,6 +8,10 @@ function fww = GetWithThetas(fxy,th1,th2)
 % th1 : Optimal theta_{1}
 % 
 % th2 : Optimal theta_{2}
+%
+% % Outputs
+%
+% fww : (Matrix) Coefficients of f(\omega_{1}, \omega_{2}0
 
 % Get the degree structure of f(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);

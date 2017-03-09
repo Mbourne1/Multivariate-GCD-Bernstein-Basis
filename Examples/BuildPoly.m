@@ -11,24 +11,31 @@ function [fxy_bi] = BuildPoly(root_mult_matrix)
 %
 % Outputs.
 %
-% fxy_bi : Matrix of coefficients of polynomial f(x,y) in scaled Bernstein 
-% form, ie. in the form 'a_{i,j} \binom{m1}{i}\binom{m2}{j}'
+% fxy_bi : (Matrix) Coefficients of polynomial f(x,y) in scaled Bernstein 
+% form
 
 % Calculate the number of distinct roots of the polynomial.
-[nEntries,~] = size(root_mult_matrix);
+[nDistinctFactors, ~] = size(root_mult_matrix);
 
 % Convolve each factor, which is defined by a row of A, separately.
 % A(k,1) stores the value of the root, and A(k,2) stores its multiplicity.
 
 fxy_bi = 1;
-for k = 1:1:nEntries
+
+for k = 1:1:nDistinctFactors
     
-    root = root_mult_matrix(k,1);
+    % Get the kth factors
+    factor = root_mult_matrix(k,1);
+    
+    % Get the multiplicity of the kth factor
     mult = root_mult_matrix(k,2);
     
-    temp_poly = B_conv(root,mult);
+    % Convolve m times
+    temp_poly = B_conv(factor, mult);
     
+    % Build fxy_bi
     fxy_bi = conv(fxy_bi , temp_poly) ;
+    
 end
 
 

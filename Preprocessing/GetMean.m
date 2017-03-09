@@ -3,11 +3,11 @@ function mean = GetMean(fxy, n1_k1, n2_k2)
 %
 % Inputs.
 %
-% fxy : Coefficients of polynomial f(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% n1_k1 : Degree of polynomial v(x,y) with respect to x
+% n1_k1 : (Int) Degree of polynomial v(x,y) with respect to x
 %
-% n2_k2 : Degree of polynomial v(x,y) with respect to y
+% n2_k2 : (Int) Degree of polynomial v(x,y) with respect to y
 
 
 % Get the mean of the coefficients of f(x,y) in the matrix
@@ -27,5 +27,5 @@ switch SETTINGS.MEAN_METHOD
         mean = 1;
         
     otherwise
-        error('err')
+        error('error : Not a valid mean computation method')
 end

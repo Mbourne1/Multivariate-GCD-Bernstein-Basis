@@ -4,25 +4,35 @@ function [fxy, gxy, dxy, uxy, vxy, m, n, t] = Examples_GCD_FromCoefficients_Biva
 %
 % Input.
 %
-% ex_num : Example Number
+% ex_num : (String) Example Number as a string
 %
 % Output.
 %
-% [fxy, gxy] : Coefficients of polynomial f(x,y) and g(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)  
 %
-% dxy : Coefficients of polynomial d(x,y)
+% gxy : (Matrix) Coefficients of polynomial g(x,y)
 %
-% [uxy, vxy] : Coefficients of polynomial u(x,y) and v(x,y)
+% dxy : (Matrix) Coefficients of polynomial d(x,y), the common divisor of f(x,y) and
+% g(x,y)
+%
+% uxy : (Matrix) Coefficients of polynomial u(x,y), the quotient polynomial such
+% that f(x,y)/u(x,y) = d(x,y)
+%
+% vxy : (Matrix) Coefficients of polynomial v(x,y), the quotient polynomial such
+% that g(x,y)/v(x,y) = d(x,y)
 
 
 
 % Initialise symbolic variables
 syms x y;
 
+% Add examples folder
 addpath(genpath('../Examples'));
 
-[f_root_mult_arr,g_root_mult_arr,d_root_mult_arr,...
-    u_root_mult_arr,v_root_mult_arr] = GCD_Examples_Bivariate_2Polys(ex_num);
+% Get the sets of roots and multiplicities of the polynomials f(x,y),
+% g(x,y) d(x,y) u(x,y) and v(x,y)
+[f_root_mult_arr, g_root_mult_arr, d_root_mult_arr,...
+    u_root_mult_arr, v_root_mult_arr] = GCD_Examples_Bivariate_2Polys(ex_num);
 
 
 % Get coefficients of polynomials f(x,y) and g(x,y)

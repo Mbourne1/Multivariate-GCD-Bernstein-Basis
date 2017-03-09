@@ -6,9 +6,11 @@ function Q1 = BuildQ1_Univariate(n_k)
 %
 % % Inputs
 %
-% n : degree of polynomial g(y)
+% n_k : (Int) where n_k = n-k
 %
-% t : index of subresultant S_{t} to be built.
+% n : (Int) Degree of polynomial g(y)
+%
+% k : (Int) Index of subresultant S_{t} to be built.
 
 % Produce the matrix Q1
 Q1 = diag(GetBinomials(n_k));

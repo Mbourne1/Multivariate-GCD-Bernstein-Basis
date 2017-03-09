@@ -1,43 +1,37 @@
 function [fxy_lr, gxy_lr, uxy_lr,vxy_lr, alpha_lr, th1_lr, th2_lr] = LowRankApproximation_Bivariate_2Polys...
-    (fxy, gxy, alpha, th1, th2, m, n, k, k1, k2, idx_col)
+    (fxy, gxy, alpha, th1, th2, k1, k2, idx_col)
 % Compute low rank approximation of the Sylvester matrix S(f,g) either
 % SNTLN or STLN.
 %
 % % Inputs.
 %
-% fxy : Coefficients of polynomial f(x,y) in the Bernstein basis
+% fxy : (Matrix) Coefficients of polynomial f(x,y) in the Bernstein basis
 %
-% gxy : Coefficients of polynomial g(x,y) in the Bernstein basis
+% gxy : (Matrix) Coefficients of polynomial g(x,y) in the Bernstein basis
 %
-% alpha : \alpha
+% alpha : (Float) \alpha
 %
-% th1 : \theta_{1}
+% th1 : (Float) \theta_{1}
 %
-% th2 : \theta_{2}
+% th2 : (Float) \theta_{2}
 %
-% m : Total degree of polynomial f(x,y)
-%
-% n : Total degree of polynomial g(x,y)
-%
-% k : Total degree of polynomial d(x,y)
-%
-% k1 : Degree of d(x,y) with respect to x
+% k1 : (Int) Degree of d(x,y) with respect to x
 % 
-% k2 : Degree of d(x,y) with respect to y
+% k2 : (Int) Degree of d(x,y) with respect to y
 %
-% idx_col : Index of optimal column to be removed from S(f,g)
+% idx_col : (Int) Index of optimal column to be removed from S(f,g)
 %
 % % Outputs
 %
-% fxy_lr : Coefficients of f(x,y) with perturbations
+% fxy_lr : (Matrix) Coefficients of f(x,y) with perturbations
 %
-% gxy_lr : Coefficients of g(x,y) with perturbations
+% gxy_lr : (Matrix) Coefficients of g(x,y) with perturbations
 %
-% alpha_lr : Refined \alpha
+% alpha_lr : (Float) Refined \alpha
 %
-% th1_lr : Refined \theta_{1}
+% th1_lr : (Float) Refined \theta_{1}
 %
-% th2_lr : Refined \theta_{2}
+% th2_lr : (Float) Refined \theta_{2}
 
 
 % Initialise global settings
@@ -60,20 +54,21 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
 
         % Multiply the rows of fxy_matrix by theta1, and multiply the cols of
         % fxy_matrix by theta2.
-        fww = GetWithThetas(fxy,th1,th2);
+        fww = GetWithThetas(fxy, th1, th2);
 
         % Multiply the rows of gxy_matrix by theta1, and multiply the cols of
         % gxy_matrix by theta2.
-        a_gww = alpha .* GetWithThetas(gxy,th1,th2);
+        a_gww = alpha .* GetWithThetas(gxy, th1, th2);
         
         % Perform STLN Computation.
-        [fww_lr, a_gww_lr, uww_lr, vww_lr] = STLN(fww, a_gww,k1,k2,idx_col);
+        [fww_lr, a_gww_lr, uww_lr, vww_lr] = STLN(fww, a_gww, k1, k2, idx_col);
         
         % Scale outputs to obtain f(x,y) and g(x,y).
-        fxy_lr = GetWithoutThetas(fww_lr,th1,th2);
-        gxy_lr = GetWithoutThetas(a_gww_lr,th1,th2) ./ alpha;
-        uxy_lr = GetWithoutThetas(uww_lr,th1,th2);
-        vxy_lr = GetWithoutThetas(vww_lr,th1,th2);
+        fxy_lr = GetWithoutThetas(fww_lr, th1,th2);
+        gxy_lr = GetWithoutThetas(a_gww_lr, th1, th2) ./ alpha;
+        
+        uxy_lr = GetWithoutThetas(uww_lr, th1, th2);
+        vxy_lr = GetWithoutThetas(vww_lr, th1, th2);
         
         alpha_lr = alpha;
         th1_lr = th1;
@@ -89,21 +84,28 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         vSingularValues3 = svd(S3);
         vSingularValues4 = svd(S4);
         
-        figure()
-        plot(log10(vSingularValues1),'-s','DisplayName','fxy,gxy');
-        hold on
-        plot(log10(vSingularValues2),'-s','DisplayName','fxy_lr,gxy_lr');
-        plot(log10(vSingularValues3),'-s','DisplayName','fww gww');
-        plot(log10(vSingularValues4),'-s','DisplayName','fww_lr gww_lr');
-        hold off
+        if (SETTINGS.PLOT_GRAPHS)
+            figure()
+            plot(log10(vSingularValues1),'-s','DisplayName','fxy,gxy');
+            hold on
+            plot(log10(vSingularValues2),'-s','DisplayName','fxy_lr,gxy_lr');
+            plot(log10(vSingularValues3),'-s','DisplayName','fww gww');
+            plot(log10(vSingularValues4),'-s','DisplayName','fww_lr gww_lr');
+            hold off
+        end
         
     case 'None'
         % Dont Apply SNTLN improvements
 
-        [uxy,vxy] = GetCofactors_Bivariate_2Polys(fxy, gxy, m, n, k, k1, k2, alpha, th1, th2);
+        % Get preprocessed form
+        fww = GetWithThetas(fxy, th1, th2);
+        gww = GetWithThetas(gxy, th1, th2);
+        a_gww = alpha.*gww;
         
-        uxy_lr = uxy;
-        vxy_lr = vxy;
+        [uww, vww] = GetCofactors_Bivariate_2Polys(fww, a_gww, k1, k2);
+        
+        uxy_lr = GetWithoutThetas(uww, th1, th2);
+        vxy_lr = GetWithoutThetas(vww, th1, th2);
         fxy_lr = fxy;
         gxy_lr = gxy;
         alpha_lr = alpha;

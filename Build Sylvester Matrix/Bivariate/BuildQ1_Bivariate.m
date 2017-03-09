@@ -8,13 +8,13 @@ function Q1 = BuildQ1_Bivariate(n1_k1, n2_k2)
 %
 % Inputs
 %
-% n1_k1 : Degree of v(x,y) with respect to x
+% n1_k1 : (Int) Degree of v(x,y) with respect to x
 %
-% n2_k2 : Degree of v(x,y) with respect to y
+% n2_k2 : (Int) Degree of v(x,y) with respect to y
 %
 % Outputs.
 %
-% Q1 : Partition Q_{1} of the matrix Q. Such that Q_{1} * v where v is a
+% Q1 : (Matrix) Partition Q_{1} of the matrix Q. Such that Q_{1} * v where v is a
 % vector of coefficients of v(x,y) gives the coefficients in scaled
 % Bernstein form.
 

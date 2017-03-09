@@ -1,4 +1,4 @@
-function [t1, t2, GM_fx, GM_gx, alpha, th1, th2] = GetGCDDegree_Bivariate_2Polys_NewMethod(fxy, gxy, limits_t1, limits_t2)
+function [t1, t2, GM_fx, GM_gx, alpha, th1, th2] = GetGCDDegree_Bivariate_2Polys_NewMethod(fxy, gxy, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
 % Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two
 % polynomials f(x,y) and g(x,y). This is done by first setting k_{1} = 1.
 % Computing the set of Sylvester subresultant matrices S_{k1,k2} for all
@@ -12,6 +12,10 @@ function [t1, t2, GM_fx, GM_gx, alpha, th1, th2] = GetGCDDegree_Bivariate_2Polys
 % fxy : (Matrix) Coefficients of polynomial f(x,y) in the Bernstein basis
 %
 % gxy : (Matrix) Coefficients of polynomial g(x,y) in the Bernstein basis
+%
+% myLimits_t1 : [(Int) (Int)] 
+%
+% myLimits_t2 : [(Int) (Int)]
 %
 % limits_t1 : [(Int) (Int)] [lowerLimit upperLimit] when computing the
 % degree of the GCD with respect to x
@@ -37,56 +41,46 @@ function [t1, t2, GM_fx, GM_gx, alpha, th1, th2] = GetGCDDegree_Bivariate_2Polys
 % th2 : (Float) Optimal value of theta_{2}
 
 
-%
 
-% Get the degree structure of polynomial f(x,y)
-[m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get the degree structure of polynomial g(x,y)
-[n1, n2] = GetDegree_Bivariate(gxy);
-
-% Set my limits for the computation of the degree of the GCD.
-my_limits_t1 = [0 min(m1,n1)];
-my_limits_t2 = [0 min(m2,n2)];
-
-lowerLimit_t1 = my_limits_t1(1);
-lowerLimit_t2 = my_limits_t2(1);
+% Get my lower limit for the computation of t_{1} and t_{2}
+myLowerLimit_t1 = myLimits_t1(1);
+myLowerLimit_t2 = myLimits_t2(1);
 
 
-% Set x = 1, so 
+% Set x = 1, so
 x = 1;
 
 % Build the set of Sylvester subresultant matrices S_{1,k2} for all k_{2}
 % values.
-[arr_R1, arr_SingularValues] = getSubresultants(fxy, gxy, my_limits_t2, 'x', x);
+[arr_R1, arr_SingularValues] = getSubresultants(fxy, gxy, myLimits_t2, 'x', x);
 
 % Return a metric used to determine the degree of the GCD with respect to y
-[metric] = getMetric(arr_R1, arr_SingularValues, my_limits_t2);
+[metric] = getMetric(arr_R1, arr_SingularValues, myLimits_t2);
 
 % Get degree of GCD with respect to y
 vDelta_y = diff(log10(metric));
 [~, index] = max(vDelta_y);
-t2 = index + lowerLimit_t2 -1;
+t2 = index + myLowerLimit_t2 -1;
 
 
 % Build the set of Sylvester subresultant matrices S_{k1, t_{2}}(f,g)
-[arr_R1, arr_SingularValues, vAlpha, vTheta1, vTheta2, vGM_fx, vGM_gx] = getSubresultants(fxy, gxy, my_limits_t1, 'y', t2);
+[arr_R1, arr_SingularValues, vAlpha, vTheta1, vTheta2, vGM_fx, vGM_gx] = getSubresultants(fxy, gxy, myLimits_t1, 'y', t2);
 
 % Return a metric used to determin the degree of the GCD with respect to x
-[metric] = getMetric(arr_R1, arr_SingularValues, my_limits_t1);
+[metric] = getMetric(arr_R1, arr_SingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
 
 % Get the degree of the GCD with respect to x
 vDelta_x = diff(log10(metric));
 [~, index] = max(vDelta_x);
-t1 = index + lowerLimit_t1 -1;
+t1 = index + myLowerLimit_t1 -1;
 
 
 % Outputs
-GM_fx = vGM_fx(t1 - lowerLimit_t1 +1);
-GM_gx = vGM_gx(t1 - lowerLimit_t1 +1);
-alpha = vAlpha(t1 - lowerLimit_t1 +1);
-th1 = vTheta1(t1 - lowerLimit_t1 +1);
-th2 = vTheta2(t1 - lowerLimit_t1 +1);
+GM_fx = vGM_fx(t1 - myLowerLimit_t1 +1);
+GM_gx = vGM_gx(t1 - myLowerLimit_t1 +1);
+alpha = vAlpha(t1 - myLowerLimit_t1 +1);
+th1 = vTheta1(t1 - myLowerLimit_t1 +1);
+th2 = vTheta2(t1 - myLowerLimit_t1 +1);
 
 
 
@@ -100,7 +94,7 @@ LineBreakMedium()
 end
 
 
-function [arr_R1, arr_SingularValues, vAlpha, vTheta1, vTheta2, vGM_fx, vGM_gx] = getSubresultants(fxy, gxy, my_limits, str_fixed_var, fixed_var)
+function [arr_R1, arr_SingularValues, vAlpha, vTheta1, vTheta2, vGM_fx, vGM_gx] = getSubresultants(fxy, gxy, myLimits, str_fixed_var, fixed_var)
 % Compute the degree (Either t_{1} or t_{2}) of the GCD d(x,y) given that
 % by constructing the sequence of Sylvester subresultant matrices S_{k1,k2}
 % where either k_{1} or k_{2} is constant.
@@ -111,15 +105,15 @@ function [arr_R1, arr_SingularValues, vAlpha, vTheta1, vTheta2, vGM_fx, vGM_gx] 
 %
 % gxy : (Matrix) : Coefficients of g(x,y)
 %
-% my_limits : [lowerLimit upperLimit]
+% my_limits : [lowerLimit upperLimit] [(Int) (Int)]
 %
 % str_fixed_var : (String) Either 'x' or 'y'
 %
 % str_var :  (Integer) Value of fixed variable.
 
 % Get lower and upper limit in computation of the degree of the GCD.
-lowerLimit = my_limits(1);
-upperLimit = my_limits(2);
+lowerLimit = myLimits(1);
+upperLimit = myLimits(2);
 
 % Get number of Sylvester subresultant matrices to be constructed
 nSubresultants = upperLimit - lowerLimit + 1;
@@ -205,7 +199,7 @@ end
 
 end
 
-function [metric] = getMetric(arr_R1, arr_SingularValues, my_limits_t1)
+function [metric] = getMetric(arr_R1, arr_SingularValues, myLimits_t1, limits_t1)
 % This function returns a metric from which the degree of the GCD can be
 % computed (Either with respect to x or y). Note the remainder of this
 % function is worded to suggest we compute the degree of the GCD with
@@ -223,16 +217,18 @@ function [metric] = getMetric(arr_R1, arr_SingularValues, my_limits_t1)
 % or k_{2} is constant
 %
 % my_limits_t1 : Set limits for the computation of the degree of the GCD,
-% 
+%
+%
+% limits_t1 :
 %
 % % Outputs
 %
 % metric (Vector) Contains a metric from which the degree of the GCD is
 % determined by the max change in the vector.
 
-% Get upper and lower limit of 
-lowerLimit = my_limits_t1(1);
-upperLimit = my_limits_t1(2);
+% Get upper and lower limit of
+lowerLimit = myLimits_t1(1);
+upperLimit = myLimits_t1(2);
 
 % Get number of Sylvester subresultant matrices required to compute degree
 % of GCD.
@@ -250,46 +246,54 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         % Get maximum and minimum row norms of R_{1} from QR decompositon
         % of S_{k1,k2}
-  
-            for i1 = 1:1:nSubresultants
-                
-                
-                arr_R1_RowNorms{i1} = sqrt(sum(arr_R1{i1}.^2,2))./norm(arr_R1{i1});
-                vMaxRowNorm(i1) = max(arr_R1_RowNorms{i1});
-                vMinRowNorm(i1) = min(arr_R1_RowNorms{i1});
-                
-            end
+        
+        for i1 = 1:1:nSubresultants
+            
+            
+            arr_R1_RowNorms{i1} = sqrt(sum(arr_R1{i1}.^2,2))./norm(arr_R1{i1});
+            vMaxRowNorm(i1) = max(arr_R1_RowNorms{i1});
+            vMinRowNorm(i1) = min(arr_R1_RowNorms{i1});
+            
+        end
         
         % Plot graphs
-        plotR1RowNorms_degreeRelative_1Dimensional(arr_R1_RowNorms, my_limits_t1)
-        plotMaxMinRowNorms_degreeRelative_1Dimensional(vMaxRowNorm, vMinRowNorm, my_limits_t1);
+        if(SETTINGS.PLOT_GRAPHS)
+            
+            % Plot graphs
+            %plotR1RowNorms_1Dimensional(arr_R1_RowNorms, myLimits_t1, limits_t1)
+            plotMaxMinRowNorms_1Dimensional(vMaxRowNorm, vMinRowNorm, myLimits_t1, limits_t1);
+            
+        end
         
-        % Set Metric
-        metric = vMinRowNorm./vMaxRowNorm;
-        
+        % Set rank revealing metric
+        metric = vMinRowNorm ./ vMaxRowNorm;
+         
     case 'R1 Row Diagonals'
         
         % Initialise matrices to store max and minimum diagonals
-        vMaxDiagonal_R1 = zeros(nSubresultants);
-        vMinDiagonal_R1 = zeros(nSubresultants);
+        vMaxDiagonal_R1 = zeros(nSubresultants, 1);
+        vMinDiagonal_R1 = zeros(nSubresultants, 1);
         
         % Get maximum and minimum diagonal of each R_{k1,k2} from QR
         % decomposition of S_{k1,k2}
-     
+        
+        
+        for i1 = 1:1:nSubresultants
             
-            for i1 = 1:1:nSubresultants
-                
-                vMaxDiagonal_R1(i1) = max(abs(diag(arr_R1{i1})));
-                vMinDiagonal_R1(i1) = min(abs(diag(arr_R1{i1})));
-                
-            end
-
+            vMaxDiagonal_R1(i1) = max(abs(diag(arr_R1{i1})));
+            vMinDiagonal_R1(i1) = min(abs(diag(arr_R1{i1})));
+            
+        end
+        
         
         % Plot graphs
-        plotR1Diagonals(arr_R1, my_limits_t1);
-        plotMaxMinDiagonalsR1(vMaxDiagonal_R1, vMinDiagonal_R1, my_limits_t1);
+        if(SETTINGS.PLOT_GRAPHS)
+            
+            %plotR1Diagonals_1Dimensional(arr_R1, myLimits_t1, limits_t1);
+            plotMaxMinDiagonalsR1_1Dimensional(vMaxDiagonal_R1, vMinDiagonal_R1, myLimits_t1, limits_t1);
+        end
         
-        % Set metric
+        % Set rank revealing metric
         metric = vMinDiagonal_R1 ./ vMaxDiagonal_R1;
         
     case 'Singular Values'
@@ -297,21 +301,22 @@ switch SETTINGS.RANK_REVEALING_METRIC
         % Initialise matrix to store minimum singular values of SVD of each
         % S_{k1,k2}
         vMinimumSingularValues = zeros(nSubresultants,1);
-
-            for i1 = 1:1:nSubresultants
-
-                vMinimumSingularValues(i1) = min(arr_SingularValues{i1});
-                
-            end
-
         
-        % Plot Graphs
-        plotSingularValues_degreeRelative_1Dimensional(arr_SingularValues, my_limits_t1)
-        plotMinimumSingularValues_degreeRelative_1Dimensional(vMinimumSingularValues, my_limits_t1)
+        for i1 = 1:1:nSubresultants
+            
+            vMinimumSingularValues(i1) = min(arr_SingularValues{i1});
+            
+        end
         
         
+        % Plot graphs
+        if(SETTINGS.PLOT_GRAPHS)
+            %plotSingularValues_1Dimensional(arr_SingularValues, myLimits_t1, limits_t1)
+            plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, myLimits_t1, limits_t1)
+        end
         
-        % Set metric
+        
+        % Set rank revealing metric
         metric = vMinimumSingularValues;
         
     case 'Residuals'

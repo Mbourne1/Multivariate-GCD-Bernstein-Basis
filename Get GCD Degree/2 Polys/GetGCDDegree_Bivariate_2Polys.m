@@ -1,4 +1,4 @@
-function [t1, t2, GM_fx, GM_gx, alpha, th1, th2] = GetGCDDegree_Relative_Bivariate_2Polys(fxy, gxy, limits_t1, limits_t2)
+function [t1, t2, GM_fx, GM_gx, alpha, th1, th2] = GetGCDDegree_Bivariate_2Polys(fxy, gxy, limits_t1, limits_t2)
 % Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two
 % polynomials f(x,y) and g(x,y)
 %
@@ -11,7 +11,7 @@ function [t1, t2, GM_fx, GM_gx, alpha, th1, th2] = GetGCDDegree_Relative_Bivaria
 % limits_t1 : [(Int) (Int)] [lowerLimit upperLimit] when computing the
 % degree of the GCD with respect to x
 %
-% limits_t2 : [(Int) (int)] [lowerLimit upperLimit] when computing the 
+% limits_t2 : [(Int) (int)] [lowerLimit upperLimit] when computing the
 % degree of the GCD with respect to y
 %
 % % Outputs
@@ -43,13 +43,13 @@ global SETTINGS
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Set my limits for the computation of the degree of the GCD.
-my_limits_t1 = [0 min(m1,n1)];
-my_limits_t2 = [0 min(m2,n2)];
+myLimits_t1 = [0 min(m1,n1)];
+myLimits_t2 = [0 min(m2,n2)];
 
-lowerLimit_t1 = my_limits_t1(1);
-upperLimit_t1 = my_limits_t1(2);
-lowerLimit_t2 = my_limits_t2(1);
-upperLimit_t2 = my_limits_t2(2);
+lowerLimit_t1 = myLimits_t1(1);
+upperLimit_t1 = myLimits_t1(2);
+lowerLimit_t2 = myLimits_t2(1);
+upperLimit_t2 = myLimits_t2(2);
 
 nSubresultants_k1 = upperLimit_t1 - lowerLimit_t1 + 1;
 nSubresultants_k2 = upperLimit_t2 - lowerLimit_t2 + 1;
@@ -76,7 +76,7 @@ for i1 = 1:1:nSubresultants_k1
         k2 = lowerLimit_t2 + (i2-1);
         
         % Preprocessing
-        [GM_fx, GM_gx, alpha, th1, th2] = Preprocess(fxy, gxy, k1, k2);
+        [GM_fx, GM_gx, alpha, th1, th2] = Preprocess_Bivariate_2Polys(fxy, gxy, k1, k2);
         
         % Divide f(x) by geometric mean
         fxy_matrix_n = fxy ./ GM_fx;
@@ -123,18 +123,18 @@ for i1 = 1:1:nSubresultants_k1
 end
 
 if (SETTINGS.PLOT_GRAPHS)
-
+    
     x_vec = lowerLimit_t1:1:upperLimit_t1;
     y_vec = lowerLimit_t2:1:upperLimit_t2;
-
+    
     [X,Y] = meshgrid(x_vec,y_vec);
-
+    
     figure_name = sprintf('Geometric Mean of f(x) %s', SETTINGS.SYLVESTER_BUILD_METHOD);
     figure('name',figure_name)
     hold on
     mesh(X,Y,log10(matrix_GM_fx)');
     hold off
-
+    
     figure_name = sprintf('Geometric Mean of g(x) in %s', SETTINGS.SYLVESTER_BUILD_METHOD);
     figure('name', figure_name)
     hold on
@@ -166,7 +166,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
         mat_MaxRowNorm = zeros(nSubresultants_k1, nSubresultants_k2);
         mat_MinRowNorm = zeros(nSubresultants_k1, nSubresultants_k2);
         
-        % Get maximum and minimum row norms of R_{1} from QR decompositon 
+        % Get maximum and minimum row norms of R_{1} from QR decompositon
         % of S_{k1,k2}
         for i1 = 1:1:nSubresultants_k1
             
@@ -180,10 +180,12 @@ switch SETTINGS.RANK_REVEALING_METRIC
             end
         end
         
-        % Plot graphs
-        plotR1RowNorms_degreeRelative(arr_R1_RowNorms, my_limits_t1, my_limits_t2)
-        plotMaxMinRowNorms_degreeRelative(mat_MaxRowNorm, mat_MinRowNorm, my_limits_t1, my_limits_t2);
         
+        % Plot graphs
+        if(SETTINGS.PLOT_GRAPHS)
+            plotR1RowNorms(arr_R1_RowNorms, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
+            plotMaxMinRowNorms(mat_MaxRowNorm, mat_MinRowNorm, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+        end
         % Set Metric
         metric = mat_MinRowNorm./mat_MaxRowNorm;
         
@@ -206,8 +208,10 @@ switch SETTINGS.RANK_REVEALING_METRIC
         end
         
         % Plot graphs
-        plotR1Diagonals(arr_R1, my_limits_t1, my_limits_t2);
-        plotMaxMinDiagonalsR1(mat_MaxDiagonal_R1, mat_MinDiagonal_R1, my_limits_t1, my_limits_t2);
+        if(SETTINGS.PLOT_GRAPHS)
+            plotR1Diagonals(arr_R1, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+            plotMaxMinDiagonalsR1(mat_MaxDiagonal_R1, mat_MinDiagonal_R1, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+        end
         
         % Set metric
         metric = mat_MinDiagonal_R1 ./ mat_MaxDiagonal_R1;
@@ -231,8 +235,10 @@ switch SETTINGS.RANK_REVEALING_METRIC
         end
         
         % Plot Graphs
-        plotSingularValues_degreeRelative(arr_SingularValues, my_limits_t1, my_limits_t2)
-        plotMinimumSingularValues_degreeRelative(mat_MinimumSingularValues, my_limits_t1, my_limits_t2)
+        if(SETTINGS.PLOT_GRAPHS)
+            plotSingularValues(arr_SingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
+            plotMinimumSingularValues(mat_MinimumSingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
+        end
         
         
         

@@ -1,4 +1,4 @@
-function deg_elv_fxy_matrix = DegreeElevate_Bivariate(fxy_matrix, ad_rows, ad_cols)
+function deg_elv_fxy_matrix = DegreeElevate_Bivariate(fxy, ad_rows, ad_cols)
 % Degree elevate the polynomial f(x,y) so that f(x,y) is a polynomial with
 % basis elements
 % B_{m1 + ad_rows}(x) in x
@@ -7,14 +7,14 @@ function deg_elv_fxy_matrix = DegreeElevate_Bivariate(fxy_matrix, ad_rows, ad_co
 % % Inputs:
 %
 %
-% fxy_matrix : Coefficients of polynomial f(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% ad_rows : number of degree elevations with respect to x
+% ad_rows : (Int) Number of degree elevations with respect to x
 %
-% ad_cols : number of degree elevations with respect to y.
+% ad_cols : (Int) Number of degree elevations with respect to y.
 
 % Get the degree of input polynomial f(x,y)
-[m1,m2] = GetDegree_Bivariate(fxy_matrix);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 % let r_f be the number of rows being added
 r_f = ad_rows;
@@ -27,30 +27,51 @@ deg_elv_fxy_matrix = zeros(m1+ad_rows,m2+ad_cols);
 
 % for each column j
 for j = 0:1:m2 + s_f
+
     % for each row i
     for i = 0:1:m1 + r_f
-        deg_elv_fxy_matrix(i+1,j+1) = summing_function(fxy_matrix, m1, m2, r_f, s_f, i, j);
+
+        deg_elv_fxy_matrix(i+1,j+1) = summing_function(fxy, m1, m2, r_f, s_f, i, j);
     end
-end
-
 
 end
 
-function sum = summing_function(fxy_matrix,m,n,r,s,i,j)
 
+end
+
+function sum = summing_function(fxy, m1, m2, r, s, i, j)
+%
+% % Inputs
+%
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
+%
+% m1 : (Int) Degree of polynomial f(x,y) with respect to x
+%
+% m1 : (Int) Degree of polynomial f(x,y) with respect to y
+%
+% r : (Int) Number of degree elevations in x
+%
+% s : (Int) Number of degree elevations in y
+%
+% i :
+%
+% j :
+
+% Initialise a sum
 sum = 0;
-for k = max(0,i-r) : 1 : min(m,i)
-    for l = max(0,j-s) : 1 : min(n,j)
+
+for k = max(0,i-r) : 1 : min(m1,i)
+    for l = max(0,j-s) : 1 : min(m2,j)
         sum = sum +...
             (...
-            fxy_matrix(k+1,l+1) *...
-            nchoosek(m,k) *...
+            fxy(k+1,l+1) *...
+            nchoosek(m1,k) *...
             nchoosek(r,i-k) *...
-            nchoosek(n,l) *...
+            nchoosek(m2,l) *...
             nchoosek(s,j-l) /...
             ...
-            (nchoosek(m+r,i) *...
-            nchoosek(n+s,j))...
+            (nchoosek(m1+r,i) *...
+            nchoosek(m2+s,j))...
             );
     end
 end

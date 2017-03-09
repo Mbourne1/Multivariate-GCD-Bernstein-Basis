@@ -7,7 +7,7 @@ function [DTQ] = BuildDTQ_Univariate(fx, gx, k)
 %
 % [fx, gx] : (Vector) Coefficients of polynomial f(x) and g(x)
 %
-% k : index of subresultant
+% k : (Int) Index of subresultant
 %
 % Note: If you wish to build the Sylvester matrix for preprocessed and
 % scaled polynomials f(\omega)g(\omega), the preprocessed forms must be the

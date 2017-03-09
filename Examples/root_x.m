@@ -7,13 +7,11 @@ function fx = root_x(r)
 % r : root
 %
 % Output.
-%                     ___
-% fx :  B_{0}^{1}(x) |___|
-%       B_{1}^{1}(x) |___|
-%
+%               
+% fx : (Vector) Coefficients of f(x) 
 
 
-%
+% Get vector of 
 fx = [-r; 1-r];
 
 end

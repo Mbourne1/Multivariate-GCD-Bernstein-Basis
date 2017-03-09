@@ -1,10 +1,24 @@
+function [max_Delta, idxMaxChange] = Analysis(vMetric)
+% 
+% % Inputs
+%
+% vMetric : (Vector) Values from Rank revealing metric. Low values suggest
+% low rank, high values suggest full rank.
+%
+% % Outputs
+%
+% max_Delta : Maximum change
+%
+% idxMaxChange : Location of maximum change in the vector
 
-function [max_Delta_MaxMin_RowSum_R,indexMaxChange_RowNorm] = Analysis(vRatio_MaxMin_RowNorm_R)
 
-    vRatio_MaxMin_RowNorm_R = sanitize(vRatio_MaxMin_RowNorm_R);
-    % % Analyse Max:Min Row Norms for each subresultant
+    vMetric = sanitize(vMetric);
+    
     % Get the change in the ratios from one subresultant to the next.
-    vDelta_MaxMin_RowNorm_R = abs(diff(log10(vRatio_MaxMin_RowNorm_R)));
-    % Get the maximum change in rowsum ratio and its index
-    [max_Delta_MaxMin_RowSum_R,indexMaxChange_RowNorm] = max(vDelta_MaxMin_RowNorm_R);
+    vDelta = abs(diff(log10(vMetric)));
+    
+    % Get the maximum change in the metric
+    [max_Delta, idxMaxChange] = max(vDelta);
+    
+    
 end

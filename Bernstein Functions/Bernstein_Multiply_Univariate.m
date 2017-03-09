@@ -1,24 +1,25 @@
-function [px] = Bernstein_Multiply(fx,gx)
+function [px] = Bernstein_Multiply_Univariate(fx, gx)
 % Given the Coefficients of two polynomials f(x) and g(x) in vector form, 
 % output the coefficients of the product p(x).
 %
 % % Input.
 %
-% fx : Column vector of coefficients of the Bernstein Polynomial f(x)
+% fx : (Vector) Vector of coefficients of the Bernstein Polynomial f(x)
 %
-% gx : Column vector of coefficients of the Bernstein Polynomial g(x)
+% gx : (Vector) Vector of coefficients of the Bernstein Polynomial g(x)
 %
 % % Output.
 %
 % px : Column vector of coefficients of the Bernstein Polynomial p(x)
 
-% Get the degree of polynomial f(x)
-[r,~] = size(fx);
-m = r - 1;
+if( size(fx,2) > 1 || size(gx,2) > 1)
+   error('fx and gx must be column vectors'); 
+end
 
-% Get the degree of polynomial g(x)
-[r,~] = size(gx);
-n = r - 1;
+
+% Get the degree of polynomial f(x) and g(x)
+m = GetDegree(fx);
+n = GetDegree(gx);
 
 % Binomial coefficients corresponding to f(x)
 Bi_m = zeros(m+1,1);
@@ -37,6 +38,7 @@ fw = fx .* Bi_m;
 for i = 0:1:n
     C(i+1:(m+1)+i,i+1) = fw;
 end
+
 
 % Build matrix D
 D_diag = zeros(1,m+n+1);

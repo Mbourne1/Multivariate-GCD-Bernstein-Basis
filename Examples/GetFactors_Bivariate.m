@@ -1,4 +1,3 @@
-
 function [arr_factors] = GetFactors_Bivariate(root_mult_arr)
 %
 % Given the set of factors and multiplicities, get an array of the factors
@@ -6,7 +5,7 @@ function [arr_factors] = GetFactors_Bivariate(root_mult_arr)
 %
 % % Inputs
 %
-% root_mult_arr : Matrix containing symbolic factors of f(x,y) and their
+% root_mult_arr : (Matrix) containing symbolic factors of f(x,y) and their
 % corresponding multiplicity
 %
 % % Outputs

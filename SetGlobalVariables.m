@@ -1,4 +1,4 @@
-function [] = SetGlobalVariables(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method)
+function [] = SetGlobalVariables(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method)
 %
 % % Inputs
 %
@@ -35,25 +35,24 @@ SETTINGS.PLOT_GRAPHS = true;
 
 % ------------------------------------------------------------------------
 %
-%       Sylvester Matrix Settings
+% Sylvester Matrix Settings
 %
 %
 
 SETTINGS.SYLVESTER_BUILD_METHOD = sylvester_build_method;
 
+%-------------------------------------------------------------------------
+%
+% Factorisation Matrix Settings
+%
+
+SETTINGS.FACTORISATION_BUILD_METHOD = factorisation_build_method;
+
 % -------------------------------------------------------------------------
 %
-%       GCD Degree Computation Settings
+% GCD Degree Computation Settings
 %
 %
-
-
-%
-% Total
-% Relative
-% Both
-%
-SETTINGS.CALC_METHOD = 'Relative';
 
 % Variables related to get degree ()
 
@@ -125,6 +124,15 @@ SETTINGS.APF_METHOD = apf_method;
 %-------------------------------------------------------------------------
 %
 % 
+
+%------------------------------------------------------------------
+%
+%
+% DECONVOLUTION METHOD
+
+% Separate
+% Batch
+SETTINGS.DECONVOLUTION_METHOD = 'Separate';
 
 
 

@@ -1,4 +1,4 @@
-function [dxy_calc] = o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method)
+function [dxy_calc] = o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method)
 % o_gcd_2Polys(ex_num, el, mean_method, bool_alpha_theta, low_rank_approx_method)
 %
 % Given an example number and set of parameters, obtain GCD of the two
@@ -8,41 +8,46 @@ function [dxy_calc] = o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bo
 %
 % % Inputs
 %
-% ex_num - Example Number
+% ex_num : (String) Example Number
 %
-% emin - Lower noise level
+% emin : (Float) Lower noise level
 %
-% emax - Upper noise level
+% emax : (Float) Upper noise level
 %
-% mean_method
+% mean_method (String)
 %       'None'
 %       'Geometric Mean Matlab Method'
 %
-% bool_alpha_theta ('y'/'n')
+% bool_alpha_theta (Boolean)
 %       true : Include Preprocessing
 %       false : Exclude Preprocessing
 %
-% low_rank_approx_method
+% low_rank_approx_method (String)
 %       'Standard SNTLN' : Include SNTLN
 %       'Standard STLN : Include STLN
 %       'None' : Exclude SNTLN
 %
-% apf_method
+% apf_method (String)
 %       'None'
 %       'Standard APF Nonlinear'
 %       'Standard APF Linear'
 %
-% sylvester_build_method
+% sylvester_build_method (String)
 %       'T'
 %       'DT'
 %       'DTQ'
 %       'TQ'
 %
+% factorisation_build_method (String)
+%
+%       'HCG'
+%       'HC'
+%
 % % Examples
 %
-% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'None', false, 'Standard STLN', 'None', 'DTQ')
-% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ')
-% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'None', 'DTQ')
+% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'None', false, 'Standard STLN', 'None', 'DTQ', 'HCG')
+% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ','HCG')
+% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'None', 'DTQ', 'HCG')
 
 % %
 % Set Variables
@@ -56,29 +61,16 @@ end
 
 % Set global variables
 SetGlobalVariables(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method)
+    low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method)
 
 % Add subfolders
 restoredefaultpath
 
-addpath(...
-    'Basis Conversion',...
-    'Build Matrices',...
-    'Formatting',...
-    'Plotting',...
-    'Preprocessing',...
-    'Results',...
-    'Scaling');
+% Determine where your m-file's folder is.
+folder = fileparts(which(mfilename)); 
 
-addpath(genpath('APF'));
-addpath(genpath('Bernstein Functions'));
-addpath(genpath('Build Sylvester Matrix'));
-addpath(genpath('Examples'));
-addpath(genpath('Get Cofactor Coefficients'));
-addpath(genpath('Get GCD Coefficients'));
-addpath(genpath('Get GCD Degree'));
-addpath(genpath('Low Rank Approximation'));
-
+% Add that folder plus all subfolders to the path.
+addpath(genpath(folder));
 
 % Print Parameters to console
 fprintf('INPUTS. \n')
@@ -89,48 +81,46 @@ fprintf('MEAN METHOD : %s \n', mean_method)
 fprintf('PREPROCESSING : %s \n',bool_alpha_theta)
 fprintf('LOW RANK METHOD : %s \n',low_rank_approx_method)
 fprintf('APF METHOD : %s \n', apf_method)
+fprintf('Sylvester Matrix Type : %s \n', sylvester_build_method);
+fprintf('Factorisation Matrix Type : %s \n', factorisation_build_method);
 
-% %
-% Get Example
+% Get Example polynomials
 [fxy_exact, gxy_exact, dxy_exact, uxy_exact, vxy_exact, m, n, t_exact] = Examples_GCD_Bivariate_2Polys(ex_num);
 
+% Get degree of f(x,y), g(x,y) and d(x,y)
 [t1, t2] = GetDegree_Bivariate(dxy_exact);
 [m1, m2] = GetDegree_Bivariate(fxy_exact);
 [n1, n2] = GetDegree_Bivariate(gxy_exact);
 
+% Print degree structure
 fprintf('The Degree Structure of f(x) : m = %i \t m1 = %i \t m2 = %i \n', m, m1, m2)
 fprintf('The Degree Structure of g(x) : n = %i \t n1 = %i \t n2 = %i \n', n, n1, n2)
 fprintf('The Degree Structure of d(x) : t = %i \t t1 = %i \t t2 = %i \n', t_exact, t1, t2)
 
-
-
-% %
-% Add Noise to the coefficients
-
-% Add noise to the coefficients of f and g
+% Add noise to the coefficients of f(x,y) and g(x,y)
 [fxy_matrix, ~] = AddVariableNoiseToPoly(fxy_exact, emin, emax);
 [gxy_matrix, ~] = AddVariableNoiseToPoly(gxy_exact, emin, emax);
 
-
-% %
-% %
 % Calculate GCD
-lowerLimit = 1;
-upperLimit = min(m,n);
-limits = [lowerLimit upperLimit]; 
+
+% Set upper and lower limit for the degree structure of d(x,y)
+lowerLimit_t1 = 0;
+upperLimit_t1 = min(m1, n1);
+lowerLimit_t2 = 0;
+upperLimit_t2 = min(m2, n2);
+limits_t1 = [lowerLimit_t1 upperLimit_t1];
+limits_t2 = [lowerLimit_t2 upperLimit_t2];
 
 % Calculate the gcd, and quotient polynomials of f(x,y) and g(x,y)
-[fxy_calc, gxy_calc, dxy_calc, uxy_calc, vxy_calc, t1, t2] = ...
-    o_gcd_mymethod_Bivariate_2Polys(fxy_matrix, gxy_matrix, m, n, limits);
+[~, ~, dxy_calc, uxy_calc, vxy_calc, t1, t2] = ...
+    o_gcd_mymethod_Bivariate_2Polys(fxy_matrix, gxy_matrix, limits_t1, limits_t2);
 
-
-
-% Get error d(x,y)
+% Get error in coefficients of d(x,y), u(x,y) and v(x,y)
 myError.dxy = GetDistance('d', dxy_calc, dxy_exact);
 myError.uxy = GetDistance('u', uxy_calc, uxy_exact);
 myError.vxy = GetDistance('v', vxy_calc, vxy_exact);
  
-% Output to file
+% Output results to file
 PrintToFile(m, n, t1, t2, myError);
 
 
@@ -139,6 +129,8 @@ end
 
 function [dist] = GetDistance(name, fxy_calc, fxy_exact)
 % Given two matrices, get the distance between them.
+%
+% name : (String)
 %
 % fxy_calc : (Matrix) Coefficients of f(x,y) as calculated
 %
@@ -171,9 +163,9 @@ function []= PrintToFile(m, n, t1, t2, myError)
 %
 % % Inputs
 %
-% m : Total degree of polynomial f(x,y)
+% m : (Int) Total degree of polynomial f(x,y)
 %
-% n : Total degree of polynomail g(x,y)
+% n : (Int) Total degree of polynomail g(x,y)
 %
 % error: Contains error.uxy, error.vxy and error.dxy
 

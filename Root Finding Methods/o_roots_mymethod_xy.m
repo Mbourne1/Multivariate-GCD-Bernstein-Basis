@@ -1,26 +1,34 @@
-function [wx,wy,wxy] = o_roots_mymethod_xy(wx,wy,vDegt_wx,vDegt_wy)
+function [arr_wxy_1,arr_wxy_2,arr_wxy_out] = o_roots_mymethod_xy(arr_wxy_1, arr_wxy_2)
 %
 % Inputs
 %
-% wx : set of polynomials w_{i} where w_{i} is a factor of multiplicity i
-% in f(x,y).
+% arr_wxy_1 : (Array of Matrices)
 %
+% arr_wxy_2 : (Array of Matrices)
 %
+% % Outputs
+%
+% arr_wxy_1 : 
+%
+% arr_wxy_2 :
+%
+% arr_wxy_out :
+
 
 % Get the number of entries in the set of polynomials w(x)
-[~,nEntries_wx] = size(wx);
+[~,nEntries_wxy_1] = size(arr_wxy_1);
 
 % Get the number of entries in the set of polynomials w(y)
-[~,nEntries_wy] = size(wy);
+[~,nEntries_wxy_2] = size(arr_wxy_2);
 
 
-wxy = 1;
+arr_wxy_out = 1;
 
 % For each of the polynomials w(x)
-for i = 1:1:nEntries_wx
+for i = 1:1:nEntries_wxy_1
     
     % Get the degree of w(x) with respect to y.
-    [~,m2] = GetDegree_Bivariate(wx{i});
+    [~,m2] = GetDegree_Bivariate(arr_wxy_1{i});
     
     % If the polynomial has a y component (is Bivariate), then must
     % deconvolve with the corresponding polynomial wy_{i}. This will result
@@ -29,21 +37,31 @@ for i = 1:1:nEntries_wx
     
     if m2 > 0
         
-        lower_lim = 1;
-        upper_lim = min(vDegt_wx(i),vDegt_wy(i));
+        [m1,m2] = GetDegree_Bivariate(arr_wxy_1{i});
+        [n1,n2] = GetDegree_Bivariate(arr_wxy_2{i});
         
-        [fxy_calc_matrix,gxy_calc_matrix, dxy_calc_matrix, uxy_calc_matrix, vxy_calc_matrix,t,t1,t2]  =...
-            o_gcd_mymethod_2Polys(wx{i},wy{i},vDegt_wx(i),vDegt_wy(i),[lower_lim, upper_lim]);
+        lowerLimit_t1 = 1;
+        upperLimit_t1 = min(m1,n1);
+        
+        limits_t1 = [lowerLimit_t1, upperLimit_t1];
+        
+        lowerLimit_t2 = 1;
+        upperLimit_t2 = min(m2,n2);
+        
+        limits_t2 = [lowerLimit_t2, upperLimit_t2];
+        
+        [fxy_calc_matrix,gxy_calc_matrix, dxy_calc_matrix, uxy_calc_matrix, vxy_calc_matrix,t1,t2]  =...
+            o_gcd_mymethod_Bivariate_2Polys(arr_wxy_1{i}, arr_wxy_2{i}, limits_t1, limits_t2);
         
         % Overwrite wx and wy with new values
         % Assign the GCD to the non-Separable part
-        wxy{i} = dxy_calc_matrix;
+        arr_wxy_out{i} = dxy_calc_matrix;
         
         % Divide w_{x} by the GCD to obtain w_{x} without y component
-        wx{i} = Deconvolve_Bivariate(wx{i},dxy_calc_matrix);
+        arr_wxy_1{i} = Deconvolve_Bivariate(arr_wxy_1{i},dxy_calc_matrix);
         
         % Divide w_{y} by the GCD to obtain w_{y} without x component
-        wy{i} = Deconvolve_Bivariate(wy{i},dxy_calc_matrix);
+        arr_wxy_2{i} = Deconvolve_Bivariate(arr_wxy_2{i},dxy_calc_matrix);
         
     end
     
@@ -57,16 +75,16 @@ end
 
 % Given the set of polynomials w(x), get the roots of f(x,y) and their
 % corresponding multiplicities.
-[root_mult_arr_x] = GetRootMultiplicityArray(wx);
+[root_mult_arr_x] = GetRootMultiplicityArray(arr_wxy_1);
 LineBreakLarge()
 
 % Given the set of polynomials w(x), get the roots of f(x,y) and their
 % corresponding multiplicities.
 
 % Transpose the entries of w(y)
-wy = cellfun(@transpose,wy,'un',0);
+arr_wxy_2 = cellfun(@transpose,arr_wxy_2,'un',0);
 
-[root_mult_arr_y] = GetRootMultiplicityArray(wy);
+[root_mult_arr_y] = GetRootMultiplicityArray(arr_wxy_2);
 
 
 display(root_mult_arr_x)

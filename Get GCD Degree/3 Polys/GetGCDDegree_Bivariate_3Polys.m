@@ -4,53 +4,55 @@ function [t1, t2, GM_fxy, GM_gxy, GM_hxy, alpha, th1, th2] = GetGCDDegree_Bivari
 %
 % % Inputs.
 %
-% [fxy, gxy, hxy] : Coefficient matrix of polynomial f(x,y) and g(x,y)
+% fxy : (Matrix) Coefficient matrix of polynomial f(x,y)
 %
-% % Outputs 
+% gxy : (Matrix) Coefficient matrix of polynomial g(x,y)
 %
-% t1 : Degree of d(x,y) with respect to x
-% 
-% t2 : Degree of d(x,y) with respect to y
+% hxy : (Matrix) Coefficient matrix of polynomial h(x,y)
 %
-% [GM_fx, GM_gx] : Geometric mean of entries in each partition of the
+% % Outputs
+%
+% t1 : (Int) Degree of d(x,y) with respect to x
+%
+% t2 : (Int) Degree of d(x,y) with respect to y
+%
+% GM_fx : (Float) Geometric mean of entries in the first partition of the Sylvester
+% subresultatn matrix S_{t1,t2}(f,g)
+%
+% GM_gx : (Float) Geometric mean of entries in the second partition of the
 % Sylvester subresultant matrix S_{t1,t2}(f,g)
 %
-% alpha : Optimal value of alpha
+% alpha : (Float) Optimal value of alpha
 %
-% th1 : Optimal value of theta_{1}
+% th1 : (Float) Optimal value of theta_{1}
 %
-% th2 : Optimal value of theta_{2}
+% th2 : (Float) Optimal value of theta_{2}
 
 
 %
 global SETTINGS
 
 
-% Get the degree structure of polynomial f(x,y)
+% Get the degree structure of polynomial f(x,y), g(x,y) and h(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get the degree structure of polynomial g(x,y)
 [n1, n2] = GetDegree_Bivariate(gxy);
-
-% Get the degree structure of polynomial g(x,y)
 [o1, o2] = GetDegree_Bivariate(hxy);
 
-my_limits_t1 = [0 min([m1,n1,o1])];
-my_limits_t2 = [0 min([m2,n2,o2])];
+% Set my limits in the computation of the degree of the GCD.
+myLimits_t1 = [0 min([m1,n1,o1])];
+myLimits_t2 = [0 min([m2,n2,o2])];
 
-lowerLimit_t1 = my_limits_t1(1);
-upperLimit_t1 = my_limits_t1(2);
+myLowerLimit_t1 = myLimits_t1(1);
+myUpperLimit_t1 = myLimits_t1(2);
+myLowerLimit_t2 = myLimits_t2(1);
+myUpperLimit_t2 = myLimits_t2(2);
 
-lowerLimit_t2 = my_limits_t2(1);
-upperLimit_t2 = my_limits_t2(2);
-
-nSubresultants_k1 = upperLimit_t1 - lowerLimit_t1 + 1;
-nSubresultants_k2 = upperLimit_t2 - lowerLimit_t2 + 1;
-
+% Get number of Sylvester subresultant matrices to be considered.
+nSubresultants_k1 = myUpperLimit_t1 - myLowerLimit_t1 + 1;
+nSubresultants_k2 = myUpperLimit_t2 - myLowerLimit_t2 + 1;
 
 % Initialise some vectors
 arrSingularValues = cell(nSubresultants_k1, nSubresultants_k2);
-
 matAlpha = zeros(nSubresultants_k1, nSubresultants_k2);
 matTheta1 = zeros(nSubresultants_k1, nSubresultants_k2);
 matTheta2 = zeros(nSubresultants_k1, nSubresultants_k2);
@@ -58,50 +60,47 @@ matGM_fxy = zeros(nSubresultants_k1, nSubresultants_k2);
 matGM_gxy = zeros(nSubresultants_k1, nSubresultants_k2);
 matGM_hxy = zeros(nSubresultants_k1, nSubresultants_k2);
 
-% For every row in the matrix
-for i1 = 1:1:nSubresultants_k1
+% For every Sylvester subresultant
+
+for i1 = 1 : 1 : nSubresultants_k1
     
     for i2 = 1:1:nSubresultants_k2
-    
-    k1 = lowerLimit_t1 + (i1 - 1);
-    k2 = lowerLimit_t2 + (i2 - 1);
-    
-    
-    % Preprocessing
-    %[GM_fx, GM_gx, alpha, th1, th2] = Preprocess(fxy, gxy, v_k1, v_k2);
-    
-    [GM_fxy, GM_gxy, GM_hxy, alpha, th1, th2] = Preprocess_Bivariate_3Polys(fxy, gxy, hxy, k1, k2);
-    
-    matGM_fxy(i1,i2) = GM_fxy;
-    matGM_gxy(i1,i2) = GM_gxy;
-    matGM_hxy(i1,i2) = GM_hxy;
-    matTheta1(i1,i2) = th1;
-    matTheta2(i1,i2) = th2;
-    matAlpha(i1,i2) = alpha;
-    
-    
-    % Divide f(x,y), g(x,y) and h(x,y) by geometric mean
-    fxy_n = fxy ./ GM_fxy;
-    gxy_n = gxy ./ GM_gxy;
-    hxy_n = hxy ./ GM_hxy;
-    
-    % Get f(w1,w2), g(w1,w2) and h(w1,w2)
-    fww = GetWithThetas(fxy_n, th1, th2);
-    gww = GetWithThetas(gxy_n, th1, th2);
-    hww = GetWithThetas(hxy_n, th1, th2);
-    
-    % Build the k1,k2 subresultant matrix
-    Sk1k2 = BuildDTQ_Bivariate_3Polys(fww,gww,hww,k1,k2);
-    
-    % Get the singular values of S_{k1,k2}
-    arrSingularValues{i1,i2} = svd(Sk1k2);
-    
-    
+        
+        % Get k_{1} and k_{2}, the index of the S_{k1,k2} matrix
+        k1 = myLowerLimit_t1 + (i1 - 1); 
+        k2 = myLowerLimit_t2 + (i2 - 1);
+        
+        % Preprocess polynomials f(x,y), g(x,y) and h(x,y)
+        [GM_fxy, GM_gxy, GM_hxy, alpha, th1, th2] = Preprocess_Bivariate_3Polys(fxy, gxy, hxy, k1, k2);
+        
+        % Store the values from preprocessing
+        matGM_fxy(i1,i2) = GM_fxy;
+        matGM_gxy(i1,i2) = GM_gxy;
+        matGM_hxy(i1,i2) = GM_hxy;
+        matTheta1(i1,i2) = th1;
+        matTheta2(i1,i2) = th2;
+        matAlpha(i1,i2) = alpha;
+        
+        % Divide f(x,y), g(x,y) and h(x,y) by geometric mean
+        fxy_n = fxy ./ GM_fxy;
+        gxy_n = gxy ./ GM_gxy;
+        hxy_n = hxy ./ GM_hxy;
+        
+        % Get f(w1,w2), g(w1,w2) and h(w1,w2)
+        fww = GetWithThetas(fxy_n, th1, th2);
+        gww = GetWithThetas(gxy_n, th1, th2);
+        hww = GetWithThetas(hxy_n, th1, th2);
+        
+        % Build the k1,k2 subresultant matrix
+        Sk1k2 = BuildDTQ_Bivariate_3Polys(fww, gww, hww, k1, k2);
+        
+        % Get the singular values of S_{k1,k2}
+        arrSingularValues{i1,i2} = svd(Sk1k2);
+        
+        
     end
     
 end
-
-
 
 % Metric used to compute the degree of the GCD
 % R1 Row Norms
@@ -109,10 +108,14 @@ end
 % Singular Values
 % Residuals
 switch SETTINGS.RANK_REVEALING_METRIC
-
+    
     case 'R1 Row Norms'
         
+        error('error : Code not complete')
+        
     case 'R1 Row Diagonals'
+        
+        error('error : Code not complete')
         
     case 'Singular Values'
         
@@ -120,20 +123,27 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         for i1 = 1:1:nSubresultants_k1
             for i2 = 1:1:nSubresultants_k2
-           
+                
                 matMinimumSingularValues(i1,i2) = min(arrSingularValues{i1,i2});
                 
             end
         end
         
-        plotSingularValues(arrSingularValues, my_limits_t1, my_limits_t2);
-        plotMinimumSingularValues(matMinimumSingularValues, my_limits_t1, my_limits_t2);
-        
+        if (SETTINGS.PLOT_GRAPHS)
+            %plotSingularValues(arrSingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+            plotMinimumSingularValues(matMinimumSingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+        end
         
         metric = matMinimumSingularValues;
         
     case 'Residuals'
-    
+        
+        error('error : Code not complete')
+        
+    otherwise
+        
+        error('Not a valid method')
+        
 end
 
 
@@ -142,21 +152,21 @@ end
 delta_x = diff(log10(metric),1,1);
 vDelta_x = sum(delta_x,2);
 [~, index] = max(vDelta_x);
-t1 = index + lowerLimit_t1 -1;
+t1 = index + myLowerLimit_t1 -1;
 
 delta_y = diff(log10(metric),1,2);
 vDelta_y = sum(delta_y,1);
 [~, index] = max(vDelta_y);
-t2 = index + lowerLimit_t1 -1;
+t2 = index + myLowerLimit_t1 -1;
 
 
 % Outputs
-GM_fxy = matGM_fxy(t1 - lowerLimit_t1 +1, t2 - lowerLimit_t2 +1);
-GM_gxy = matGM_gxy(t1 - lowerLimit_t1 +1, t2 - lowerLimit_t2 +1);
-GM_hxy = matGM_hxy(t1 - lowerLimit_t1 +1, t2 - lowerLimit_t2 +1);
-alpha = matAlpha(t1 - lowerLimit_t1 +1, t2 - lowerLimit_t2 +1);
-th1 = matTheta1(t1 - lowerLimit_t1 +1, t2 - lowerLimit_t2 +1);
-th2 = matTheta2(t1 - lowerLimit_t1 +1, t2 - lowerLimit_t2 +1);
+GM_fxy = matGM_fxy(t1 - myLowerLimit_t1 +1, t2 - myLowerLimit_t2 +1);
+GM_gxy = matGM_gxy(t1 - myLowerLimit_t1 +1, t2 - myLowerLimit_t2 +1);
+GM_hxy = matGM_hxy(t1 - myLowerLimit_t1 +1, t2 - myLowerLimit_t2 +1);
+alpha = matAlpha(t1 - myLowerLimit_t1 +1, t2 - myLowerLimit_t2 +1);
+th1 = matTheta1(t1 - myLowerLimit_t1 +1, t2 - myLowerLimit_t2 +1);
+th2 = matTheta2(t1 - myLowerLimit_t1 +1, t2 - myLowerLimit_t2 +1);
 
 LineBreakMedium()
 fprintf([mfilename ' : ' 'The Calculated Degree of the GCD is given by \n'])

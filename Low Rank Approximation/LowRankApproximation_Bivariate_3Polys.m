@@ -1,40 +1,39 @@
-function [fxy_lr, gxy_lr, hxy_lr, uxy_lr, vxy_lr, wxy_lr, alpha_lr, th1_lr, th2_lr] = LowRankApproximation_3Polys...
+function [fxy_lr, gxy_lr, hxy_lr, uxy_lr, vxy_lr, wxy_lr, alpha_lr, th1_lr, th2_lr] = LowRankApproximation_Bivariate_3Polys...
     (fxy, gxy, hxy, alpha, th1, th2, k1, k2, idx_col)
 % Compute low rank approximation of the Sylvester matrix S(f,g) either
 % SNTLN or STLN.
 %
 % % Inputs.
 %
-% [fxy, gxy, hxy] : Coefficients of polynomial f(x,y), g(x,y) and h(x,y) in
-% the Bernstein basis
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% alpha : \alpha
+% gxy : (Matrix) Coefficients of polynomial g(x,y) 
 %
-% th1 : \theta_{1}
+% hxy : (Matrix) Coefficients of polynomial h(x,y)
 %
-% th2 : \theta_{2}
+% alpha : (Float) \alpha
 %
-% [m, n, o] : Total degree of polynomial f(x,y)
+% th1 : (Float) \theta_{1}
 %
-% k : Total degree of polynomial d(x,y)
+% th2 : (Float) \theta_{2}
 %
-% k1 : Degree of d(x,y) with respect to x
+% k1 : (Int) Degree of d(x,y) with respect to x
 % 
-% k2 : Degree of d(x,y) with respect to y
+% k2 : (Int) Degree of d(x,y) with respect to y
 %
-% idx_col : Index of optimal column to be removed from S(f,g)
+% idx_col : (Int) Index of optimal column to be removed from S(f,g)
 %
 % % Outputs
 %
-% fxy_lr : Coefficients of f(x,y) with perturbations
+% fxy_lr : (Matrix) Coefficients of f(x,y) with perturbations
 %
-% gxy_lr : Coefficients of g(x,y) with perturbations
+% gxy_lr : (Matrix) Coefficients of g(x,y) with perturbations
 %
-% alpha_lr : Refined \alpha
+% alpha_lr : (Float) Refined \alpha
 %
-% th1_lr : Refined \theta_{1}
+% th1_lr : (Float) Refined \theta_{1}
 %
-% th2_lr : Refined \theta_{2}
+% th2_lr : (Float) Refined \theta_{2}
 
 
 % Initialise global settings
@@ -90,13 +89,15 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         vSingularValues3 = svd(S3);
         vSingularValues4 = svd(S4);
         
-        figure()
-        plot(log10(vSingularValues1),'-s','DisplayName','fxy,gxy');
-        hold on
-        plot(log10(vSingularValues2),'-s','DisplayName','fxy_lr,gxy_lr');
-        plot(log10(vSingularValues3),'-s','DisplayName','fww gww');
-        plot(log10(vSingularValues4),'-s','DisplayName','fww_lr gww_lr');
-        hold off
+        if (SETTINGS.PLOT_GRAPHS)
+            figure()
+            plot(log10(vSingularValues1),'-s','DisplayName','fxy,gxy');
+            hold on
+            plot(log10(vSingularValues2),'-s','DisplayName','fxy_lr,gxy_lr');
+            plot(log10(vSingularValues3),'-s','DisplayName','fww gww');
+            plot(log10(vSingularValues4),'-s','DisplayName','fww_lr gww_lr');
+            hold off
+        end
         
     case 'None'
         % Dont Apply SNTLN improvements

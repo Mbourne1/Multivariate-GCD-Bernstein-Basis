@@ -1,27 +1,25 @@
-function [wx,vDegt_wx] = o_roots_mymethod_x(fxy, M)
-% o_roots_mymethod_x(fxy_matrix,M)
+function [arr_wxy, vDegree_x_wxy, vDegree_y_wxy] = o_roots_mymethod_x(fxy)
+% o_roots_mymethod_x(fxy, M)
 %
 % Inputs
 %
-% fxy : Coefficients of polynomial f(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% M : Degree of f(x,y)
+% % Outputs
+%
+% arr_wxy : (Array of Matrices) : Array containing matrices of coefficients
+% of the polynomials w_{i}(x,y)
 
 
 % Set the first entry of q to be the input polynomial f(x,y)
-fx{1} = fxy;
+arr_fxy{1} = fxy;
 
 % Get degree of polynomial f(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
 
-% Get degree of polynomial f(x,y) with respect to x
-vDeg1_fx(1) = m1;
-
-% Get degree of polynomial f(x,y) with respect to y
-vDeg2_fx(1) = m2;
-
-% Get total degree of polynomial f(x,y)
-vDegt_fx(1) = M;
+% Get degree of polynomial f(x,y) with respect to x and y
+vDegree_x_fxy(1) = m1;
+vDegree_y_fxy(1) = m2;
 
 % Set the iteration number
 ite = 1;
@@ -29,23 +27,22 @@ ite = 1;
 % Whilst the most recently calculated GCD has a degree greater than
 % zero. ie is not a constant, perform a gcd calculation on it and its
 % derivative.
-while vDeg1_fx(ite) > 0
+while vDegree_x_fxy(ite) > 0
     
-    if (vDeg1_fx(ite) == 1)
+    if (vDegree_x_fxy(ite) == 1)
         % The derivative is a constant
         
         % The GCD is a constant
-        fx{ite+1} = Differentiate_wrt_x(fx{ite});
-        ux{ite+1} = Deconvolve_Bivariate(fx{ite},fx{ite+1});
+        arr_fxy{ite+1} = Differentiate_wrt_x(arr_fxy{ite});
+        
+        arr_uxy{ite+1} = Deconvolve_Bivariate(arr_fxy{ite}, arr_fxy{ite+1});
         
         % Get degree of d(x,y) with respect to x
-        %vDeg1_fx(ite+1) = 0;
+        vDegree_x_fxy(ite+1) = 0;
         
         % Get degree of d(x,y) with respect to y
-        %vDeg2_fx(ite+1) = vDeg2_fx(ite);
-        
-        % Get total degree of d(x,y)
-        vDegt_fx(ite+1) = 0;
+        vDegree_y_fxy(ite+1) = vDegree_y_fxy(ite);
+       
         break;
     end
     
@@ -53,141 +50,148 @@ while vDeg1_fx(ite) > 0
     fprintf([mfilename ' : ' sprintf('Compute GCD of f_{%i} and derivative f_{%i}\n\n',ite,ite)]);
     
     % Differentiate f(x,y) with respect to x to obtain g(x,y)
-    gxy = Differentiate_wrt_x(fx{ite});
+    gxy = Differentiate_wrt_x(arr_fxy{ite});
     
-    % Get total degree of f(x,y)
-    m = vDegt_fx(ite);
+    % Get the degree of f(x,y) and g(x,y) with respect to x and y
+    [m1, m2] = GetDegree_Bivariate(fxy);
+    [n1, n2] = GetDegree_Bivariate(gxy);
     
-    % Get total degree of g(x,y)
-    n  = m-1;
-   
     % Set upper and lower bounds of total degree.
     if ite > 1
-        lower_lim = vDegt_fx(ite)-d(ite-1);
-        upper_lim = m-1;
+        
+        lowerLimit_t1 = vDegree_x_fxy(ite)-d_x(ite-1);
+        upperLimit_t1 = min([m1,n1]);
+        
+        lowerLimit_t2 = vDegree_y_fxy(ite) - d_y(ite-1);
+        upperLimit_t2 = min([m2,n2]);
+        
     else
-        lower_lim = 1;
-        upper_lim = m-1;
+                
+        lowerLimit_t1 = 0;
+        upperLimit_t1 = min([m1, n1]);
+        
+        lowerLimit_t2 = 0;
+        upperLimit_t2 = min([m2, n2]);
+        
     end
     
-    fprintf([mfilename ' : ' sprintf('Minimum degree of f_{%i}: %i \n', ite+1, lower_lim)]);
-    fprintf([mfilename ' : ' sprintf('Maximum degree of f_{%i}: %i \n', ite+1, upper_lim)]);
+    
+    
+    
+    % Set limits of t, t1 and t2
+    limits_t1 = [lowerLimit_t1, upperLimit_t1];
+    limits_t2 = [lowerLimit_t2, upperLimit_t2];
+    
+    fprintf([mfilename ' : ' sprintf('Minimum degree of f_{%i} with respect to x: %i \n', ite+1, lowerLimit_t1)]);
+    fprintf([mfilename ' : ' sprintf('Maximum degree of f_{%i} with respect to x: %i \n', ite+1, upperLimit_t1)]);
+    
+    fprintf([mfilename ' : ' sprintf('Minimum degree of f_{%i} with respect to y: %i \n', ite+1, lowerLimit_t2)]);
+    fprintf([mfilename ' : ' sprintf('Maximum degree of f_{%i} with respect to y: %i \n', ite+1, upperLimit_t2)]);
     
     % GCD is only a scalar with respect to x so set equal to g(x,y).
-    [fx{ite}, gxy, fx{ite+1}, uxy, vxy, t, t1, t2] = o_gcd_mymethod_2Polys(fx{ite}, gxy, m, n, [lower_lim,upper_lim]);
+    [arr_fxy{ite}, gxy, arr_fxy{ite+1}, uxy, vxy, t1, t2] = o_gcd_mymethod_Bivariate_2Polys(arr_fxy{ite}, gxy, limits_t1, limits_t2);
     
     % Set the degree of q{i} with respect to x
-    vDeg1_fx(ite+1) = t1;
+    vDegree_x_fxy(ite+1) = t1;
     
     % Set the degree of q{i} with respect to y
-    vDeg2_fx(ite+1) = t2;
+    vDegree_y_fxy(ite+1) = t2;
     
-    % Set the total degree of q{i}
-    vDegt_fx(ite+1) = t;
     
-    % Get number of distinct roots of f(ite)
-    d(ite) = vDegt_fx(ite) - vDegt_fx(ite+1);
+    d_x(ite) = vDegree_x_fxy(ite) - vDegree_x_fxy(ite+1);
+    d_y(ite) = vDegree_y_fxy(ite) - vDegree_y_fxy(ite+1);
     
-    fprintf([mfilename ' : ' sprintf('The computed deg(GCD(f_{%i},f_{%i}) is : %i \n',ite,ite,vDegt_fx(ite+1))]);
-    fprintf([mfilename ' : ' sprintf('Number of distinct roots in f_{%i} : %i \n',ite,d(ite))]);
-    fprintf([mfilename ' : ' sprintf('Degree of f_{%i} : %i \n',ite + 1, vDegt_fx(ite+1))]);
-    LineBreakLarge();
+    fprintf([mfilename ' : ' sprintf('Degree of GCD with respect to x : %i', vDegree_x_fxy)]);
+    fprintf([mfilename ' : ' sprintf('Degree of GCD with respect to y : %i', vDegree_y_fxy)]);
+    
+    
     
     % Increment the iteration number
     ite = ite + 1;
+    LineBreakLarge();
 end
 
 
 %% Obtain the series h_{x}{i} by series of deconvolutions on q_{x}{i}
 
 % Get number of elements in the series of polynomials q_{i}
-[~,nEntries_qx] = size(fx);
+[~,nEntries_qxy] = size(arr_fxy);
 
-nEntries_hx = nEntries_qx - 1;
+nEntries_hxy = nEntries_qxy - 1;
 
 % Pre assign the CellArray h_{x} to have one less element than the
 % CellArray q_{x}
-hx = cell(1,nEntries_hx);
+arr_hxy = cell(1, nEntries_hxy);
 
 % Initialise vectors to store the degrees of h(x).
-%vDeg1_hx = zeros(1,nEntries_hx);
-%vDeg2_hx = zeros(1,nEntries_hx);
-vDegt_hx = zeros(1,nEntries_hx);
+vDegree_x_hxy = zeros(1,nEntries_hxy);
+vDegree_y_hxy = zeros(1,nEntries_hxy);
+
 
 % For each pair of consecutive polynomials in qx perform deconvolution
-for i = 1:1:nEntries_hx
+for i = 1:1:nEntries_hxy
     
     % Get the series h_{x,i}
-    hx{i} = Deconvolve_Bivariate(fx{i},fx{i+1});
+    arr_hxy{i} = Deconvolve_Bivariate(arr_fxy{i},arr_fxy{i+1});
     
     % Set the degree of h with respect to x
-    %vDeg1_hx(i) = vDeg1_fx(i) - vDeg1_fx(i+1);
+    vDegree_x_hxy(i) = vDegree_x_fxy(i) - vDegree_x_fxy(i+1);
     
     % Set the degree of h with respect to y
-    %vDeg2_hx(i) = vDeg2_fx(i) - vDeg2_fx(i+1);
-    
-    % Set the total degree of h
-    vDegt_hx(i) = vDegt_fx(i) - vDegt_fx(i+1);
-    
+    vDegree_y_hxy(i) = vDegree_y_fxy(i) - vDegree_y_fxy(i+1);
+        
 end
 
 
 % Get the number of entries in the array of h_{x}.
-[~,nEntries_hx] = size(hx);
+[~, nEntries_hxy] = size(arr_hxy);
 
 %% Obtain the series w_{x}{i} by series of deconvolutions on h_{x}{i}
 
 % Pre assign the CellArray w_{x}
-nEntries_wx = nEntries_hx -1;
+nEntries_wxy = nEntries_hxy - 1;
 
-wx = cell(1,nEntries_wx);
+arr_wxy = cell(1, nEntries_wxy);
 
 % Initialise vectors to store the degrees of w(x).
-%vDeg1_wx = zeros(1,nEntries_wx);
-%vDeg2_wx = zeros(1,nEntries_wx);
-vDegt_wx = zeros(1,nEntries_wx);
+vDegree_x_wxy = zeros(1, nEntries_wxy);
+vDegree_y_wxy = zeros(1, nEntries_wxy);
 
 % For each pair, perform a deconvolution to obtain w_{x}
-if nEntries_hx > 1
-    for i = 1:1: nEntries_hx - 1
+if nEntries_hxy > 1
+    for i = 1:1: nEntries_hxy - 1
         
-        wx{i} = Deconvolve_Bivariate(hx{i},hx{i+1});
+        arr_wxy{i} = Deconvolve_Bivariate(arr_hxy{i},arr_hxy{i+1});
         
         % Set the degree of w with respect to x
-        %vDeg1_wx(i) = vDeg1_hx(i) - vDeg1_hx(i+1);
+        vDegree_x_wxy(i) = vDegree_x_hxy(i) - vDegree_x_hxy(i+1);
         
         % Set the degree of w with respect to y
-        %vDeg2_wx(i) = vDeg2_hx(i) - vDeg2_hx(i+1);
+        vDegree_y_wxy(i) = vDegree_y_hxy(i) - vDegree_y_hxy(i+1);
         
-        % Set the total degree
-        vDegt_wx(i) = vDegt_hx(i) - vDegt_hx(i+1);
     end
     
     % Include the final element of hx in wx
-    wx{i+1} = hx{i+1};
+    arr_wxy{i+1} = arr_hxy{i+1};
     
     % Set its degree with respect to x
-    %vDeg1_wx(i+1) = vDeg1_hx(i+1);
+    vDegree_x_wxy(i+1) = vDegree_x_hxy(i+1);
     
     % Set its degree with respect to y
-    %vDeg2_wx(i+1) = vDeg2_hx(i+1);
+    vDegree_y_wxy(i+1) = vDegree_y_hxy(i+1);
     
-    % Set the total degree
-    vDegt_wx(i+1) = vDegt_hx(i+1);
     
 else
     
     % number of elements in the array h_{i} is equal to one
-    wx{1} = hx{1};
+    arr_wxy{1} = arr_hxy{1};
     
     % Set the degree with respect to x
-    %vDeg1_wx(1) = vDeg1_hx(1);
+    vDegree_x_wxy(1) = vDegree_x_hxy(1);
     
     % Set the degree with respect to y
-    %vDeg2_wx(1) = vDeg2_hx(1);
+    vDegree_y_wxy(1) = vDegree_y_hxy(1);
     
-    % Set the total degree
-    vDegt_wx(1) = vDegt_hx(1);
 end
 
 end

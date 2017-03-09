@@ -49,7 +49,8 @@ switch SETTINGS.APF_METHOD
         hww = GetWithThetas(hxy, th1, th2);
         
         
-        % Get u(\omega_{1},\omega_{2}) and v(\omega_{1},\omega_{2})
+        % Get u(\omega_{1},\omega_{2}), v(\omega_{1},\omega_{2}) and
+        % w(\omega_{1},\omega_{2}).
         uww = GetWithThetas(uxy, th1, th2);
         vww = GetWithThetas(vxy, th1, th2);
         www = GetWithThetas(wxy, th1, th2);

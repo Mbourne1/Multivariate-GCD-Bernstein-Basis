@@ -1,4 +1,4 @@
-function [C] = PowerToBernstein_Univariate(fx)
+function [fx_Bb] = PowerToBernstein_Univariate(fx)
 % PowerToBernstein(fx)
 %
 % Given a column vector of coefficients in the power basis, convert to bernstein
@@ -7,29 +7,31 @@ function [C] = PowerToBernstein_Univariate(fx)
 %
 % Inputs.
 %
-% fx : Vector of coefficients of polynomial f(x) in the power basis.
+% fx : (Vector) Coefficients of polynomial f(x) in the power basis.
 %
 % Outputs.
 %
-% c : Vector of coefficients of polynomail f(x) in the Bernstein basis. 
+% fx_Bb : (Vector) Coefficients of polynomail f(x) in the Bernstein basis. 
 
 
 % Get the degree of f(x)
 m = GetDegree_Univariate(fx);
 
-C = zeros(m+1,1);
+% Initialise a vector to store coefficients in Bernstein form
+fx_Bb = zeros(m+1, 1);
 
 for j = 0:1:m
     temp_sum = 0;
+
     for k = 0:1:j
         temp_sum = temp_sum + ...
             (...
-                nchoosek(j,k)...
-                ./ nchoosek(m,k) ...
+                nchoosek(j, k)...
+                ./ nchoosek(m, k) ...
                 .* fx(k+1)...
             );
     end
-    C(j+1) = temp_sum;
+    fx_Bb(j+1) = temp_sum;
 end
 
 

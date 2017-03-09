@@ -1,4 +1,4 @@
-function [fxy,m] = Examples_Roots_bivar(ex_num)
+function [fxy, m] = Examples_Roots_Bivariate(ex_num)
 % Examples_Roots(ex_num)
 %
 % Given an example number, return the matrix of coefficients of a
@@ -6,15 +6,13 @@ function [fxy,m] = Examples_Roots_bivar(ex_num)
 %
 % % Inputs.
 %
-% ex_num : Example Number as string
+% ex_num : (String) Example Number as string
 %
 % % Outputs.
 %
-% fxy : Coefficients of matrix f(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% m : Total degree of f(x,y)
-
-
+% m : (Int) Total degree of f(x,y)
 
 
 TYPE = 'From Coefficients';
@@ -22,11 +20,11 @@ TYPE = 'From Coefficients';
 switch TYPE 
     case 'From Roots'
         
-        [fxy,m] = Examples_Roots_FromRoots(ex_num);
+        [fxy,m] = Examples_Roots_FromRoots_Bivariate(ex_num);
         
     case 'From Coefficients'
         
-        [fxy,m] = Examples_Roots_FromCoefficients(ex_num);
+        [fxy,m] = Examples_Roots_FromCoefficients_Bivariate(ex_num);
         
 end
     

@@ -6,13 +6,13 @@ function [max_mtrx,min_mtrx] = GetMaxMin(fxy, n1_k1, n2_k2)
 %
 % Inputs
 %
-% fxy : The Coefficients of polynomial f(x,y) in standard bernstein basis.
+% fxy : (Matrix) The Coefficients of polynomial f(x,y) in standard bernstein basis.
 %       Given in matrix form so that the rows are in terms of x basis
 %       elements and the columns are y basis elements.
 %
-% n1_k1 : Degree of v(x,y) with respect to x
+% n1_k1 : (Int) Degree of v(x,y) with respect to x
 %
-% n2_k2 : Degree of v(x,y) with respect to y
+% n2_k2 : (Int) Degree of v(x,y) with respect to y
 
 
 % Get the degree of polynomial f(x,y)

@@ -6,36 +6,36 @@ function P = BuildP1(m1,m2,n1,n2,k1,k2,idx_col)
 %
 % Inputs.
 %
-% m1 : Degree of polynomial f(x,y) with respect to x
+% m1 : (Int) Degree of polynomial f(x,y) with respect to x
 %
-% m2 : Degree of polynomial f(x,y) with respect to y
+% m2 : (Int) Degree of polynomial f(x,y) with respect to y
 %
-% n1 : Degree of polynomial g(x,y) with respect to x
+% n1 : (Int) Degree of polynomial g(x,y) with respect to x
 %
-% n2 : Degree of polynomial g(x,y) with respect to y
+% n2 : (Int) Degree of polynomial g(x,y) with respect to y
 %
-% th1 : Optimal value of \theta_{1}
+% th1 : (Float) Optimal value of \theta_{1}
 %
-% th2 : Optimal value of \theta_{2}
+% th2 : (Float) Optimal value of \theta_{2}
 %
-% k1 : Degree of polynomial d(x,y) with respect to x
+% k1 : (Int) Degree of polynomial d(x,y) with respect to x
 %
-% k2 : Degree of polynomial d(x,y) with respect to y
+% k2 : (Int) Degree of polynomial d(x,y) with respect to y
 %
-% idx_col : Index of column removed from the Sylvester Subresultant
+% idx_col : (Int) Index of column removed from the Sylvester Subresultant
 % matrix S_{k_{1},k_{2}}(f,g) such that A_{k_{1},k_{2}}x = c_{k_{1},k_{2}}.
 
 
 % Get a matrix of \theta_{1}^{i}\theta_{2}^{j} corresponding to polynomial
 % f(x,y). 
-thetas_matrix = ones(m1+1,m2+1);
+thetas_matrix = ones(m1+1, m2+1);
 
 % Produce a zero matrix to fill the space
 padd_mat = zeros(m1+n1-k1+1, m2+n2-k2+1);
 
 % % Given the index of the optimal column, Get the number of multiplications
 % with respec to x and number with respect to y.
-[i,j] = GivenCol_GetIndex(n1-k1,n2-k2,idx_col);
+[i,j] = GivenCol_GetIndex(n1-k1, n2-k2, idx_col);
 
 % initialise i hat and j hat.
 ihat = i+1;

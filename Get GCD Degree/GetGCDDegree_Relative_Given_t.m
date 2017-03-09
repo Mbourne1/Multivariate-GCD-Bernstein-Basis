@@ -1,4 +1,4 @@
-function [t1,t2,lambda,mu,alpha,th1,th2] = GetGCDDegree_Relative_Given_t(fxy, gxy)
+function [t1,t2,GM_fx,GM_gx,alpha,th1,th2] = GetGCDDegree_Relative_Given_t(fxy, gxy)
 % Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two
 % polynomials f(x,y) and g(x,y)
 %
@@ -10,30 +10,28 @@ function [t1,t2,lambda,mu,alpha,th1,th2] = GetGCDDegree_Relative_Given_t(fxy, gx
 %
 % % Outputs 
 %
-% t1 : Degree of d(x,y) with respect to x
+% t1 : (Int) Degree of d(x,y) with respect to x
 % 
-% t2 : Degree of d(x,y) with respect to y
+% t2 : (Int) Degree of d(x,y) with respect to y
 %
-% GM_fx : Geometric mean of entries in first partition of Syvlester
+% GM_fx : (Float) Geometric mean of entries in first partition of Syvlester
 %   matrix
 %
-% GM_gx : Geometric mean of Entries in second partition of Sylvester matrix
+% GM_gx : (Float) Geometric mean of Entries in second partition of Sylvester matrix
 %
-% alpha : Optimal value of alpha
+% alpha : (Float) Optimal value of alpha
 %
-% th1 : Optimal value of theta_{1}
+% th1 : (Float) Optimal value of theta_{1}
 %
-% th2 : Optimal value of theta_{2}
+% th2 : (Float) Optimal value of theta_{2}
 
 
 %
 global SETTINGS
 
 
-% Get the degree structure of polynomial f(x,y)
+% Get the degree structure of polynomial f(x,y) and g(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get the degree structure of polynomial g(x,y)
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Get all k1 k2 pairs
@@ -66,13 +64,13 @@ for i = 1:1:nPairs
     v_k2 = k1k2Pairs(i,2);
     
     % Preprocessing
-    [lambda, mu, alpha, th1,th2] = Preprocess(fxy,gxy,v_k1,v_k2);
+    [GM_fx, GM_gx, alpha, th1, th2] = Preprocess(fxy,gxy,v_k1,v_k2);
     
     % Divide f(x) by geometric mean
-    fxy_matrix_n = fxy ./lambda;
+    fxy_matrix_n = fxy ./GM_fx;
     
     % Divide g(x) by geometric mean
-    gxy_matrix_n = gxy ./mu;
+    gxy_matrix_n = gxy ./GM_gx;
     
     % Get f(w,w) from f(x,y)
     fww_matrix = GetWithThetas(fxy_matrix_n,th1,th2);
@@ -91,8 +89,8 @@ for i = 1:1:nPairs
     vAlpha_all(i) = alpha;
     vTheta1_all(i) = th1;
     vTheta2_all(i) = th2;
-    vLambda_all(i) = lambda;
-    vMu_all(i) = mu;
+    vLambda_all(i) = GM_fx;
+    vMu_all(i) = GM_gx;
     
 end
 
@@ -165,8 +163,8 @@ if (nValues ==1)
     alpha = vAlpha(1);
     th1 = vTheta1(1);
     th2 = vTheta2(1);
-    lambda = vLambda(1);
-    mu = vMu(1);
+    GM_fx = vLambda(1);
+    GM_gx = vMu(1);
     return
 end
 
@@ -184,8 +182,8 @@ if (maxChange < SETTINGS.THRESHOLD_RANK)
     alpha = vAlpha(end);
     th1 = vTheta1(end);
     th2 = vTheta2(end);
-    lambda = vLambda(end);
-    mu = vMu(end);
+    GM_fx = vLambda(end);
+    GM_gx = vMu(end);
     
 else
     fprintf([mfilename ' : ' 'Significant Change \n'])
@@ -194,8 +192,8 @@ else
     alpha = vAlpha(index);
     th1 = vTheta1(index);
     th2 = vTheta2(index);
-    lambda = vLambda(index);
-    mu = vMu(index);
+    GM_fx = vLambda(index);
+    GM_gx = vMu(index);
 end
 
 

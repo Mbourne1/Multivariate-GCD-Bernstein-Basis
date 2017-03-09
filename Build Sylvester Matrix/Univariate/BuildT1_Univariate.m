@@ -7,11 +7,13 @@ function T1 = BuildT1_Univariate(fx,n_k)
 %
 % % Inputs
 %
-% fx : Coefficients of polynomial f(x)
+% fx : (Vector) Coefficients of polynomial f(x)
 %
-% n : Degree of polynomial g
+% n_k : (Int) Degree of polynomial v_{k}(x)
 %
-% k : Index of subresultant S_{k} to be formed. 
+% n : (Int) Degree of polynomial g(x)
+%
+% k : (Int) Index of subresultant S_{k} to be formed. 
 
 
 % Get degree of polynomail f(\omega,\theta)

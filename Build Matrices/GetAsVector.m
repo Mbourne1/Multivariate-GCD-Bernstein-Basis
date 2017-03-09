@@ -2,6 +2,15 @@ function f_vec = GetAsVector(fxy)
 % Given the polynomial f(x,y) in the Bernstein basis, whose coefficients are in
 % matrix form, obtain the vector of the coefficients such that the order is
 % increasing and the higher power of x is first.
+%
+% % Inputs
+%
+% fxy : (Matrix) Coefficients of polynomial f(x,y) as a matrix
+%
+% % Outputs
+%
+% f_vec : (Vector) Vector of ordered coefficients of f(x,y)
+
 
 % Get the degree of f(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);

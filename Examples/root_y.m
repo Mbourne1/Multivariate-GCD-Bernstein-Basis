@@ -9,10 +9,7 @@ function fy = root_y(r)
 %
 % Outpus.
 %
-% fx :   B_{0}^{1}(y) B_{1}^{1}(y) 
-%        ____________ ____________
-%       | ___________|____________|
-%
+% fx : (Vector) Coefficients of f(y)
 
 
 

@@ -4,28 +4,30 @@ function [ fxy_lr,gxy_lr,uxy_lr,vxy_lr] = STLN(fxy, gxy, k1, k2, idx_col)
 %
 % % Inputs.
 %
-% fxy : Coefficients of polynomial f(x,y), in the Bernstein basis.
+% fxy : (Matrix) Coefficients of polynomial f(x,y), in the Bernstein basis.
 %
-% gxy : Coefficients of polynomial g(x,y), in the Bernstein basis.
+% gxy : (Matrix) Coefficients of polynomial g(x,y), in the Bernstein basis.
 %
-% k1 : Degree of AGCD with respect to x.
+% k1 : (Int) Degree of AGCD with respect to x.
 %
-% k2 : Degree of AGCD with respect to y.
+% k2 : (Int) Degree of AGCD with respect to y.
 %
-% idx_col : Optimal column for removal from the sylvester matrix, such that col
+% idx_col : (Int) Optimal column for removal from the sylvester matrix, such that col
 %           is the column which is most likely a linear combination of the others.
 %
 % % Outputs.
 %
-% fxy_lr : Coefficients of f(x,y) in the Bernstein basis, including added 
+% fxy_lr : (Matrix) Coefficients of f(x,y) in the Bernstein basis, including added 
 % perturbations.
 %
-% gxy_lr : Coefficients of g(x,y) in the Bernstein basis, including added 
+% gxy_lr : (Matrix) Coefficients of g(x,y) in the Bernstein basis, including added 
 % perturbations.
 %
-% uxy_lr : Coefficients of  
+% uxy_lr : (Matrix) Coefficients of u(x,y) in the Bernstein basis, where
+% u(x,y) is the quotient polynomial such that f(x,y)/u(x,y) = d(x,y)
 %
-% vxy_lr :
+% vxy_lr : (Matrix) Coefficients of u(x,y) in the Bernstein basis, where
+% u(x,y) is the quotient polynomial such that g(x,y)/v(x,y) = d(x,y)
 
 
 % Global Variables
@@ -44,23 +46,23 @@ ite = 1;
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Get the number of coefficients in the polynomial f(x,y)
-nCoeffs_fxy = (m1+1) * (m2+1);
+nCoefficients_fxy = (m1+1) * (m2+1);
 
 % Get the number of coefficients in the polynomial g(x,y)
-nCoeffs_gxy = (n1+1) * (n2+1);
+nCoefficients_gxy = (n1+1) * (n2+1);
 
 % Get the number of coefficients in both f(x,y) and g(x,y)
-nCoeffs_fg = nCoeffs_fxy + nCoeffs_gxy;
+nCoefficients_fg = nCoefficients_fxy + nCoefficients_gxy;
 
 % Get the number of coefficients in v(x,y)
-nCoeffs_vxy = (n1-k1+1) * (n2-k2+1);
+nCoefficients_vxy = (n1-k1+1) * (n2-k2+1);
 
 % Get the number of coefficients in u(x,y)
-nCoeffs_uxy = (m1-k1+1) * (m2-k2+1);
+nCoefficients_uxy = (m1-k1+1) * (m2-k2+1);
 
 % Get the number of coefficients in the unknown vector x, where A_{t}x =
 % c_{t}.
-nCoeffs_xls = nCoeffs_uxy + nCoeffs_vxy - 1;
+nCoefficients_xls = nCoefficients_uxy + nCoefficients_vxy - 1;
 
 % Create the identity matrix I, the matrix M formed from I by removing the
 % column equivalent to the optimal column for removal from the Sylvester
@@ -69,17 +71,17 @@ nCoeffs_xls = nCoeffs_uxy + nCoeffs_vxy - 1;
 
 % Get the number of columns in C_{t}(f), the first partition of the Sylvester
 % Matrix S_{t}(f,g)
-nCols_Cf = nCoeffs_vxy;
+nColumns_Cf = nCoefficients_vxy;
 
 % Get the number of columns in C_{t}(g), the second partition of the
 % Sylvester matrix S_{t}(f,g)
-nCols_Cg = nCoeffs_uxy;
+nColumns_Cg = nCoefficients_uxy;
 
 % Get the total number of columns in the Sylvester matrix S_{t}(f,g)
-nCols_St1t2 = nCols_Cf + nCols_Cg;
+nColumns_St1t2 = nColumns_Cf + nColumns_Cg;
 
 % Create the identity matrix
-I = eye(nCols_St1t2, nCols_St1t2);
+I = eye(nColumns_St1t2, nColumns_St1t2);
 
 % Create the matrix M, such that S(f,g)*M gives A_{t}, the Sylvester Matrix
 % with the optimal column removed.
@@ -106,7 +108,7 @@ Ak(:,idx_col) = [];
 % Initialise the vector z of structured perturbations
 % if we are working with strictly the roots problem, the number of entries
 % in z can be reduced.
-zk = zeros(nCoeffs_fg , 1);
+zk = zeros(nCoefficients_fg , 1);
 
 % %
 % Build the matrix of binomials corresponding to polynomial f(x,y)
@@ -130,7 +132,7 @@ xk = SolveAx_b(Ak,ck);
 first_part = xk(1:(idx_col-1));
 second_part = xk(idx_col:end);
 x = [first_part ; 0 ; second_part];
-DYG = BuildDYG_SNTLN(m1,m2,n1,n2,k1,k2,x,1,1,1);
+DYG = BuildDYG_SNTLN(m1, m2, n1, n2, k1, k2, x, 1, 1, 1);
 
 % Test
 test2a = DTQ*x;
@@ -143,9 +145,9 @@ display(norm(test2))
 res_vec = ck - (DTQ*M*xk);
 
 % Get the matrix p, which will store all the perturbations returned from LSE file
-nEntries = nCoeffs_fxy...
-    + nCoeffs_gxy ...
-    + nCoeffs_xls ...
+nEntries = nCoefficients_fxy...
+    + nCoefficients_gxy ...
+    + nCoefficients_xls ...
     + 3;
 
 
@@ -174,7 +176,7 @@ start_point = ...
 
 yy = start_point;
 
-f = -(yy-start_point);
+f = -(yy - start_point);
 
 % Set the termination criterion to a large value. It will be
 % over written later.
@@ -184,7 +186,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     % Use the QR decomposition to solve the LSE problem
     % min |y-p| subject to Cy=q
     
-    y = LSE(E,f,C,res_vec);
+    y = LSE(E, f, C, res_vec);
     
     % Increment the iteration number
     ite = ite + 1;
@@ -193,17 +195,17 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     yy = yy + y;
         
     % Get the coefficients of z_{f}(x,y) and z_{g}(x,y)
-    delta_zk        = y(1:nCoeffs_fxy + nCoeffs_gxy ,1);
+    delta_zk        = y(1:nCoefficients_fxy + nCoefficients_gxy ,1);
     
     % Update variables z_{k}, where z_{k} are perturbations in the
     % coefficients of f and g.
     zk = zk + delta_zk;
     
     % Get the vector of structured perturbations z_{f}(x,y) 
-    vec_z_fxy      = zk(1:nCoeffs_fxy);
+    vec_z_fxy      = zk(1:nCoefficients_fxy);
     
     % Get the vector of coefficients of z_{g}(x,y)
-    vec_z_gxy      = zk(nCoeffs_fxy + 1 :end);
+    vec_z_gxy      = zk(nCoefficients_fxy + 1 :end);
     
     % Get the vectors z_fx and z_gx as matrices, which match the shape of
     % f(x) and g(x).
@@ -211,7 +213,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     z_gxy = GetAsMatrix(vec_z_gxy,n1,n2);
        
     % Get the coefficients corresponding to x
-    delta_xk        = y(nCoeffs_fg+1:end);
+    delta_xk        = y(nCoefficients_fg+1:end);
     
     % Update x_{k}, where x_{k}
     xk = xk + delta_xk;
@@ -285,10 +287,10 @@ PlotSNTLN()
 
 % get the vector zk
 
-zPert_f_vec = zk(1:nCoeffs_fxy);
+zPert_f_vec = zk(1:nCoefficients_fxy);
 zPert_f_mat = GetAsMatrix(zPert_f_vec,m1,m2);
 
-zPert_g_vec = zk(nCoeffs_fxy+1:end);
+zPert_g_vec = zk(nCoefficients_fxy+1:end);
 zPert_g_mat = GetAsMatrix(zPert_g_vec,n1,n2);
 
 % Get f(x,y) with added perturbations
@@ -302,11 +304,11 @@ xa = xk(1:idx_col-1);
 xb = xk(idx_col:end);
 x = [xa ; -1 ; xb];
 
-vec_vxy = x(1:nCoeffs_vxy);
-vec_uxy = -1.*x(nCoeffs_vxy+1:end);
+vec_vxy = x(1:nCoefficients_vxy);
+vec_uxy = -1.*x(nCoefficients_vxy+1:end);
 
-vxy_lr = GetAsMatrix(vec_vxy,n1-k1,n2-k2);
-uxy_lr = GetAsMatrix(vec_uxy,m1-k1,m2-k2);
+vxy_lr = GetAsMatrix(vec_vxy, n1-k1, n2-k2);
+uxy_lr = GetAsMatrix(vec_uxy, m1-k1, m2-k2);
 
 
 end

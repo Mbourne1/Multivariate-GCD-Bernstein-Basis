@@ -6,11 +6,15 @@ function [sum] = Evaluate_BernsteinPoly_Bivariate(t1, t2, fxy)
 %
 % % Inputs
 %
-% t1 : Degree of d(x,y) with respect to x
+% t1 : (Int) Evaluation point x_{i}
 %
-% t2 : Degree of d(x,y) with respect to y
+% t2 : (Int) Evaluation point y_{i}
 %
-% fxy : Coefficients of polynomial f(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
+%
+% % Outputs
+%
+% sum
 
 % Get degree of f(x,y) with respect to x and y
 [m1, m2] = GetDegree_Bivariate(fxy);

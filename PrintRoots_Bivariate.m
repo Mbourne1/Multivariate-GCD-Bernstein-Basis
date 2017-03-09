@@ -14,8 +14,8 @@ function [] = PrintRoots_Bivariate(root_mult_arr_x, root_mult_arr_y, polys_xy)
 % polys_xy : Array of bivariate polynomials which are the non-separable
 %            factors of f(x,y)
 
-nRoots_x = size(root_mult_arr_x,1);
-nRoots_y = size(root_mult_arr_y,1);
+nRoots_x = size(root_mult_arr_x, 1);
+nRoots_y = size(root_mult_arr_y, 1);
 
 nFactors_xy = size(polys_xy,1);
 

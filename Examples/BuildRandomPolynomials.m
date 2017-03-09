@@ -1,30 +1,33 @@
-function [f_root_mult_arr,g_root_mult_array] = BuildRandomPolynomials(m,n,t,intvl_low,intvl_high)
-% Given the degree of two polynomials, construct two sets of roots
+function [f_root_mult_arr,g_root_mult_array] = BuildRandomPolynomials(m, n, t, interval_low, interval_high)
+% Construct the root multiplicity structure of two random polynomials of
+% degree m and n, such that they have a common divisor of degree t and all
+% roots are constrained in an interval.
 % 
 % Inputs.
 % 
 %
-% m : Degree of polynomial f(x)
+% m : (Int) Degree of polynomial f(x)
 %
-% n : Degree of polynomial g(x)
+% n : (Int) Degree of polynomial g(x)
 %
-% t : Degree of polynomial d(x)
+% t : (Int) Degree of polynomial d(x)
 %
-% intvl_low : Lowest allowed root value
+% interval_low : Lowest allowed root value
 %
-% intvl_high : Highest allowed root value
+% interval_high : Highest allowed root value
 %
 % Outputs.
 %
+% f_root_mult_arr : (Matrix) Root and multiplicity array for polynomial
+% f(x)
 %
-% f_root_mult_arr : root and multiplicity array for polynomial f.
-%
-% g_root_mult_arr : root and multiplicity array for polynomial g.
+% g_root_mult_arr : (Matrix) Root and multiplicity array for polynomial
+% g(x)
 
 global SETTINGS
 
-a = intvl_low;
-b = intvl_high;
+a = interval_low;
+b = interval_high;
 
 format long
 % Get the multiplicity structure of the roots of the GCD d of degree

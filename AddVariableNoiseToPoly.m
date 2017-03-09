@@ -4,7 +4,7 @@ function [fxy_noisy, noise_matrix] = AddVariableNoiseToPoly(fxy, el, eu)
 %
 % Inputs
 %
-% fxy : Coefficients of exact polynomial f(x,y)
+% fxy : (Matrix) Coefficients of exact polynomial f(x,y)
 %
 % el : signal to noise low limit
 %
@@ -12,9 +12,9 @@ function [fxy_noisy, noise_matrix] = AddVariableNoiseToPoly(fxy, el, eu)
 %
 % % Outputs
 %
-% fxy_noisy : Coefficients of the noisy form of polynomial f(x,y)
+% fxy_noisy : (Matrix) Coefficients of the noisy form of polynomial f(x,y)
 %
-% noise_matrix : Matrix of noise added to the coefficients of f(x,y)
+% noise_matrix : (Matrix) Contains noise added to the coefficients of f(x,y)
 
 
 global SETTINGS

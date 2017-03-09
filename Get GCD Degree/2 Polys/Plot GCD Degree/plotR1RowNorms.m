@@ -1,4 +1,4 @@
-function [] = plotR1RowNorms(arr_R1_RowNorms, my_limits_t1, my_limits_t2)
+function [] = plotR1RowNorms(arr_R1_RowNorms, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
 %
 % % Inputs
 %
@@ -12,10 +12,10 @@ function [] = plotR1RowNorms(arr_R1_RowNorms, my_limits_t1, my_limits_t2)
 global SETTINGS
 
 % Get limits
-lowerLimit_t1 = my_limits_t1(1);
-upperLimit_t1 = my_limits_t1(2);
-lowerLimit_t2 = my_limits_t2(1);
-upperLimit_t2 = my_limits_t2(2);
+lowerLimit_t1 = myLimits_t1(1);
+upperLimit_t1 = myLimits_t1(2);
+lowerLimit_t2 = myLimits_t2(1);
+upperLimit_t2 = myLimits_t2(2);
 
 % Get number of subresultants
 nSubresultants_t1 = upperLimit_t1 - lowerLimit_t1 + 1;
