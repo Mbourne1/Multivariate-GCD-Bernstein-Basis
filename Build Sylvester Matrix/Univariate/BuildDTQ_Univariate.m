@@ -5,7 +5,9 @@ function [DTQ] = BuildDTQ_Univariate(fx, gx, k)
 %
 % Inputs.
 %
-% [fx, gx] : (Vector) Coefficients of polynomial f(x) and g(x)
+% fx : (Vector) Coefficients of polynomial f(x) 
+%
+% gx : (Vector) Coefficients of polynomial g(x)
 %
 % k : (Int) Index of subresultant
 %

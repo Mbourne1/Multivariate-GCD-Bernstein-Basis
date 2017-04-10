@@ -15,19 +15,23 @@ function [fxy_lr, gxy_lr, uxy_lr, vxy_lr, dxy_lr, alpha_lr, th1_lr, th2_lr] = ..
 %
 % alpha : (Float): Optimal value of \alpha
 %
-% [th1 , th2] [(Float) (Float)] : Optimal values of \theta_{1} and \theta_{2}
+% th1 th2 : [Float Float ] : Optimal values of \theta_{1} and \theta_{2}
 %
 % % Outputs
 %
-% [fxy_lr, gxy_lr] : Coefficients of f(x,y) and g(x,y) after APF
+% fxy_lr : (Matrix) Coefficients of f(x,y) after APF
 %
-% [uxy_lr, vxy_lr] : Coefficients of u(x,y) and v(x,y) after APF
+% gxy_lr : (Matrix) Coefficients of g(x,y) after APF
 %
-% dxy_lr : Computed coefficients of d(x,y)
+% uxy_lr : (Matrix) Coefficients of u(x,y) after APF
 %
-% alpha_lr : Optimal value of \alpha after APF
+% vxy_lr : (Matrix) Coefficients of v(x,y) after APF
+%
+% dxy_lr : (Matrix) Computed coefficients of d(x,y)
+%
+% alpha_lr : (Float) Optimal value of \alpha after APF
 % 
-% [th1_lr, th2_lr] : Optimal values of \theta_{1} and \theta_{2} after APF
+% [th1_lr, th2_lr] : (Float Float) Optimal values of \theta_{1} and \theta_{2} after APF
 
 global SETTINGS
 switch SETTINGS.APF_METHOD

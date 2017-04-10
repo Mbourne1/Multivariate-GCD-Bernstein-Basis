@@ -13,20 +13,18 @@ function T = BuildT_Univariate_2Polys(fx, gx, k)
 %
 % % Output
 %
-% T : The partitioned matrix T = [T(f) T(g)].
+% T : (Matrix) The partitioned matrix T = [T(f) T(g)].
 
 
-% Get degree of polynomail f(x)
+% Get degree of polynomail f(x) and g(x)
 m = GetDegree_Univariate(fx);
-
-% Get degree of polynomial g(x)
 n = GetDegree_Univariate(gx);
 
-% Build Toeplitz matrix of f(x), the first partiton.
-T1 = BuildT1_univar(fx,n-k);
+% Build Toeplitz matrix of f(x), the first partiton T_{n-k}(f)
+T1 = BuildT1_univar(fx, n-k);
 
-% Build Toeplitz matrix of g(x), the second partition.
-T2 = BuildT1_univar(gx,m-k);
+% Build Toeplitz matrix of g(x), the second partition T_{m-k}(g)
+T2 = BuildT1_univar(gx, m-k);
 
 % Concatenate the partitions.
 T = [T1 T2];

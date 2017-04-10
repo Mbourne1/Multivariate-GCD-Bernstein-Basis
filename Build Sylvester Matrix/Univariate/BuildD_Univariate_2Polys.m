@@ -6,11 +6,11 @@ function D = BuildD_Univariate_2Polys(m, n_k)
 %
 % % Input
 %
-% m : Degree of polynomial f(x)
+% m : (Int) Degree of polynomial f(x)
 %
-% n_k : Degree of polynomial v(x)
+% n_k : (Int) Degree of polynomial v(x)
 %
-% n : Degree of polynomial g(x)
+% n : (Int) Degree of polynomial g(x)
 
 
 % Produce a vector of elements of D, then diagonalise it to form a matrix.

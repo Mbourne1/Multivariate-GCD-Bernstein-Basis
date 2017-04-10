@@ -12,7 +12,7 @@ function [Sk1k2] = BuildSubresultant_Bivariate_2Polys(fxy, gxy, k1, k2)
 % k2 : (Int)
 
 
-% Get degree of polynomial f(x,y)
+% Get degree of polynomial f(x,y) and g(x,y) with respect to x and y
 [m1, m2] = GetDegree_Bivariate(fxy);
 [n1, n2] = GetDegree_Bivariate(gxy);
 

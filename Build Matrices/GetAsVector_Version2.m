@@ -17,7 +17,7 @@ function fxy_vec = GetAsVector_Version2(fxy)
 % Get the degree structure of f(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
 
-% Get number of coefficients in the matrix.
+% Get number of coefficients in the polynomial f(x,y)
 nCoefficients = (m1+1) * (m2+1);
 
 % Initialise the matrix which stores the coefficients

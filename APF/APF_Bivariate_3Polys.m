@@ -3,31 +3,34 @@ function [fxy_lr, gxy_lr, hxy_lr, uxy_lr, vxy_lr, wxy_lr, dxy_lr, alpha_lr, th1_
 %
 % % Inputs
 %
-% [fxy, gxy, hxy] : Coefficients of the polynomials f(x,y), g(x,y) and
-% h(x,y)
+% [fxy, gxy, hxy] : [Matrix Matrix Matrix] Coefficients of the polynomials 
+% f(x,y), g(x,y) and h(x,y)
 %
-% [uxy, vxy, wxy] : Coefficients of the polynomials u(x,y), v(x,y) and
-% w(x,y)
+% [uxy, vxy, wxy] : [Matrix Matrix Matrix] Coefficients of the polynomials 
+% u(x,y), v(x,y) and w(x,y)
 %
-% [m, n, o] : Total degree of f(x,y), g(x,y) and h(x,y)
+% [m, n, o] : [Int Int Int] : Total degree of f(x,y), g(x,y) and h(x,y)
 %
-% [t , t1, t2] : Total and relative degrees of d(x,y)
+% [t1, t2] : [Int Int] Degree of d(x,y) with respect to x and y
 %
-% alpha : Optimal value of \alpha
+% alpha : (Float) Optimal value of \alpha
 %
-% [th1 , th2] : Optimal values of \theta_{1} and \theta_{2}
+% [th1 , th2] : [Float Float] Optimal values of \theta_{1} and \theta_{2}
 %
 % % Outputs
 %
-% [fxy_lr, gxy_lr, hxy_lr] : Coefficients of f(x,y), g(x,y) and h(x,y) after APF
+% [fxy_lr, gxy_lr, hxy_lr] : (Matrix Matrix Matrix) Coefficients of f(x,y),
+% g(x,y) and h(x,y) after APF
 %
-% [uxy_lr, vxy_lr, wxy_lr] : Coefficients of u(x,y), v(x,y) and w(x,y) after APF
+% [uxy_lr, vxy_lr, wxy_lr] : [Matrix Matrix Matrix] Coefficients of u(x,y),
+% v(x,y) and w(x,y) after APF
 %
-% dxy_lr : Computed coefficients of d(x,y)
+% dxy_lr : (Matrix) Computed coefficients of d(x,y)
 %
-% alpha_lr : Optimal value of \alpha after APF
+% alpha_lr : (Float) Optimal value of \alpha after APF
 % 
-% [th1_lr, th2_lr] : Optimal values of \theta_{1} and \theta_{2} after APF
+% [th1_lr, th2_lr] : (Float Float) Optimal values of \theta_{1} and 
+% \theta_{2} after APF
 
 global SETTINGS
 switch SETTINGS.APF_METHOD

@@ -22,33 +22,23 @@ m = GetDegree(fx);
 n = GetDegree(gx);
 
 % Binomial coefficients corresponding to f(x)
-Bi_m = zeros(m+1,1);
-for i = 0:1:m
-    Bi_m(i+1) = nchoosek(m,i);
-end
-
-Bi_n = zeros(n+1,1);
-for i = 0:1:n
-    Bi_n(i+1) = nchoosek(n,i);
-end
+Bi_m = GetBinomials(m);
+Bi_n = GetBinomials(n);
 
 fw = fx .* Bi_m;
 
 %% Build matrix C
+T_fx = zeros(m+n+1,n+1);
+
 for i = 0:1:n
-    C(i+1:(m+1)+i,i+1) = fw;
+    T_fx(i+1:(m+1)+i,i+1) = fw;
 end
 
+D = BuildD_Univariate_2Polys(m,n);
+Q = BuildQ1_Univariate(n);
 
-% Build matrix D
-D_diag = zeros(1,m+n+1);
-for i = 0:1:m+n
-    D_diag(i+1) = 1./ nchoosek(m+n,i);
-end
-D = diag(D_diag);
+% Get the product of f(X) and g(x)
+px = D*T_fx*Q*gx;
 
-% Build Q
-Q = diag(Bi_n);
 
-px = D*C*Q*gx;
 end

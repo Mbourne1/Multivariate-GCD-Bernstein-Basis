@@ -1,7 +1,7 @@
 function DTQ = BuildDTQ_Bivariate_3Polys(fxy, gxy, hxy, k1, k2)
-% BuildSubresultant(fxy_matrix_n,gxy_matrix_n,k1,k2,alpha,th1,th2)
+% BuildDTQ(fxy, gxy, hxy, k1, k2)
 %
-% Build the sylvester subresultant matrix S_{k1,k2}.
+% Build the sylvester subresultant matrix S_{k1,k2}(f,g,h).
 %
 % % Inputs.
 %

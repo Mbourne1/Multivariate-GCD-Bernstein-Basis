@@ -1,4 +1,7 @@
 function C_uv = BuildFactorisationMatrix(uxy, vxy, t1, t2)
+% Build the matrix C consisting of two convolution matrices C(u) and C(v)
+% stacked on top of one another C = [ C(u) ; C(v)].
+%
 %
 % % Inputs
 %

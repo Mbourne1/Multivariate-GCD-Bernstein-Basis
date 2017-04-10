@@ -1,5 +1,5 @@
 function DT1Q1 = BuildDT1Q1_Bivariate(fxy, n1_k1, n2_k2)
-% BuildDT1Q1_Bivariate(fxy_matrix_n,gxy_matrix_n,k1,k2,alpha,th1,th2)
+% BuildDT1Q1_Bivariate(fxy, gxy, k1, k2)
 %
 % Build the sylvester subresultant matrix S_{k1,k2}.
 %
