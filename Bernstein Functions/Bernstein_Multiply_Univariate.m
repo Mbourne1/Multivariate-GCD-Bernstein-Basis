@@ -10,7 +10,7 @@ function [px] = Bernstein_Multiply_Univariate(fx, gx)
 %
 % % Output.
 %
-% px : Column vector of coefficients of the Bernstein Polynomial p(x)
+% px : (Vector) Column vector of coefficients of the Bernstein Polynomial p(x)
 
 if( size(fx,2) > 1 || size(gx,2) > 1)
    error('fx and gx must be column vectors'); 
@@ -23,7 +23,6 @@ n = GetDegree(gx);
 
 % Binomial coefficients corresponding to f(x)
 Bi_m = GetBinomials(m);
-Bi_n = GetBinomials(n);
 
 fw = fx .* Bi_m;
 
@@ -34,11 +33,11 @@ for i = 0:1:n
     T_fx(i+1:(m+1)+i,i+1) = fw;
 end
 
-D = BuildD_Univariate_2Polys(m,n);
+D = BuildD_Univariate_2Polys(m, n);
 Q = BuildQ1_Univariate(n);
 
 % Get the product of f(X) and g(x)
-px = D*T_fx*Q*gx;
+px = D * T_fx * Q * gx;
 
 
 end

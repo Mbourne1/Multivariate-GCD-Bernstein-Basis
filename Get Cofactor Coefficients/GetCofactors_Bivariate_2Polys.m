@@ -24,10 +24,8 @@ function [uxy, vxy] = GetCofactors_Bivariate_2Polys(fxy, gxy, t1, t2)
 % Initialise Global Variables
 global SETTINGS
 
-% Get the degrees of polynomial f(x,y)
+% Get the degrees of polynomial f(x,y) and g(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get the degrees of polynomial g(x,y)
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Build the (t1,t2)-th subresultant matrix

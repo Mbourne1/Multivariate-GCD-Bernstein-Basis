@@ -16,7 +16,7 @@ bi_m = zeros(m,1);
 % For each entry of the vector of binomials calculate nchoosek
 for i = 0:1:m
     
-    bi_m(i+1) = nchoosek(m,i);
+    bi_m(i+1,1) = nchoosek(m,i);
     
 end
 

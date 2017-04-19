@@ -1,5 +1,5 @@
 function T = BuildT_Univariate_2Polys(fx, gx, k)
-%  Build the Toeplitz matrix T = [T1 T2], consisting of coefficients of 
+% Build the Toeplitz matrix T = [T1 T2], consisting of coefficients of 
 % f(x) and g(x).
 %
 %

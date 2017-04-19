@@ -25,11 +25,11 @@ function [fxy, gxy, hxy, dxy, uxy, vxy, wxy, m, n, t] = Examples_GCD_FromRoots_B
 % wxy : (Matrix) Coefficients of polynomial v(x,y), the quotient polynomial
 % such that h(x,y)/w(x,y) = d(x,y)
 %
-% m : Total degree of f(x,y)
+% m : (Int) Total degree of f(x,y)
 %
-% n : Total degree of g(x,y)
+% n : (Int) Total degree of g(x,y)
 %
-% t : Total degree of d(x,y)
+% t : (Int) Total degree of d(x,y)
 
 f_roots_x = [];
 f_roots_y = [];

@@ -7,7 +7,9 @@ function T1 = BuildT1_Symbolic_Bivariate(m1, m2, n1_k1, n2_k2)
 %
 % % Inputs.
 %
-% fxy_matrix : (Matrix) Coefficients of polynomial f(x,y)
+% m1 : (Int) Degree of polynomial f(x,y) with respect to x
+%
+% m2 : (Int) Degree of polynomial f(x,y) with respect to y
 %
 % n1_k1 : (Int) Degree of polynomial v(x,y) with respect to x
 %

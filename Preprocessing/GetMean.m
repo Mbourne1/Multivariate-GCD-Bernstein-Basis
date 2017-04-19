@@ -23,6 +23,9 @@ switch SETTINGS.MEAN_METHOD
     case 'Geometric Mean My Method'
         mean = GetGeometricMean_MyMethod(fxy, n1_k1, n2_k2);
         
+    case 'Arithmetic Mean'
+        mean = GetArithmeticMean(fxy, n1_k1, n2_k2);
+
     case 'None'
         mean = 1;
         

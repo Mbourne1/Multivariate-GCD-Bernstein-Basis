@@ -1,25 +1,25 @@
-function [] = plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, myLimits_t1, limits_t1)
+function [] = plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, limits_k1, limits_t1)
 %
 % % Inputs
 %
-% mat_MinimumSingularValues : 
+% vMinimumSingularValues : (Vector)
 %
-% myLimits_t1
+% limits_k1 : (Int Int)
 %
-% limits_t1
+% limits_t1 : (Int Int)
 
 global SETTINGS
 
-%
-myLowerLimit_t1 = myLimits_t1(1);
-myUpperLimit_t1 = myLimits_t1(2);
+% Get upper and lower limits for k_{1}
+lowerLimit_k1 = limits_k1(1);
+upperLimit_k1 = limits_k1(2);
 
-%
+% Get upper and lower limits for t_{1}
 lowerLimit_t1 = limits_t1(1);
 upperLimit_t1 = limits_t1(2);
 
 %
-vec_x = myLowerLimit_t1 : 1 : myUpperLimit_t1;
+vec_x = lowerLimit_k1 : 1 : upperLimit_k1;
 
 figure_name = sprintf('Minimum Singular Values of %s', SETTINGS.SYLVESTER_BUILD_METHOD);
 figure('name',figure_name)

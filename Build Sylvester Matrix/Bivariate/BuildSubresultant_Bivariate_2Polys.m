@@ -30,20 +30,14 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         
         Sk1k2 = [T1 T2];
         
-    case 'T Version 2'
-        error('Code Not Completed');
-        
     case 'DT'
         
-        BuildD_Bivariate_2Polys(m1, m2, n1-k1, n2-k2);
+        D = BuildD_Bivariate_2Polys(m1, m2, n1-k1, n2-k2);
         T1 = BuildT1_Bivariate(fxy, n1-k1, n2-k2);
         T2 = BuildT1_Bivariate(gxy, m1-k1, m2-k2);
         
         Sk1k2 = D*[T1 T2];
         
-    case 'DT Version 2'
-        error('Code Not Completed');
-
     case 'DTQ'
         
         Sk1k2 = BuildDTQ_Bivariate_2Polys(fxy, gxy, k1, k2);
@@ -58,10 +52,9 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         T1 = BuildT1_Bivariate(fxy, n1-k1, n2-k2);
         T2 = BuildT1_Bivariate(gxy, m1-k1, m2-k2);
         
-        Q = BuildQ_Bivariate_2Polys(n1-k1,n2-k2,m1-k1,m2-k2);
+        Q = BuildQ_Bivariate_2Polys(n1-k1, n2-k2, m1-k1, m2-k2);
         
         Sk1k2 = [T1 T2] * Q;
         
-    case 'TQ Version 2'
-        error('Code Not Completed');
+    
 end

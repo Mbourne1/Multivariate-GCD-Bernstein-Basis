@@ -19,6 +19,7 @@ function DT1Q1 = BuildDT1Q1_Bivariate(fxy, n1_k1, n2_k2)
 % Get the degree of f(x,y) with respect to x and y
 [m1, m2] = GetDegree_Bivariate(fxy);
 
+
 % Build two Cauchy matrices, the first for coefficients of fxy and the
 % second for the coefficients of gxy
 T1 = BuildT1_Bivariate(fxy, n1_k1, n2_k2);
@@ -29,7 +30,10 @@ D = BuildD_Bivariate_2Polys(m1, m2, n1_k1, n2_k2);
 % Build the diagonal matrix Q_{1}
 Q1 = BuildQ1_Bivariate(n1_k1, n2_k2);
 
+
+
 % Build the matrix DTQ
 DT1Q1 = D*T1*Q1;
+
 
 end

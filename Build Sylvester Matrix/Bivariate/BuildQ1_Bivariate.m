@@ -3,7 +3,7 @@ function Q1 = BuildQ1_Bivariate(n1_k1, n2_k2)
 %
 % Build the matrix Q1, a partition of the matrix Q, where Q is the diagonal
 % matrix of binomial coefficients of the vector [v;-u].
-% Q is a matrix which forms the kth Sylvester subresultant matrix 
+% Q is a matrix which forms the kth Sylvester subresultant matrix
 % D^{-1}[T(f) T(g)]Q
 %
 % Inputs
@@ -22,8 +22,10 @@ function Q1 = BuildQ1_Bivariate(n1_k1, n2_k2)
 % v(x,y).
 Q_mat = GetWithBinomials_Bivariate(ones(n1_k1+1,n2_k2+1));
 
+
 % Get the matrix Q as a vector
 Q_vec = GetAsVector(Q_mat);
+
 
 % Diagonalise Q
 Q1 = diag(Q_vec);

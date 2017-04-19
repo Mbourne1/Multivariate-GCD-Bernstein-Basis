@@ -1,5 +1,6 @@
 function [fxy_lr, gxy_lr, uxy_lr, vxy_lr, dxy_lr, alpha_lr, th1_lr, th2_lr] = ...
     APF_Bivariate_2Polys(fxy, gxy, uxy, vxy, t1, t2, alpha, th1, th2)
+% 
 %
 % % Inputs
 %
@@ -15,7 +16,7 @@ function [fxy_lr, gxy_lr, uxy_lr, vxy_lr, dxy_lr, alpha_lr, th1_lr, th2_lr] = ..
 %
 % alpha : (Float): Optimal value of \alpha
 %
-% th1 th2 : [Float Float ] : Optimal values of \theta_{1} and \theta_{2}
+% th1 th2 : [Float Float] : Optimal values of \theta_{1} and \theta_{2}
 %
 % % Outputs
 %

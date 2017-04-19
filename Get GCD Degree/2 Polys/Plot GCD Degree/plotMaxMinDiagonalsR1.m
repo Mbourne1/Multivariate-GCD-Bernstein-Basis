@@ -1,4 +1,4 @@
-function [] = plotMaxMinDiagonalsR1(mat_MaxDiagonals_R1, mat_MinDiagonals_R1, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
+function [] = plotMaxMinDiagonalsR1(mat_MaxDiagonals_R1, mat_MinDiagonals_R1, limits_k1, limits_k2, limits_t1, limits_t2)
 %
 % % Inputs
 %
@@ -10,18 +10,19 @@ function [] = plotMaxMinDiagonalsR1(mat_MaxDiagonals_R1, mat_MinDiagonals_R1, my
 %
 % myLimits_t2 : ([Int Int])
 %
-% limits_t1 :
+% limits_t1 : (Int Int)
 % 
-% limits_t2 :
+% limits_t2 : (Int Int)
 
 % Get upper and lower limits of k1 and k2
-lowerLimit_k1 = myLimits_t1(1);
-upperLimit_k1 = myLimits_t1(2);
-lowerLimit_k2 = myLimits_t2(1);
-upperLimit_k2 = myLimits_t2(2);
+lowerLimit_k1 = limits_k1(1);
+upperLimit_k1 = limits_k1(2);
 
-v_k1 = lowerLimit_k1:1:upperLimit_k1;
-v_k2 = lowerLimit_k2:1:upperLimit_k2;
+lowerLimit_k2 = limits_k2(1);
+upperLimit_k2 = limits_k2(2);
+
+v_k1 = lowerLimit_k1 : 1 : upperLimit_k1;
+v_k2 = lowerLimit_k2 : 1 : upperLimit_k2;
 
 [X,Y] = meshgrid(v_k1,v_k2);
 

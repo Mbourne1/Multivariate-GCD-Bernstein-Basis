@@ -41,6 +41,10 @@ SETTINGS.PLOT_GRAPHS = true;
 
 SETTINGS.SYLVESTER_BUILD_METHOD = sylvester_build_method;
 
+
+% Version 1 - Read antidiagonals
+% Version 2 - Read down columns from left to right
+SETTINGS.VECTORISATION_METHOD = 'Version 2';
 %-------------------------------------------------------------------------
 %
 % Factorisation Matrix Settings

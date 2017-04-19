@@ -13,7 +13,7 @@ function [fx_Pwr] = BernsteinToPower_Univariate(fx_Brn)
 % % Outputs : 
 %
 %
-% fx_Pwr : Column vector of coefficients of polynomial f(x) in Power form.
+% fx_Pwr : (Vector) Column vector of coefficients of polynomial f(x) in Power form.
 %
 
 % Get the degree of input polynomial f(x) in Bernstein basis.
@@ -22,7 +22,8 @@ m = GetDegree_Bivariate(fx_Brn);
 
 % Build the conversion Matrix
 mat = zeros(m+1,m+1);
-% for each row
+
+% For each row
 for i = 0:1:m
     for j = 0:1:m
         if j>= i

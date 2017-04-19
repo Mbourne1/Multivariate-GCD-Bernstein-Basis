@@ -2,7 +2,7 @@ function [i,j] = GivenCol_GetIndex(m,n,c)
 % GivenCol_GetIndex(m,n,c)
 %
 %
-% Inputs.
+% % Inputs.
 %
 % m : (Int) Degree with respect to x
 %
@@ -10,7 +10,7 @@ function [i,j] = GivenCol_GetIndex(m,n,c)
 %
 % c : (int)   Index of column removed
 %
-% Outputs
+% % Outputs
 %
 % [i,j] : Index of column
 

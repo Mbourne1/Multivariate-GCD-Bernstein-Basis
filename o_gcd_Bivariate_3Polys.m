@@ -1,4 +1,4 @@
-function [dxy_calc] = o_gcd_Bivariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method)
+function [dxy_calc] = o_gcd_Bivariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method)
 % o_gcd(ex_num, el, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method)
 %
 % Given an example number and set of parameters, obtain GCD of the two
@@ -38,10 +38,16 @@ function [dxy_calc] = o_gcd_Bivariate_3Polys(ex_num, emin, emax, mean_method, bo
 %       'DTQ'
 %       'TQ'
 %
+% factorisation_build_method (String)
+%
+%   HCG
+%   HC
+%
+%
 % % Examples
 %
-% >> o_gcd_Bivariate_3Polys('1',1e-12,1e-10,'None',false,'None','None','DTQ')
-% >> o_gcd_Bivariate_3Polys('1',1e-12,1e-10,'Geometric Mean Matlab Method',true,'Standard STLN','None','DTQ')
+% >> o_gcd_Bivariate_3Polys('1',1e-12,1e-10,'None',false,'None','None','DTQ', 'HCG')
+% >> o_gcd_Bivariate_3Polys('1',1e-12,1e-10,'Geometric Mean Matlab Method',true,'Standard STLN','None','DTQ', 'HCG')
 
 % %
 % Set Variables
@@ -55,30 +61,31 @@ end
 
 % Set global variables
 SetGlobalVariables(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method)
+    low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method)
 
 % Add subfolders
 restoredefaultpath
 
-addpath(genpath(...
+addpath(...
     'APF',...
     'Basis Conversion',...
     'Bernstein Functions',...
     'Build Factorisation Matrix',...
     'Build Matrices',...
-    'Build Sylvester Matrix',...
     'Deconvolution',...
-    'Examples',...
     'Formatting',...
     'Get Cofactor Coefficients',...
     'Get GCD Coefficients',...
-    'Get GCD Degree',...
-    'Low Rank Approximation',...
     'Plotting',...
     'Preprocessing',...
     'Results',...
     'Root Finding Methods',...
-    'Scaling'));
+    'Scaling');
+
+addpath(genpath('Build Sylvester Matrix'));
+addpath(genpath('Examples'));
+addpath(genpath('Get GCD Degree'));
+addpath(genpath('Low Rank Approximation'));
 
 % Print Parameters to console
 fprintf('INPUTS. \n')
@@ -105,19 +112,30 @@ fprintf([mfilename ' : ' sprintf('Deg_y of GCD : %i \n',t2)]);
 % Add Noise to the coefficients
 
 % Add noise to the coefficients of f and g
-[fxy_matrix, ~] = AddVariableNoiseToPoly(fxy_exact, emin, emax);
-[gxy_matrix, ~] = AddVariableNoiseToPoly(gxy_exact, emin, emax);
-[hxy_matrix, ~] = AddVariableNoiseToPoly(hxy_exact, emin, emax);
+[fxy, ~] = AddVariableNoiseToPoly(fxy_exact, emin, emax);
+[gxy, ~] = AddVariableNoiseToPoly(gxy_exact, emin, emax);
+[hxy, ~] = AddVariableNoiseToPoly(hxy_exact, emin, emax);
 
-% %
-% %
+
+% Get degree of f(x,y), g(x,y) and h(x,y)
+[m1, m2] = GetDegree_Bivariate(fxy);
+[n1, n2] = GetDegree_Bivariate(gxy);
+[o1, o2] = GetDegree_Bivariate(hxy);
+
+
 % Calculate GCD
-lower_limit = 1;
-upper_limit = min(m,n);
+lowerLimit_t1 = 1;
+upperLimit_t1 = min([m1, n1, o1]);
+limits_t1 = [lowerLimit_t1, upperLimit_t1];
+
+lowerLimit_t2 = 1;
+upperLimit_t2 = min([m2, n2, o2]);
+limits_t2 = [lowerLimit_t2, upperLimit_t2];
+
 
 % Calculate the gcd, and quotient polynomials of f(x,y) and g(x,y)
 [fxy_calc, gxy_calc, hxy_exact, dxy_calc, uxy_calc, vxy_calc, wxy_calc, t1, t2] = ...
-    o_gcd_mymethod_Bivariate_3Polys(fxy_matrix, gxy_matrix, hxy_matrix, [lower_limit,upper_limit]);
+    o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2);
 
 % %
 % %
@@ -134,7 +152,7 @@ error.vxy = GetDistance('v', vxy_calc, vxy_exact);
 error.wxy = GetDistance('w', wxy_calc, wxy_exact);
 
 % Output to file
-PrintToFile(m,n,o,t1,t2,error);
+PrintToFile(m, n, o, t1, t2, error);
 
 
 end
@@ -168,17 +186,23 @@ function []= PrintToFile(m, n, o, t1, t2, error)
 %
 % % Inputs
 %
-% m : Total degree of polynomial f(x,y)
+% m : (Int) Total degree of polynomial f(x,y)
 %
-% n : Total degree of polynomail g(x,y)
+% n : (Int) Total degree of polynomail g(x,y)
 %
-% error: Contains error.uxy, error.vxy and error.dxy
+% t1 : (Int) Degree of d(x,y) with respect to x
+%
+% t2  : (Int) Degree of d(x,y) with respect to y
+%
+% error: (Float Float Float Float) Contains error.uxy, error.vxy error.wxy and error.dxy
+
+
 
 
 % Global settings
 global SETTINGS
 
-fullFileName = sprintf('Results/Results_o_gcd_3Polys%s.txt',datetime('today'));
+fullFileName = sprintf('Results/Results_o_gcd_3Polys_%s.txt',datetime('today'));
 
 % If file already exists append a line
 if exist(fullFileName, 'file')

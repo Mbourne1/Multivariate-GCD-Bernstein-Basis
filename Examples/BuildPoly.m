@@ -5,9 +5,9 @@ function [fxy_bi] = BuildPoly(root_mult_matrix)
 
 % Inputs
 %
-% root_mult_array
-%
-% root : factor 
+% root_mult_array : (Matrix) Consists of polynomial roots and corresponding
+% multiplicity
+% 
 %
 % Outputs.
 %
@@ -22,7 +22,7 @@ function [fxy_bi] = BuildPoly(root_mult_matrix)
 
 fxy_bi = 1;
 
-for k = 1:1:nDistinctFactors
+for k = 1 : 1 : nDistinctFactors
     
     % Get the kth factors
     factor = root_mult_matrix(k,1);

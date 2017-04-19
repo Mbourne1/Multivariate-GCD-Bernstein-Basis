@@ -12,11 +12,11 @@ function  [partial_fxy] = Differentiate_wrt_x(fxy)
 
 
 % Get degree of f(x,y)
-[m1,m2] = GetDegree_Bivariate(fxy);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 % Initialise a matrix to store the partial derivative of f(x,y) with
 % respect to x
-partial_fxy = zeros(m1,m2+1);
+partial_fxy = zeros(m1, m2+1);
 
 % for each column of coefficients
 for j = 0:1:m2
@@ -41,6 +41,13 @@ function fxy_wrt_x = diff_x(fxy)
 % % Inputs
 %
 % fxy : (Matrix) Coefficients of polynomial f(x,y)
+%
+% % Outputs
+% 
+% fxy_wrt_x : (Matrix) Coefficients of partial derivative of f(x,y) with 
+% respect to x 
+
+
 
 % Get degree of f(x,y) with respect to x.
 [m1,~] = GetDegree_Bivariate(fxy);

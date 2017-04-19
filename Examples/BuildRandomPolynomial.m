@@ -5,11 +5,11 @@ function [f_roots] = BuildRandomPolynomial(m, interval_low, interval_high)
 %
 % % Inputs
 %
-% m : Degree of polynomial f(x)
+% m : (Int) Degree of polynomial f(x)
 %
-% interval_low : (Float) 
+% interval_low : (Float) : Upper bound for all roots
 %
-% interval_up : (Float)
+% interval_up : (Float) : Lower bound for all roots
 %
 % % Outputs
 %
@@ -22,7 +22,6 @@ a = interval_low;
 b = interval_high;
 
 % Get a multiplicity structure for polynomial f
-
 prob_arr = zeros(1,m);
 for i = 1:1:m
     prob_arr(i) = i./ nchoosek(m+1,2);

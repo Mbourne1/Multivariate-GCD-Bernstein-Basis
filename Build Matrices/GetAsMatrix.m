@@ -1,8 +1,8 @@
 function fxy_matrix = GetAsMatrix(fxy_vec, m1, m2)
-% Given the vector of coefficients of the polynomial f(x,y), 
-% format the coefficients as a matrix. 
-% 
-% Note : This method inserts into a matrix in the order [0,0] [1,0] [0,1]
+% Given the vector of coefficients of the polynomial f(x,y),
+% format the coefficients as a matrix.
+%
+% Note : This method inserts coefficients into a matrix in the order [0,0] [1,0] [0,1]
 %
 % % Inputs
 %
@@ -16,33 +16,22 @@ function fxy_matrix = GetAsMatrix(fxy_vec, m1, m2)
 %
 % fxy_matrix : (Matrix) Coefficients of the polynomial f(x,y) as a matrix.
 
+global SETTINGS
 
-% Initialise an empty matrix fxy
-fxy_matrix = zeros(m1+1, m2+1);
 
-% Intialise a counter which will go through each entry of f_vec (The vector
-% of coefficients of of f).
-count = 1;
-
-% get number of diagonals in the matrix fxy.
-nDiagonals = (m1+1) + (m2+1) -1;
-
-for tot = 0:1:nDiagonals -1
-    for i = tot:-1:0
-        j = tot-i;
+switch SETTINGS.VECTORISATION_METHOD
+    
+    case 'Version 1'
         
-        if i > m1 || j> m2
-            
-            % restrict to only the i and j values within the matrix.
-            
-        else
-            
-            fxy_matrix(i+1,j+1) = fxy_vec(count);
-            count = count + 1;
-        end
-    end
+        fxy_matrix = GetAsMatrix_Version1(fxy_vec,m1,m2);
+        
+    case 'Version 2'
+        
+        fxy_matrix = GetAsMatrix_Version2(fxy_vec,m1,m2);
+        
+    otherwise
+        
+        error('Error')
+        
 end
-
-
-
 end

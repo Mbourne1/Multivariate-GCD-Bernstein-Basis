@@ -2,7 +2,7 @@ function [fxy, gxy, hxy, dxy, uxy, vxy, wxy, m, n, o, t] = Examples_GCD_Bivariat
 %
 % Inputs
 %
-% ex_num : Example Number
+% ex_num : (String) Example Number
 %
 % Outputs
 %

@@ -1,5 +1,5 @@
 function [fxy, m] = Examples_Roots_Bivariate(ex_num)
-% Examples_Roots(ex_num)
+% Examples_Roots_Bivariate(ex_num)
 %
 % Given an example number, return the matrix of coefficients of a
 % polynomial f(x,y)

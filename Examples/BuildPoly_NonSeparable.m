@@ -4,7 +4,7 @@ function [fxy] = BuildPoly_NonSeparable(factors_fxy_array)
 % 
 % Inputs.
 %
-% roots_f : Array of factors of f(x,y)
+% factors_fxy_array : (Array) Array of factors of f(x,y) 
 %
 % Outputs.
 %
@@ -20,8 +20,11 @@ temp_prod = factors_fxy_array{1,1};
 % For every other root 2,...,
 for i = 2:1:nFactors
     
-   % Multiply product by the new root
-   temp_prod = Bernstein_Multiply_Bivariate(temp_prod,factors_fxy_array{i,1}) ;
+   % Get coefficients of the factor as a vector
+   temp_factor = factors_fxy_array{i,1};
+   
+   % Multiply product by the new factor
+   temp_prod = Bernstein_Multiply_Bivariate(temp_prod, temp_factor ) ;
    
 end
 

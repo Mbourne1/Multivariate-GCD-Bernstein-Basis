@@ -36,15 +36,22 @@ parfor i1 = 1:1:length(ex_num_arr)
                             
                             close all
                             clc
+                            
+                            filename = 'log_GCD_2Polys.txt';
+                            
                             try
+                                
                                 o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method);
-                                fileId = fopen('log.txt','a')
+                                fileId = fopen(filename,'a')
                                 fprintf(fileId,'%s \n','success');
                                 fclose(fileId);
+                                
                             catch err
-                                fileId = fopen('log.txt','a')
+                                
+                                fileId = fopen(filename,'a')
                                 fprintf(fileId,'%s \n\n\n\',getReport(err));
                                 fclose(fileId);
+                                
                             end
                         end
                     end

@@ -5,12 +5,12 @@ function fxy_bi = GetWithBinomials_Bivariate(fxy)
 % Inputs
 %
 %
-% fxy : Matrix of coefficients of the polynomial f(x,y)
+% fxy : (Matrix) Coefficients of the polynomial f(x,y)
 %
 % Outputs.
 %
 %
-% fxy_bi : Matrix of coefficients of the polynomial f(x,y) including
+% fxy_bi : (Matrix) Coefficients of the polynomial f(x,y) including
 %          binomial coefficients, so fxy_bi is the polynomial coefficients in the
 %          modified Bernstein Basis.
 

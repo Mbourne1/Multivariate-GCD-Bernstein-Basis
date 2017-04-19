@@ -1,8 +1,15 @@
 function [fxy] = GetWithoutBinomials_Bivariate(fxy_bi)
+% Given coefficients of the polynomial f(x,y) in scaled Bernstein basis,
+% return the coefficients of the polynomial in the Bernstein basis.
 %
 % % Inputs
 %
-% fxy_bi : Coefficients of f(x,y) in scaled Bernstein Basis.
+% fxy_bi : (Matrix) Coefficients of f(x,y) in scaled Bernstein Basis.
+%
+% % Outputs
+%
+% fxy : (Matrix) Coefficients of polynomial f(x,y) in Bernstein basis
+
 
 % Get degree structure of f(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy_bi);

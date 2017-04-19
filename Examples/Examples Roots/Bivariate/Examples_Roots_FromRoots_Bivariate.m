@@ -6,9 +6,9 @@ function [fxy, m] = Examples_Roots_FromRoots_Bivariate(ex_num)
 %
 % % Outputs
 %
-% fxy : Coefficients of polynomial f(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% m : Total degree of f(x,y)
+% m : (Int) Total degree of f(x,y)
 
 
 root_mult_array_f_x = [];
@@ -25,8 +25,8 @@ switch ex_num
         intvl_low = -1;
         intvl_high = 1;
         
-        [root_mult_array_f_x] = BuildRandomPolynomial(m1,intvl_low, intvl_high)
-        [root_mult_array_f_y] = BuildRandomPolynomial(m2,intvl_low, intvl_high)
+        [root_mult_array_f_x] = BuildRandomPolynomial(m1,intvl_low, intvl_high);
+        [root_mult_array_f_y] = BuildRandomPolynomial(m2,intvl_low, intvl_high);
         
         m = m1+m2;
         

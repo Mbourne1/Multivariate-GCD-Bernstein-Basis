@@ -8,9 +8,9 @@ function DT1Q1 = BuildDT1Q1_Univariate(fx, n_k)
 %
 % fx : (Matrix) Coefficients of polynomial f(x) given in Bernstein basis 
 % 
-% n  : (Int) Degree of polynomial g(x)
+% n : (Int) Degree of polynomial g(x)
 % 
-% k  : (Int) The index of the subresultant being built
+% k : (Int) The index of the subresultant being built
 %
 % n_k : (Int) Degree of polynomial which f is to be multiplied by.
 

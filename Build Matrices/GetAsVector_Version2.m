@@ -27,11 +27,11 @@ fxy_vec = zeros(nCoefficients, 1);
 % Build the matrix of coefficients
 for j = 0 : 1 : m2
     
-    start_point = j*(m1+1) + 1;
+    start_point = (j*(m1+1)) + 1;
     
     temp_vec = fxy(:,j+1);
     
-    fxy_vec(start_point, start_point + (m1+1)) = temp_vec;
+    fxy_vec(start_point:start_point + (m1),1) = temp_vec;
     
 end
 

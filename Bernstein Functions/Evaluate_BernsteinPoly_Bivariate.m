@@ -14,7 +14,7 @@ function [sum] = Evaluate_BernsteinPoly_Bivariate(t1, t2, fxy)
 %
 % % Outputs
 %
-% sum
+% sum : Value of function f(x,y) at (t_{1},t_{2})
 
 % Get degree of f(x,y) with respect to x and y
 [m1, m2] = GetDegree_Bivariate(fxy);

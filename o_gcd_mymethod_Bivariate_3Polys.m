@@ -44,7 +44,7 @@ function [fxy_o, gxy_o, hxy_o, dxy_o, uxy_o, vxy_o, wxy_o, t1, t2] = ...
 % t2 :(Int) Degree of the GCD with respect to y
 
 %
-[t1, t2, GM_fx, GM_gx, GM_hx, alpha, th1, th2] = GetGCDDegree_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2);
+[t1, t2, GM_fx, GM_gx, GM_hx, alpha, beta, th1, th2] = GetGCDDegree_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2);
 
 fprintf([mfilename ' : ' sprintf('Degree of GCD : t1 = %i, t2 = %i \n', t1, t2)])
 
@@ -58,19 +58,21 @@ fww_n = GetWithThetas(fxy_n, th1, th2);
 gww_n = GetWithThetas(gxy_n, th1, th2);
 hww_n = GetWithThetas(hxy_n, th1, th2);
 
-a_gww_n = alpha.* gww_n;
+a_gww_n = alpha .* gww_n;
+b_hww_n = beta .* hww_n;
 
 % Get optimal column
-St1t2 = BuildDTQ_Bivariate_3Polys(fww_n,a_gww_n, hww_n, t1, t2);
+St1t2 = BuildDTQ_Bivariate_3Polys(fww_n, a_gww_n, b_hww_n, t1, t2);
+
 idx_col = GetOptimalColumn(St1t2);
 
 % % Get coefficients of u(x,y) and v(x,y).
-[fxy_lr, gxy_lr, hxy_lr, uxy_lr, vxy_lr, wxy_lr, alpha_lr, th1_lr, th2_lr] = ...
-    LowRankApproximation_Bivariate_3Polys(fxy_n, gxy_n, hxy_n, alpha, th1, th2, t1, t2, idx_col);
+[fxy_lr, gxy_lr, hxy_lr, uxy_lr, vxy_lr, wxy_lr, alpha_lr, beta_lr, th1_lr, th2_lr] = ...
+    LowRankApproximation_Bivariate_3Polys(fxy_n, gxy_n, hxy_n, alpha, beta, th1, th2, t1, t2, idx_col);
 
 % Get coefficients of d(x,y)
 [fxy_lra, gxy_lra, hxy_lra, uxy_lra, vxy_lra, wxy_lra, dxy_lra, alpha_lra, th1_lra, th2_lra] = ...
-    APF_Bivariate_3Polys(fxy_lr, gxy_lr, hxy_lr, uxy_lr, vxy_lr, wxy_lr, t1, t2, alpha_lr, th1_lr, th2_lr);
+    APF_Bivariate_3Polys(fxy_lr, gxy_lr, hxy_lr, uxy_lr, vxy_lr, wxy_lr, t1, t2, alpha_lr, beta_lr, th1_lr, th2_lr);
 
 % Outputs
 fxy_o = fxy_lra;

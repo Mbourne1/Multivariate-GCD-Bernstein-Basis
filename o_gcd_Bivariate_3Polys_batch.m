@@ -1,8 +1,8 @@
 function [] = o_gcd_Bivariate_3Polys_batch()
 
 ex_num_arr = {'1','2','3','4','5','6','7','8','9','10'};
-emin_arr = {1e-8,1e-10,1e-12};
-mean_method_arr = {'Geometric Mean Matlab Method','None'};
+emin_arr = {1e-8, 1e-10, 1e-12};
+mean_method_arr = {'Geometric Mean Matlab Method', 'None'};
 bool_alpha_theta_arr = {true,false};
 low_rank_approx_method_arr = {'None','Standard STLN', 'Standard SNTLN'};
 apf_method_arr = {'None'};
@@ -32,17 +32,23 @@ parfor i1 = 1:1:length(ex_num_arr)
                         for sylvester_build_method_elem = sylvester_build_method_arr
                             sylvester_build_method = sylvester_build_method_elem{1};
                             
-                            close all
-                            clc
+                            close all; clc;
+                            
+                            my_filename = 'log_GCD_3Polys.txt'
+                            
                             try
+                                
                                 o_gcd_bivar_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method);
-                                fileId = fopen('log.txt','a')
-                                fprintf(fileId,'%s \n','success');
+                                fileId = fopen(my_filename, 'a')
+                                fprintf(fileId,'%s %s \n',datetime('now'), 'Success');
                                 fclose(fileId);
+                                
                             catch err
-                                fileId = fopen('log.txt','a')
-                                fprintf(fileId,'%s \n\n\n\',getReport(err));
+                                
+                                fileId = fopen(my_filename, 'a')
+                                fprintf(fileId,'%s %s \n\n\n\',datetime('now'), getReport(err));
                                 fclose(fileId);
+                                
                             end
                         end
                     end

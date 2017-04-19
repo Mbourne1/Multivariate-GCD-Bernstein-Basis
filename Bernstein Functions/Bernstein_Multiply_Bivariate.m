@@ -27,13 +27,29 @@ o2 = m2 + n2;
 DT1Q1 = BuildDT1Q1_Bivariate(fxy, n1, n2);
 
 % Build the vector of the coefficients of g(x,y)
-g_vec = GetAsVector(gxy);
-
+global SETTINGS
+switch SETTINGS.VECTORISATION_METHOD
+    case 'Version 1'
+        
+        v_gxy = GetAsVector(gxy);
+        
+    case 'Version 2'
+        
+        v_gxy = GetAsVector_Version2(gxy);
+    otherwise
+        error('err')
+        
+end
 % Perform multiplication to obtain hxy in vector form
-h_vec = DT1Q1 * g_vec;
+h_vec = DT1Q1 * v_gxy;
 
 % Convert hxy to matrix form
+switch SETTINGS.VECTORISATION_METHOD
+case 'Version 1'
 hxy = GetAsMatrix(h_vec, o1, o2);
+case 'Version 2'
+hxy = GetAsMatrix_Version2(h_vec, o1, o2);
+end
 
 end
 

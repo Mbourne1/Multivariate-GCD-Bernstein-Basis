@@ -1,6 +1,7 @@
 function C_uv = BuildFactorisationMatrix(uxy, vxy, t1, t2)
 % Build the matrix C consisting of two convolution matrices C(u) and C(v)
-% stacked on top of one another C = [ C(u) ; C(v)].
+% stacked on top of one another C = [ C(u) ; C(v)]. This matrix is used in
+% the computation of the coefficients of the GCD d(x,y) 
 %
 %
 % % Inputs
@@ -15,7 +16,7 @@ function C_uv = BuildFactorisationMatrix(uxy, vxy, t1, t2)
 %
 % % Outputs
 %
-% C_uv : (Matrix)
+% C_uv : (Matrix) 
 
 global SETTINGS
 
@@ -63,6 +64,7 @@ switch SETTINGS.FACTORISATION_BUILD_METHOD
         C_uv = H*C;
         
     otherwise
+        
         error('factorisation method not valid')
         
 end

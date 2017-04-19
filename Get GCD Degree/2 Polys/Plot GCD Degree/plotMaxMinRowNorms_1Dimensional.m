@@ -1,27 +1,29 @@
-function [] = plotMaxMinRowNorms_1Dimensional(vMaxRowNorm, vMinRowNorm, myLimits_t1, limits_t1)
+function [] = plotMaxMinRowNorms_1Dimensional(vMaxRowNorm, vMinRowNorm, limits_k1, limits_t1)
 %
 % % Inputs
 %
-% vMaxRowNorm : 
+% vMaxRowNorm : (Vector) 
 %
-% vMinRowNorm : 
+% vMinRowNorm : (Vector)
 %
-% myLimits_t1 :
+% limits_k1 : (Int Int)
 %
-% limits_t1 :
+% limits_t1 : (Int Int)
+%
+
 
 global SETTINGS
 
 % Get upper and lower bounds
-myLowerLimit_t1 = myLimits_t1(1);
-myUpperLimit_t1 = myLimits_t1(2);
+lowerLimit_k1 = limits_k1(1);
+upperLimit_k1 = limits_k1(2);
 
 % Get upper and lower limits
 lowerLimit_t1 = limits_t1(1);
 upperLimit_t1 = limits_t1(2);
 
 % Get vector x
-vec_x = myLowerLimit_t1 : 1 : myUpperLimit_t1;
+vec_x = lowerLimit_k1 : 1 : upperLimit_k1;
 
 temp_vec = (vMinRowNorm) ./ (vMaxRowNorm);
 figure_name = sprintf('Plot Max:Min Row Norms of %s',SETTINGS.SYLVESTER_BUILD_METHOD);

@@ -1,16 +1,16 @@
-function [] = plotR1Diagonals_1Dimensional(arr_R1, myLimits_t1, limits_t1)
+function [] = plotR1Diagonals_1Dimensional(arr_R1, limits_k1, limits_t1)
 %
 % % Inputs
 %
 % arr_R1 : (Array)
 %
-% my_limits_t1 : ([Int Int])
+% limits_k1 : ([Int Int])
 %
-% limits_t1 : [(Int) (Int)]
+% limits_t1 : (Int Int)
 
 % Get upper and lower limits
-myLowerLimit_t1 = myLimits_t1(1);
-myUpperLimit_t1 = myLimits_t1(2);
+myLowerLimit_t1 = limits_k1(1);
+myUpperLimit_t1 = limits_k1(2);
 
 lowerLimit_t1 = limits_t1(1);
 upperLimit_t1 = limits_t1(2);
@@ -28,12 +28,10 @@ for i1 = 1:1:nSubresultants_t1
   
         k1 = myLowerLimit_t1 + (i1 -1);
   
-        
         temp_vec = diag(arr_R1{i1, i2});
         
         vec_k1 = k1.*ones(length(temp_vec), 1);
-        
-        
+              
         plot(vec_k1, temp_vec,'*');
         
 end

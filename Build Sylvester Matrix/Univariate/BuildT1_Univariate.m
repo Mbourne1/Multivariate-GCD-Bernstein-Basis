@@ -1,5 +1,5 @@
 function T1 = BuildT1_Univariate(fx,n_k)
-% BuildT1_univar(fx,n_k)
+% BuildT1_Univariate(fx,n_k)
 %
 % Build a Toeplitz Matrix of coefficients of f(x).
 % T1 \in \mathbb{R}^{(m+n-k+1)\times(n-k+1)}

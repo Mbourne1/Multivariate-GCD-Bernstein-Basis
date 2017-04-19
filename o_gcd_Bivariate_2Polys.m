@@ -66,7 +66,7 @@ SetGlobalVariables(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
 % Add subfolders
 restoredefaultpath
 
-% Determine where your m-file's folder is.
+% Determine where your m-files folder is.
 folder = fileparts(which(mfilename)); 
 
 % Add that folder plus all subfolders to the path.
@@ -101,13 +101,18 @@ fprintf('The Degree Structure of d(x) : t = %i \t t1 = %i \t t2 = %i \n', t_exac
 [fxy_matrix, ~] = AddVariableNoiseToPoly(fxy_exact, emin, emax);
 [gxy_matrix, ~] = AddVariableNoiseToPoly(gxy_exact, emin, emax);
 
+display(fxy_matrix)
+display(gxy_matrix)
+
 % Calculate GCD
 
 % Set upper and lower limit for the degree structure of d(x,y)
 lowerLimit_t1 = 0;
 upperLimit_t1 = min(m1, n1);
+
 lowerLimit_t2 = 0;
 upperLimit_t2 = min(m2, n2);
+
 limits_t1 = [lowerLimit_t1 upperLimit_t1];
 limits_t2 = [lowerLimit_t2 upperLimit_t2];
 

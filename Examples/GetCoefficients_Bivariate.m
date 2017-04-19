@@ -35,7 +35,7 @@ temp_coefficient_matrix = arr_factors{1};
 
 
 for i = 2:1:nFactors
-    temp_coefficient_matrix = Bernstein_Multiply_Bivariate(temp_coefficient_matrix,arr_factors{i});
+    temp_coefficient_matrix = Bernstein_Multiply_Bivariate(temp_coefficient_matrix, arr_factors{i});
 end
 
 fxy = temp_coefficient_matrix;

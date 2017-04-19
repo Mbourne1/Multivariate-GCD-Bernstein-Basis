@@ -6,13 +6,17 @@ function H = BuildH_Bivariate(m1, m2, n1, n2)
 %
 % % Inputs:
 %
-% [m1, m2] : [(Int) (Int)] Degree of polynomial f with respect to x and y
+% m1 : (Int) Degree of polynomial f(x,y) with respect to x
 %
-% [n1, n2] : [(Int) (Int)] Degree of polynomial g with respect to x and y
+% m2 : (Int) Degree of polynomial f(x,y) with respect to y
+%
+% n1 : (Int) Degree of polynomial g(x,y) with respect to x
+%
+% n2 : (Int) Degree of polynomial g(x,y) with respect to y
 %
 % % Outputs.
 %
-% H : The matrix H^{-1}
+% H : (Matrix) The matrix H^{-1}
 %
 
 % Build the first partition H1

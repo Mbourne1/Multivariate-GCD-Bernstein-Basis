@@ -6,11 +6,17 @@ function H = BuildH_Bivariate_3Polys(m1, m2, n1, n2, o1, o2)
 %
 % % Inputs:
 %
-% [m1, m2] : [(Int) (Int)] Degree of polynomial f with respect to x and y
+% m1 : (Int) Degree of polynomial f(x,y) with respect to x 
 %
-% [n1, n2] : [(Int) (Int)] Degree of polynomial g with respect to x and y
+% m2 : (Int) Degree of polynomial f(x,y) with respect to y
 %
-% [o1, o2] : [(Int) (Int)] Degree of polynomial h with respect to x and y
+% n1 : (Int) Degree of polynomial g(x,y) with respect to x
+%
+% n2 : (Int) Degree of polynomial g(x,y) with respect to y
+%
+% o1 : (Int) Degree of polynomial h(x,y) with respect to x
+%
+% o2 : (Int) Degree of polynomial h(x,y) with respect to y
 %
 % % Outputs.
 %
@@ -27,5 +33,5 @@ H2 = BuildH1_Bivariate(n1, n2);
 H3 = BuildH1_Bivariate(o1, o2);
 
 % Build the block diagonal matrix [H1 0 ; 0 H2] = diag([H1 H2])
-H = blkdiag(H1,H2,H3);
+H = blkdiag(H1, H2, H3);
 end

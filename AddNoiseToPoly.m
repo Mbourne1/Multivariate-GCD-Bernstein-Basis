@@ -1,10 +1,11 @@
 function [fxy_noisy, noise_matrix] = AddNoiseToPoly(fxy, el)
+% Add noise to the coefficients of the polynomial f(x,y)
 %
 % % Inputs
 %
 % fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% el : Noise level
+% el : (Float) Noise level
 %
 % % Outputs
 %

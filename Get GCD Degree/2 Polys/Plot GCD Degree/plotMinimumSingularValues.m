@@ -1,4 +1,4 @@
-function [] = plotMinimumSingularValues(matMinimumSingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
+function [] = plotMinimumSingularValues(matMinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2)
 %
 % % Inputs
 %
@@ -6,25 +6,26 @@ function [] = plotMinimumSingularValues(matMinimumSingularValues, myLimits_t1, m
 % each Sylvester subresultant matrix S_{k1,k2} for k1 =
 % lowerlim,...,upperlim and k2 = lowerlim,...,upperlim
 %
-% my_limits_t1 :
+% limits_k1 : [Int Int]
 %
-% my_limits_t2 :
+% limits_k2 : [Int Int]
 %
-% limits_t1 :
+% limits_t1 : [Int Int]
 %
-% limits_t2
+% limits_t2 : [Int Int]
 
 global SETTINGS
 
 % Get upper and lower limit
-lowerLimit_t1 = myLimits_t1(1);
-upperLimit_t1 = myLimits_t1(2);
-lowerLimit_t2 = myLimits_t2(1);
-upperLimit_t2 = myLimits_t2(2);
+lowerLimit_k1 = limits_k1(1);
+upperLimit_k1 = limits_k1(2);
 
+lowerLimit_k2 = limits_k2(1);
+upperLimit_k2 = limits_k2(2);
 
-v_i1 = lowerLimit_t1 : 1 : upperLimit_t1;
-v_i2 = lowerLimit_t2 : 1 : upperLimit_t2;
+% 
+v_i1 = lowerLimit_k1 : 1 : upperLimit_k1;
+v_i2 = lowerLimit_k2 : 1 : upperLimit_k2;
 
 [X,Y] = meshgrid(v_i1,v_i2);
 
@@ -35,7 +36,7 @@ title('Minimum Singular Values');
 xlabel('k_{1}');
 ylabel('k_{2}');
 grid on
-surf(X,Y,log10(matMinimumSingularValues)');
+surf(X, Y, log10(matMinimumSingularValues)');
 hold off
 
 

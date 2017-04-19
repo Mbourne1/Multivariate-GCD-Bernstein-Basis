@@ -94,7 +94,7 @@ LineBreakMedium()
 end
 
 
-function [arr_R1, arr_SingularValues, vAlpha, vTheta1, vTheta2, vGM_fx, vGM_gx] = getSubresultants(fxy, gxy, myLimits, str_fixed_var, fixed_var)
+function [arr_R1, arr_SingularValues, vAlpha, vTheta1, vTheta2, vGM_fx, vGM_gx] = getSubresultants(fxy, gxy, limits_k, str_fixed_var, fixed_var)
 % Compute the degree (Either t_{1} or t_{2}) of the GCD d(x,y) given that
 % by constructing the sequence of Sylvester subresultant matrices S_{k1,k2}
 % where either k_{1} or k_{2} is constant.
@@ -105,18 +105,18 @@ function [arr_R1, arr_SingularValues, vAlpha, vTheta1, vTheta2, vGM_fx, vGM_gx] 
 %
 % gxy : (Matrix) : Coefficients of g(x,y)
 %
-% my_limits : [lowerLimit upperLimit] [(Int) (Int)]
+% limits_k : [Int) (Int)]
 %
 % str_fixed_var : (String) Either 'x' or 'y'
 %
 % str_var :  (Integer) Value of fixed variable.
 
 % Get lower and upper limit in computation of the degree of the GCD.
-lowerLimit = myLimits(1);
-upperLimit = myLimits(2);
+lowerLimit_k = limits_k(1);
+upperLimit_k = limits_k(2);
 
 % Get number of Sylvester subresultant matrices to be constructed
-nSubresultants = upperLimit - lowerLimit + 1;
+nSubresultants = upperLimit_k - lowerLimit_k + 1;
 
 
 % Initialise an array to store singular values of each of the Sylvester
@@ -142,7 +142,7 @@ for i2 = 1:1:nSubresultants
         case 'x'
             
             k1 = fixed_var;
-            k2 = lowerLimit + (i2-1);
+            k2 = lowerLimit_k + (i2-1);
             
         case 'y'
             
@@ -199,7 +199,7 @@ end
 
 end
 
-function [metric] = getMetric(arr_R1, arr_SingularValues, myLimits_t1, limits_t1)
+function [metric] = getMetric(arr_R1, arr_SingularValues, limits_k1, limits_t1)
 % This function returns a metric from which the degree of the GCD can be
 % computed (Either with respect to x or y). Note the remainder of this
 % function is worded to suggest we compute the degree of the GCD with
@@ -216,7 +216,7 @@ function [metric] = getMetric(arr_R1, arr_SingularValues, myLimits_t1, limits_t1
 % values of each Sylvester subresultant matrix S_{k1,k2} where either k_{1}
 % or k_{2} is constant
 %
-% my_limits_t1 : Set limits for the computation of the degree of the GCD,
+% limits_k1 : (Int Int) Set limits for the computation of the degree of the GCD,
 %
 %
 % limits_t1 :
@@ -227,12 +227,12 @@ function [metric] = getMetric(arr_R1, arr_SingularValues, myLimits_t1, limits_t1
 % determined by the max change in the vector.
 
 % Get upper and lower limit of
-lowerLimit = myLimits_t1(1);
-upperLimit = myLimits_t1(2);
+lowerLimit_k1 = limits_k1(1);
+upperLimit_k1 = limits_k1(2);
 
 % Get number of Sylvester subresultant matrices required to compute degree
 % of GCD.
-nSubresultants = upperLimit - lowerLimit + 1;
+nSubresultants = upperLimit_k1 - lowerLimit_k1 + 1;
 
 global SETTINGS
 switch SETTINGS.RANK_REVEALING_METRIC
@@ -261,7 +261,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
             
             % Plot graphs
             %plotR1RowNorms_1Dimensional(arr_R1_RowNorms, myLimits_t1, limits_t1)
-            plotMaxMinRowNorms_1Dimensional(vMaxRowNorm, vMinRowNorm, myLimits_t1, limits_t1);
+            plotMaxMinRowNorms_1Dimensional(vMaxRowNorm, vMinRowNorm, limits_k1, limits_t1);
             
         end
         
@@ -290,7 +290,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
         if(SETTINGS.PLOT_GRAPHS)
             
             %plotR1Diagonals_1Dimensional(arr_R1, myLimits_t1, limits_t1);
-            plotMaxMinDiagonalsR1_1Dimensional(vMaxDiagonal_R1, vMinDiagonal_R1, myLimits_t1, limits_t1);
+            plotMaxMinDiagonalsR1_1Dimensional(vMaxDiagonal_R1, vMinDiagonal_R1, limits_k1, limits_t1);
         end
         
         % Set rank revealing metric
@@ -311,8 +311,10 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         % Plot graphs
         if(SETTINGS.PLOT_GRAPHS)
+            
             %plotSingularValues_1Dimensional(arr_SingularValues, myLimits_t1, limits_t1)
-            plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, myLimits_t1, limits_t1)
+            plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, limits_k1, limits_t1)
+            
         end
         
         
