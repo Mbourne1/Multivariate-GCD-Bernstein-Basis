@@ -1,4 +1,4 @@
-function [] = plotMinimumSingularValues(matMinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2)
+function [] = plotMinimumSingularValues(matMinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2, rank_range)
 %
 % % Inputs
 %
@@ -13,6 +13,8 @@ function [] = plotMinimumSingularValues(matMinimumSingularValues, limits_k1, lim
 % limits_t1 : [Int Int]
 %
 % limits_t2 : [Int Int]
+%
+% rank_range : [Float Float]
 
 global SETTINGS
 
@@ -20,6 +22,7 @@ global SETTINGS
 lowerLimit_k1 = limits_k1(1);
 upperLimit_k1 = limits_k1(2);
 
+%
 lowerLimit_k2 = limits_k2(1);
 upperLimit_k2 = limits_k2(2);
 

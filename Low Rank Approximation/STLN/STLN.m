@@ -39,25 +39,19 @@ end
 % Set the initial iterations number
 ite = 1;
 
-% Get degree of polynomial f(x,y).
+% Get degree of polynomial f(x,y) and g(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get degree of polynomial g(x,y).
 [n1, n2] = GetDegree_Bivariate(gxy);
 
-% Get the number of coefficients in the polynomial f(x,y)
+% Get the number of coefficients in the polynomial f(x,y) and g(x,y)
 nCoefficients_fxy = (m1+1) * (m2+1);
-
-% Get the number of coefficients in the polynomial g(x,y)
 nCoefficients_gxy = (n1+1) * (n2+1);
 
 % Get the number of coefficients in both f(x,y) and g(x,y)
 nCoefficients_fg = nCoefficients_fxy + nCoefficients_gxy;
 
-% Get the number of coefficients in v(x,y)
+% Get the number of coefficients in v(x,y) and u(x,y)
 nCoefficients_vxy = (n1-k1+1) * (n2-k2+1);
-
-% Get the number of coefficients in u(x,y)
 nCoefficients_uxy = (m1-k1+1) * (m2-k2+1);
 
 % Get the number of coefficients in the unknown vector x, where A_{t}x =
@@ -162,9 +156,7 @@ DTNQ = BuildDTQ_Bivariate_2Polys(fxy, gxy, k1, k2);
 % Create the matrix C for input into iteration
 
 H_z     = DYG - DPG;
-
 H_x     = DTNQ * M;
-
 C       = [H_z H_x];
 
 % Define the starting vector for the iterations for the LSE problem.
@@ -195,25 +187,23 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     yy = yy + y;
         
     % Get the coefficients of z_{f}(x,y) and z_{g}(x,y)
-    delta_zk        = y(1:nCoefficients_fxy + nCoefficients_gxy ,1);
+    delta_zk = y(1 : nCoefficients_fxy + nCoefficients_gxy ,1);
     
     % Update variables z_{k}, where z_{k} are perturbations in the
     % coefficients of f and g.
     zk = zk + delta_zk;
     
-    % Get the vector of structured perturbations z_{f}(x,y) 
-    vec_z_fxy      = zk(1:nCoefficients_fxy);
-    
-    % Get the vector of coefficients of z_{g}(x,y)
+    % Get the vector of structured perturbations z_{f}(x,y) and z_{g}(x,y)
+    vec_z_fxy      = zk(1 : nCoefficients_fxy);
     vec_z_gxy      = zk(nCoefficients_fxy + 1 :end);
     
     % Get the vectors z_fx and z_gx as matrices, which match the shape of
     % f(x) and g(x).
-    z_fxy = GetAsMatrix(vec_z_fxy,m1,m2);
-    z_gxy = GetAsMatrix(vec_z_gxy,n1,n2);
+    z_fxy = GetAsMatrix(vec_z_fxy, m1, m2);
+    z_gxy = GetAsMatrix(vec_z_gxy, n1, n2);
        
     % Get the coefficients corresponding to x
-    delta_xk        = y(nCoefficients_fg+1:end);
+    delta_xk = y(nCoefficients_fg+1 : end);
     
     % Update x_{k}, where x_{k}
     xk = xk + delta_xk;
@@ -239,12 +229,12 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     % Insert a zero into the position of the optimal_column.
     
     % Partition x_ls into the two parts for coefficients of 
-    first_part = xk(1:(idx_col-1));
-    second_part = xk(idx_col:end);
+    first_part = xk(1 : (idx_col-1));
+    second_part = xk(idx_col : end);
     x = [first_part ; 0 ; second_part];
    
     % Update the matrix Y and DYG
-    DYG = BuildDYG_SNTLN(m1,m2,n1,n2,k1,k2,x,1,1,1);
+    DYG = BuildDYG_SNTLN(m1, m2, n1, n2, k1, k2, x, 1, 1, 1);
   
     % Get residual as a vector
     res_vec = (ck + hk) - DTNQ*M*xk ;
@@ -266,7 +256,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     condition(ite) = norm(res_vec) / norm(ek);
     
     % Update fnew - used in LSE Problem.
-    f = -(yy-start_point);
+    f = -(yy - start_point);
     
     
 end
@@ -287,11 +277,11 @@ PlotSNTLN()
 
 % get the vector zk
 
-zPert_f_vec = zk(1:nCoefficients_fxy);
-zPert_f_mat = GetAsMatrix(zPert_f_vec,m1,m2);
+zPert_f_vec = zk(1 : nCoefficients_fxy);
+zPert_f_mat = GetAsMatrix(zPert_f_vec, m1, m2);
 
-zPert_g_vec = zk(nCoefficients_fxy+1:end);
-zPert_g_mat = GetAsMatrix(zPert_g_vec,n1,n2);
+zPert_g_vec = zk(nCoefficients_fxy+1 : end);
+zPert_g_mat = GetAsMatrix(zPert_g_vec, n1, n2);
 
 % Get f(x,y) with added perturbations
 fxy_lr = fxy + zPert_f_mat;
@@ -300,12 +290,12 @@ fxy_lr = fxy + zPert_f_mat;
 gxy_lr = gxy + zPert_g_mat;
 
 % Get u(x,y) and v(x,y)
-xa = xk(1:idx_col-1);
-xb = xk(idx_col:end);
+xa = xk(1 : idx_col-1);
+xb = xk(idx_col : end);
 x = [xa ; -1 ; xb];
 
-vec_vxy = x(1:nCoefficients_vxy);
-vec_uxy = -1.*x(nCoefficients_vxy+1:end);
+vec_vxy = x(1 : nCoefficients_vxy);
+vec_uxy = -1.*x(nCoefficients_vxy+1 : end);
 
 vxy_lr = GetAsMatrix(vec_vxy, n1-k1, n2-k2);
 uxy_lr = GetAsMatrix(vec_uxy, m1-k1, m2-k2);

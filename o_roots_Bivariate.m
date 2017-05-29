@@ -53,7 +53,9 @@ folder = fileparts(which(mfilename));
 addpath(genpath(folder));
 
 % Set the global variables
-SetGlobalVariables(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method)
+SetGlobalVariables(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
+    low_rank_approx_method, apf_method, sylvester_build_method, ...
+    factorisation_build_method)
 
 % Given the example number, return the coefficients of the bivariate
 % polynomial f(x,y)

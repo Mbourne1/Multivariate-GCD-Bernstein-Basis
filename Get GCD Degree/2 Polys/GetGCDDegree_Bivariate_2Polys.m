@@ -62,13 +62,14 @@ matrix_Theta2 = zeros(nSubresultants_k1, nSubresultants_k2);
 matrix_GM_fx = zeros(nSubresultants_k1, nSubresultants_k2);
 matrix_GM_gx = zeros(nSubresultants_k1, nSubresultants_k2);
 
+arr_Sk1k2 = cell(nSubresultants_k1, nSubresultants_k2);
 arr_R1 = cell(nSubresultants_k1, nSubresultants_k2);
 
 
 % For every row in the matrix
-for i1 = 1:1:nSubresultants_k1
+for i1 = 1 : 1 : nSubresultants_k1
     
-    for i2 = 1:1:nSubresultants_k2
+    for i2 = 1 : 1 : nSubresultants_k2
         
         k1 = lowerLimit_k1 + (i1-1);
         k2 = lowerLimit_k2 + (i2-1);
@@ -89,16 +90,9 @@ for i1 = 1:1:nSubresultants_k1
         gww_matrix = GetWithThetas(gxy_matrix_n, th1, th2);
         
         % Build the Sylvester subresultant matrix S_{k1,k2}(f,g)
-        Sk1k2 = BuildSubresultant_Bivariate_2Polys(fww_matrix, alpha.*gww_matrix, k1, k2);
+        arr_Sk1k2{i1,i2} = BuildSubresultant_Bivariate_2Polys(fww_matrix, alpha.*gww_matrix, k1, k2);
         
-        % Get the singular values
-        arr_SingularValues{i1, i2} = svd(Sk1k2);
-        
-        % Get QR decomposition
-        [~,R] = qr(Sk1k2);
-        [~,c] = size(R);
-        arr_R1{i1, i2} = R(1:c,1:c);
-        
+              
         
         % Store the optimal alpha
         matrix_Alpha(i1, i2) = alpha;
@@ -118,33 +112,7 @@ for i1 = 1:1:nSubresultants_k1
     end
 end
 
-% if (SETTINGS.PLOT_GRAPHS)
-%     
-%     x_vec = lowerLimit_k1:1:upperLimit_k1;
-%     y_vec = lowerLimit_k2:1:upperLimit_k2;
-%     
-%     [X,Y] = meshgrid(x_vec,y_vec);
-%     
-%     figure_name = sprintf('Geometric Mean of f(x) %s', SETTINGS.SYLVESTER_BUILD_METHOD);
-%     figure('name',figure_name)
-%     hold on
-%     mesh(X,Y,log10(matrix_GM_fx)');
-%     hold off
-%     
-%     figure_name = sprintf('Geometric Mean of g(x) in %s', SETTINGS.SYLVESTER_BUILD_METHOD);
-%     figure('name', figure_name)
-%     hold on
-%     mesh(X,Y,log10(matrix_GM_gx)');
-%     hold off
-%     
-%     figure_name = sprintf('Optimal values of alpha, th2 and th2 in %s', SETTINGS.SYLVESTER_BUILD_METHOD);
-%     figure('name',figure_name)
-%     hold on
-%     %mesh(X, Y, log10(matrix_Alpha)');
-%     mesh(X, Y, log10(matrix_Theta1)');
-%     mesh(X, Y, log10(matrix_Theta2)');
-%     hold off
-% end
+
 
 
 
@@ -157,6 +125,7 @@ end
 switch SETTINGS.RANK_REVEALING_METRIC
     case 'R1 Row Norms'
         
+     
         % Initialise matrices to store max and minimum row norms
         arr_R1_RowNorms = cell(nSubresultants_k1, nSubresultants_k2);
         mat_MaxRowNorm = zeros(nSubresultants_k1, nSubresultants_k2);
@@ -167,6 +136,10 @@ switch SETTINGS.RANK_REVEALING_METRIC
         for i1 = 1:1:nSubresultants_k1
             
             for i2 = 1:1:nSubresultants_k2
+                
+                [~,R] = qr(arr_Sk1k2{i1,i2});
+                [~,c] = size(R);
+                arr_R1{i1, i2} = R(1:c,1:c);
                 
                 
                 arr_R1_RowNorms{i1, i2} = sqrt(sum(arr_R1{i1, i2}.^2,2))./norm(arr_R1{i1, i2});
@@ -200,6 +173,10 @@ switch SETTINGS.RANK_REVEALING_METRIC
             
             for i2 = 1:1:nSubresultants_k2
                 
+                [~,R] = qr(arr_Sk1k2{i1,i2});
+                [~,c] = size(R);
+                arr_R1{i1, i2} = R(1:c,1:c);
+                
                 mat_MaxDiagonal_R1(i1,i2) = max(abs(diag(arr_R1{i1,i2})));
                 mat_MinDiagonal_R1(i1,i2) = min(abs(diag(arr_R1{i1,i2})));
                 
@@ -227,6 +204,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
             
             for i2 = 1:1:nSubresultants_k2
                 
+                % Get the singular values
+                arr_SingularValues{i1, i2} = svd(arr_Sk1k2{i1,i2});
                 
                 % k1 = lowerLimit_k1 + (i1 - 1)
                 % k2 = lowerLimit_k2 + (i2 - 1)

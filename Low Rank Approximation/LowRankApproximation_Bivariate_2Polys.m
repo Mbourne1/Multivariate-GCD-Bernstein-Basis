@@ -42,7 +42,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         
         
         % Apply SNTLN improvements
-        [ fxy_lr,gxy_lr,uxy_lr,vxy_lr,alpha_lr,th1_lr,th2_lr] = ...
+        [ fxy_lr, gxy_lr, uxy_lr, vxy_lr, alpha_lr, th1_lr, th2_lr] = ...
             SNTLN(fxy, gxy, alpha, th1, th2, k1, k2, idx_col);
         
        
@@ -55,9 +55,6 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         % Multiply the rows of fxy_matrix by theta1, and multiply the cols of
         % fxy_matrix by theta2.
         fww = GetWithThetas(fxy, th1, th2);
-
-        % Multiply the rows of gxy_matrix by theta1, and multiply the cols of
-        % gxy_matrix by theta2.
         a_gww = alpha .* GetWithThetas(gxy, th1, th2);
         
         % Perform STLN Computation.
@@ -67,6 +64,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         fxy_lr = GetWithoutThetas(fww_lr, th1,th2);
         gxy_lr = GetWithoutThetas(a_gww_lr, th1, th2) ./ alpha;
         
+        % Get u(x,y) and v(x,y)
         uxy_lr = GetWithoutThetas(uww_lr, th1, th2);
         vxy_lr = GetWithoutThetas(vww_lr, th1, th2);
         

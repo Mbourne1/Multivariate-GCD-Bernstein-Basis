@@ -84,7 +84,7 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         % Get u(x,y) and v(x,y) as a matrix of coefficients
         uxy = GetAsMatrix(v_uxy, m1-t1, m2-t2);
         vxy = GetAsMatrix(v_vxy, n1-t1, n2-t2);
-        vxy = GetWithoutBinomails_Bivariate(vxy);
+        vxy = GetWithoutBinomials_Bivariate(vxy);
         uxy = GetWithoutBinomials_Bivariate(uxy);
         
     case 'DTQ'

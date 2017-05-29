@@ -114,7 +114,7 @@ fww = GetWithThetas(fxy, th1, th2);
 gww = GetWithThetas(gxy, th1, th2);
 
 % % Form the Coefficient Matrix T = [C(f)|C(g)] such that DTQ * x = [col]
-DTQ_fg = BuildDTQ(fww, alpha.*gww, k1, k2);
+DTQ_fg = BuildDTQ_Bivariate_2Polys(fww, alpha.*gww, k1, k2);
 
 % Get partial derivative of f(\omega_{1},\omega_{2}) with respect to \alpha
 fww_wrt_alpha            = zeros(m1+1, m2+1);
@@ -135,16 +135,16 @@ fww_wrt_th2 = Differentiate_wrt_th2(fww, th2(ite));
 gww_wrt_th2 = Differentiate_wrt_th2(gww, th2(ite));
 
 % Build the derivative of T(f,g) with respect to alpha
-DTQ_alpha = BuildDTQ(fww_wrt_alpha, alpha_gww_wrt_alpha, k1, k2);
+DTQ_alpha = BuildDTQ_Bivariate_2Polys(fww_wrt_alpha, alpha_gww_wrt_alpha, k1, k2);
 
 % Calculate the derivative of T(f,g) with respect to theta_{1}
-DTQ_wrt_th1 = BuildDTQ(fww_wrt_th1, alpha(ite).*gww_wrt_th1, k1, k2);
+DTQ_wrt_th1 = BuildDTQ_Bivariate_2Polys(fww_wrt_th1, alpha(ite).*gww_wrt_th1, k1, k2);
 
 % Calcualte the derivative of T(f,g) with respect to theta_2
-DTQ_wrt_th2 = BuildDTQ(fww_wrt_th2, alpha(ite).*gww_wrt_th2, k1, k2);
+DTQ_wrt_th2 = BuildDTQ_Bivariate_2Polys(fww_wrt_th2, alpha(ite).*gww_wrt_th2, k1, k2);
 
 
-%%
+%
 % Initialise the vector z of structured perturbations
 % if we are working with strictly the roots problem, the number of entries
 % in z can be reduced.
@@ -153,17 +153,17 @@ nRows_Sylvester_matrix = (m1 + n1 - k1 + 1) * (m2 + n2 - k2 + 1);
 
 zk = zeros(nCoefficients_fg , 1);
 
-%%
+%
 % Initilaise the derivative of N wrt alpha.
-DNQ_wrt_alpha   = zeros(nRows_Sylvester_matrix, nColumns_Tf + nColumns_Tg);
+DNQ_wrt_alpha = zeros(nRows_Sylvester_matrix, nColumns_Tf + nColumns_Tg);
 
 % Initilaise the derivative of N wrt theta_1.
-DNQ_wrt_th1   = zeros(nRows_Sylvester_matrix, nColumns_Tf + nColumns_Tg);
+DNQ_wrt_th1 = zeros(nRows_Sylvester_matrix, nColumns_Tf + nColumns_Tg);
 
 % Initialise the derivative of N wrt theta 2
-DNQ_wrt_th2   = zeros(nRows_Sylvester_matrix, nColumns_Tf + nColumns_Tg);
+DNQ_wrt_th2 = zeros(nRows_Sylvester_matrix, nColumns_Tf + nColumns_Tg);
 
-%%
+%
 % Initialise the derivative of h
 % Calculate the derivatives wrt alpha and theta of the column of DNQ
 % that is moved to the right hand side.
@@ -182,14 +182,14 @@ Ak_fg(:,idx_col) = [];
 DPG = BuildDPG_SNTLN(m1, m2, n1, n2, th1(ite), th2(ite), alpha(ite), k1, k2, idx_col);
 
 
-%%
+%
 % Calculate the derivatives wrt alpha and theta of the removed column.
 ck_wrt_alpha = DTQ_alpha * e;
 ck_wrt_th1 = DTQ_wrt_th1 * e;
 ck_wrt_th2 = DTQ_wrt_th2 * e;
 
 
-%%
+%
 % Perform QR decomposition of Ak to obtain the solution x
 xk = SolveAx_b(Ak_fg, ck);
 
@@ -219,16 +219,16 @@ nEntries = nCoefficients_fxy...
 E = eye(nEntries);
 
 % Create the matrix D(T+N)Q, initially N is empty so this is the same as T.
-DTNQ = BuildDTQ(fww, alpha(ite).*gww, k1, k2);
+DTNQ = BuildDTQ_Bivariate_2Polys(fww, alpha(ite).*gww, k1, k2);
 
 % Create The matrix (T+N) with respect to alpha
-DTNQ_wrt_alpha = BuildDTQ(fww_wrt_alpha, alpha_gww_wrt_alpha, k1, k2);
+DTNQ_wrt_alpha = BuildDTQ_Bivariate_2Polys(fww_wrt_alpha, alpha_gww_wrt_alpha, k1, k2);
 
 % Create The matrix (T+N) with respect to theta1
-DTNQ_wrt_theta1 = BuildDTQ(fww_wrt_th1, alpha(ite).*gww_wrt_th1, k1, k2);
+DTNQ_wrt_theta1 = BuildDTQ_Bivariate_2Polys(fww_wrt_th1, alpha(ite).*gww_wrt_th1, k1, k2);
 
 % Create The matrix (T+N) with respect to theta2
-DTNQ_wrt_theta2 = BuildDTQ(fww_wrt_th2, alpha(ite).*gww_wrt_th2, k1, k2);
+DTNQ_wrt_theta2 = BuildDTQ_Bivariate_2Polys(fww_wrt_th2, alpha(ite).*gww_wrt_th2, k1, k2);
 
 % %
 % Create the matrix C for input into iteration
@@ -334,7 +334,7 @@ while (condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     gww = GetWithThetas(gxy, th1(ite), th2(ite));
         
     % Construct the kth Sylvester subresultant matrix DTQ.
-    DTQ_fg = BuildDTQ(fww, alpha(ite).*gww,k1,k2);
+    DTQ_fg = BuildDTQ_Bivariate_2Polys(fww, alpha(ite).*gww,k1,k2);
     
     % %
     % Get partial derivatives
@@ -359,13 +359,13 @@ while (condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     gww_wrt_th2 = Differentiate_wrt_th2(gww, th2(ite));
     
     % Calculate the Partial derivative of T with respect to alpha.
-    DTQ_wrt_alpha = BuildDTQ(fww_wrt_alpha, alpha_gww_wrt_alpha, k1, k2);
+    DTQ_wrt_alpha = BuildDTQ_Bivariate_2Polys(fww_wrt_alpha, alpha_gww_wrt_alpha, k1, k2);
         
     % Calculate the partial derivative of DTQ with respect to theta_{1}
-    DTQ_wrt_th1 = BuildDTQ(fww_wrt_th1, alpha(ite).*gww_wrt_th1, k1, k2);
+    DTQ_wrt_th1 = BuildDTQ_Bivariate_2Polys(fww_wrt_th1, alpha(ite).*gww_wrt_th1, k1, k2);
     
     % Calculate the partial derivative of DTQ with respect to theta_{2}
-    DTQ_wrt_th2 = BuildDTQ(fww_wrt_th2, alpha(ite).*gww_wrt_th2, k1, k2);
+    DTQ_wrt_th2 = BuildDTQ_Bivariate_2Polys(fww_wrt_th2, alpha(ite).*gww_wrt_th2, k1, k2);
     
     % Calculate the column c_{k} of DTQ that is moved to the right hand side
     ck = DTQ_fg*e;
@@ -405,16 +405,16 @@ while (condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     
     % Build the coefficient Matrix N = [T(z1) T(z2)], of structured perturbations, with
     % same structure as DTQ.
-    DNQ = BuildDTQ(z_fww, alpha(ite).*z_gww, k1, k2);
+    DNQ = BuildDTQ_Bivariate_2Polys(z_fww, alpha(ite).*z_gww, k1, k2);
     
     % Build the coefficient matrix N with respect to alpha
-    DNQ_wrt_alpha = BuildDTQ(zfw_wrt_alpha, alpha_zgw_wrt_alpha, k1, k2);
+    DNQ_wrt_alpha = BuildDTQ_Bivariate_2Polys(zfw_wrt_alpha, alpha_zgw_wrt_alpha, k1, k2);
     
     % Calculate the derivatives of DNQ with respect to theta
-    DNQ_wrt_th1 = BuildDTQ(zfw_wrt_th1, alpha(ite).*zgw_wrt_th1, k1, k2);
+    DNQ_wrt_th1 = BuildDTQ_Bivariate_2Polys(zfw_wrt_th1, alpha(ite).*zgw_wrt_th1, k1, k2);
     
     % Calculate the derivatives of DNQ with respect to theta
-    DNQ_wrt_th2 = BuildDTQ(zfw_wrt_th2, alpha(ite).*zgw_wrt_th2, k1, k2);
+    DNQ_wrt_th2 = BuildDTQ_Bivariate_2Polys(zfw_wrt_th2, alpha(ite).*zgw_wrt_th2, k1, k2);
         
     % Calculate the column of DNQ that is moved to the right hand side, which
     % has the same structure as c_{k} the column of S_{k} moved to the RHS
@@ -430,27 +430,27 @@ while (condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     h_th2 = DNQ_wrt_th2 * e;
     
     % Build the matrix (T+N)
-    DTNQ = BuildDTQ(...
+    DTNQ = BuildDTQ_Bivariate_2Polys(...
                     fww + z_fww,...
                     alpha(ite).*(gww + z_gww),...
                     k1, k2);
     
     % Calculate the paritial derivative of (T+N) with respect to
     % alpha
-    DTNQ_alpha = BuildDTQ(...
+    DTNQ_alpha = BuildDTQ_Bivariate_2Polys(...
                     fww_wrt_alpha + zfw_wrt_alpha,...
                     alpha_gww_wrt_alpha + alpha_zgw_wrt_alpha,...
                     k1, k2);
     
     
     % Calculate the paritial derivative of (T+N) with respect to theta1
-    DTNQ_th1 = BuildDTQ(...
+    DTNQ_th1 = BuildDTQ_Bivariate_2Polys(...
                     fww_wrt_th1 + zfw_wrt_th1,...
                     alpha(ite).*gww_wrt_th1 + zgw_wrt_th1,...
                     k1, k2);
     
     % Calculate the paritial derivative of (T+N) with respect to theta2
-    DTNQ_th2 = BuildDTQ(...
+    DTNQ_th2 = BuildDTQ_Bivariate_2Polys(...
                     fww_wrt_th2 + zfw_wrt_th2,...
                     alpha(ite).*gww_wrt_th2 + zgw_wrt_th2,...
                     k1, k2);
@@ -494,7 +494,7 @@ while (condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     condition(ite) = norm(res_vec) / norm(ek);
     
     % Update fnew - used in LSE Problem.
-    f = -(yy-start_point);
+    f = -(yy - start_point);
     
     
 end

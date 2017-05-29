@@ -78,7 +78,7 @@ fprintf('EXAMPLE NUMBER %s \n',ex_num)
 fprintf('EMIN : %s \n',emin)
 fprintf('EMAX : %s \n',emax)
 fprintf('MEAN METHOD : %s \n', mean_method)
-fprintf('PREPROCESSING : %s \n',bool_alpha_theta)
+fprintf('PREPROCESSING : %s \n',num2str(bool_alpha_theta))
 fprintf('LOW RANK METHOD : %s \n',low_rank_approx_method)
 fprintf('APF METHOD : %s \n', apf_method)
 fprintf('Sylvester Matrix Type : %s \n', sylvester_build_method);
@@ -178,7 +178,9 @@ function []= PrintToFile(m, n, t1, t2, myError)
 % Global settings
 global SETTINGS
 
-fullFileName = sprintf('Results/Results_o_gcd%s.txt',datetime('today'));
+v = datevec(now);
+
+fullFileName = sprintf('Results/Results_o_gcd_%s-%s-%s.txt',num2str(v(1)), num2str(v(2)), num2str(v(3)));
 
 % If file already exists append a line
 if exist(fullFileName, 'file')

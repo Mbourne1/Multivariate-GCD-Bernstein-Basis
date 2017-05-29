@@ -79,5 +79,8 @@ th_gww = diag(th_gww);
 
 
 % multiply by the alpha of g
-DYQ = [D*Y1*Q1*th_fww alpha.*D*Y2*Q2*th_gww];
+DYQ = [...
+        D*Y1*Q1*th_fww ...
+        alpha.*D*Y2*Q2*th_gww...
+    ];
 end

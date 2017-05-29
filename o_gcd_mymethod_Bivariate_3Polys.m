@@ -1,5 +1,5 @@
-function [fxy_o, gxy_o, hxy_o, dxy_o, uxy_o, vxy_o, wxy_o, t1, t2] = ...
-    o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2)
+function [fxy_o, gxy_o, hxy_o, dxy_o, uxy_o, vxy_o, wxy_o, t1, t2, rank_range] = ...
+    o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2, rank_range)
 % o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, t_limits)
 %
 % Given two input polynomials, calculate the GCD and its degree structure
@@ -16,6 +16,8 @@ function [fxy_o, gxy_o, hxy_o, dxy_o, uxy_o, vxy_o, wxy_o, t1, t2] = ...
 % limits_t1 : [(Int) (Int)] Limits on degree of GCD with respect to x
 % 
 % limits_t2 : [(Int) (Int)] Limits on degree of GCD with respect to y
+%
+% rank_range : [(Float) (Float)]
 %
 % % Outputs
 %
@@ -44,7 +46,7 @@ function [fxy_o, gxy_o, hxy_o, dxy_o, uxy_o, vxy_o, wxy_o, t1, t2] = ...
 % t2 :(Int) Degree of the GCD with respect to y
 
 %
-[t1, t2, GM_fx, GM_gx, GM_hx, alpha, beta, th1, th2] = GetGCDDegree_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2);
+[t1, t2, GM_fx, GM_gx, GM_hx, alpha, beta, th1, th2, rank_range] = GetGCDDegree_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2, rank_range);
 
 fprintf([mfilename ' : ' sprintf('Degree of GCD : t1 = %i, t2 = %i \n', t1, t2)])
 

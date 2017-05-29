@@ -15,6 +15,10 @@ arr_fxy{1} = fxy_matrix;
 vDeg_x_arr_fxy(ite,1) = m1;
 vDeg_y_arr_fxy(ite,1) = m2;
 
+
+% Initial rank range
+rank_range = [-16 0];
+
 % Whilst the most recently calculated GCD has a degree greater than
 % zero. ie is not a constant, perform a gcd calculation on it and its
 % derivative.
@@ -85,8 +89,9 @@ while vDeg_x_arr_fxy(ite,1) > 0 && vDeg_y_arr_fxy(ite,1) > 0
     limits_t1 = [lowerLimit_t1, upperLimit_t1];
     limits_t2 = [lowerLimit_t2, upperLimit_t2];
     
-    [fxy_o, gxy_o, hxy_o, dxy_o, uxy_o, vxy_o, wxy_o, t1, t2] = ...
-        o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2);
+    % Compute GCD
+    [fxy_o, gxy_o, hxy_o, dxy_o, uxy_o, vxy_o, wxy_o, t1, t2, rank_range] = ...
+        o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2, rank_range);
     
     %[arr_fxy{ite,1},~,arr_fxy{ite+1,1},arr_uxy{ite,1},arr_vxy{ite,1},t,t1,t2] = o_gcd_mymethod(arr_fxy{ite},gxy,m,n,);
     arr_fxy{ite, 1} = fxy_o;
@@ -103,9 +108,9 @@ while vDeg_x_arr_fxy(ite,1) > 0 && vDeg_y_arr_fxy(ite,1) > 0
     vNumDistinctRoots_x(ite, 1) = vDeg_x_arr_fxy(ite) - vDeg_x_arr_fxy(ite+1);
     vNumDistinctRoots_y(ite, 1) = vDeg_y_arr_fxy(ite) - vDeg_y_arr_fxy(ite+1);
     
-    fprintf([mfilename ' : ' sprintf('The degree of the GCD with respect to x is : %i \n', ite, vDeg_x_arr_fxy(ite+1))]);
-    fprintf([mfilename ' : ' sprintf('The degree of the GCD with respect to y is : %i \n', ite, vDeg_y_arr_fxy(ite+1))]);
-    
+    LineBreakLarge()
+    fprintf([mfilename ' : ' sprintf('The degree of the GCD with respect to x is : %i \n',  vDeg_x_arr_fxy(ite+1,1))]);
+    fprintf([mfilename ' : ' sprintf('The degree of the GCD with respect to y is : %i \n',  vDeg_y_arr_fxy(ite+1,1))]);
     LineBreakLarge()
     
     % Increment the iteration number

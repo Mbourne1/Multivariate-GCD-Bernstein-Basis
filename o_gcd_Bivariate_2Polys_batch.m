@@ -1,6 +1,7 @@
 function [] = o_gcd_Bivariate_2Polys_batch()
 
 ex_num_arr = {'1','2','3','4','5','6','7','8','9','10'};
+%ex_num_arr = {'1'};
 emin_arr = {1e-8,1e-10,1e-12};
 mean_method_arr = {'Geometric Mean Matlab Method','None'};
 bool_alpha_theta_arr = {true, false};
@@ -36,20 +37,21 @@ parfor i1 = 1:1:length(ex_num_arr)
                             
                             close all
                             clc
-                            
-                            filename = 'log_GCD_2Polys.txt';
+                            v = datevec(now);
+
+                            filename = sprintf('Results/log_GCD_2Polys_%s-%s-%s.txt',num2str(v(1)), num2str(v(2)), num2str(v(3)));
                             
                             try
                                 
                                 o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method);
                                 fileId = fopen(filename,'a')
-                                fprintf(fileId,'%s \n','success');
+                                fprintf(fileId,'%s, %s \n',datetime('now'),'success');
                                 fclose(fileId);
                                 
                             catch err
                                 
                                 fileId = fopen(filename,'a')
-                                fprintf(fileId,'%s \n\n\n\',getReport(err));
+                                fprintf(fileId,'%s, %s \n\n\n',datetime('now'),getReport(err));
                                 fclose(fileId);
                                 
                             end
