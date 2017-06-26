@@ -383,8 +383,8 @@ while (condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     
     % Get the vectors z_fx and z_gx as matrices, which match the shape of
     % f(x) and g(x).
-    z_fxy = GetAsMatrix(vec_z_fx, m1, m2);
-    z_gxy = GetAsMatrix(vec_z_gx, n1, n2);
+    z_fxy = GetAsMatrix_Version1(vec_z_fx, m1, m2);
+    z_gxy = GetAsMatrix_Version1(vec_z_gx, n1, n2);
     
     % Get matrices z_fw_mat and z_gw_mat, by multiplying rows by
     % theta_{1}^{i} and columns by theta_{2}^{j}
@@ -470,22 +470,22 @@ while (condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
        
     
     % Get residual as a vector
-    res_vec = (ck+hk) - DTNQ*M*xk ;
+    res_vec = (ck + hk) - DTNQ*M*xk ;
     
     % Create the matrix C. This is made up of five submatrices, HZ, Hx,
     % H_alpha and H_theta1 and H_theta2.
     
-    Hz          = DYG - DPG;
+    Hz = DYG - DPG;
     
-    Hx          = DTNQ*M;
+    Hx = DTNQ*M;
     
-    H_alpha     = DTNQ_alpha*M*xk - (ck_wrt_alpha + h_alpha);
+    H_alpha = DTNQ_alpha*M*xk - (ck_wrt_alpha + h_alpha);
     
-    H_th1    = DTNQ_th1*M*xk - (ck_wrt_th1 + h_th1);
+    H_th1 = DTNQ_th1*M*xk - (ck_wrt_th1 + h_th1);
     
-    H_th2    = DTNQ_th2*M*xk - (ck_wrt_th2 + h_th2);
+    H_th2 = DTNQ_th2*M*xk - (ck_wrt_th2 + h_th2);
     
-    C = [Hz,Hx,H_alpha,H_th1, H_th2];  % the matrix C
+    C = [Hz, Hx, H_alpha, H_th1, H_th2];  % the matrix C
     
     % Calculate the new right hand vector
     ek = ck + hk;
@@ -517,10 +517,10 @@ PlotSNTLN();
 
 % get the vector zk
 zPert_f_vec = zk(1 : nCoefficients_fxy);
-zPert_f_mat = GetAsMatrix(zPert_f_vec,m1,m2);
+zPert_f_mat = GetAsMatrix_Version1(zPert_f_vec,m1,m2);
 
 zPert_g_vec = zk(nCoefficients_fxy+1 : end);
-zPert_g_mat = GetAsMatrix(zPert_g_vec, n1, n2);
+zPert_g_mat = GetAsMatrix_Version1(zPert_g_vec, n1, n2);
 
 % Get f(x,y) low rank
 fxy_lr = fxy + zPert_f_mat;
@@ -539,8 +539,8 @@ v_vww = x(1:nCoefficients_vxy);
 v_uww = -1.*x(nCoefficients_vxy+1:end);
 
 % Get v(\omega_{1},\omega_{2}) and u(\omega_{1},\omega_{2})
-vww = GetAsMatrix(v_vww, n1-k1, n2-k2);
-uww = GetAsMatrix(v_uww, m1-k1, m2-k2);
+vww = GetAsMatrix_Version1(v_vww, n1-k1, n2-k2);
+uww = GetAsMatrix_Version1(v_uww, m1-k1, m2-k2);
 
 % Get v(x,y) and u(x,y)
 vxy_lr = GetWithoutThetas(vww, th1(ite), th2(ite));

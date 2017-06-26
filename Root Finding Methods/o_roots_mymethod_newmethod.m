@@ -12,8 +12,8 @@ arr_fxy{1} = fxy_matrix;
 
 % Get the degree of f(x,y) with respect to x and y
 [m1, m2] = GetDegree_Bivariate(arr_fxy{ite});
-vDeg_x_arr_fxy(ite,1) = m1;
-vDeg_y_arr_fxy(ite,1) = m2;
+vDegree_x_arr_fxy(ite,1) = m1;
+vDegree_y_arr_fxy(ite,1) = m2;
 
 
 % Initial rank range
@@ -22,10 +22,10 @@ rank_range = [-16 0];
 % Whilst the most recently calculated GCD has a degree greater than
 % zero. ie is not a constant, perform a gcd calculation on it and its
 % derivative.
-while vDeg_x_arr_fxy(ite,1) > 0 && vDeg_y_arr_fxy(ite,1) > 0
+while vDegree_x_arr_fxy(ite,1) > 0 && vDegree_y_arr_fxy(ite,1) > 0
     
     
-    if (vDeg_x_arr_fxy(ite,1) == 1)
+    if (vDegree_x_arr_fxy(ite,1) == 1)
         % The derivative with respect to x is a constant
         
         % The GCD is a constant
@@ -36,8 +36,8 @@ while vDeg_x_arr_fxy(ite,1) > 0 && vDeg_y_arr_fxy(ite,1) > 0
         
         
         % Get degree structure of d(x,y)
-        vDeg_x_arr_fxy(ite+1,1) = vDeg_x_arr_fxy(ite)-1;
-        vDeg_y_arr_fxy(ite+1,1) = vDeg_y_arr_fxy(ite);
+        vDegree_x_arr_fxy(ite+1,1) = vDegree_x_arr_fxy(ite)-1;
+        vDegree_y_arr_fxy(ite+1,1) = vDegree_y_arr_fxy(ite);
         
         break;
     end
@@ -62,10 +62,10 @@ while vDeg_x_arr_fxy(ite,1) > 0 && vDeg_y_arr_fxy(ite,1) > 0
     % Get the upper and lower limit of the degree of the GCD(f, f')
     if ite > 1
         
-        lowerLimit_t1 = vDeg_x_arr_fxy(ite) - vNumDistinctRoots_x(ite-1);
+        lowerLimit_t1 = vDegree_x_arr_fxy(ite) - vNumberDistinctRoots_x(ite-1);
         upperLimit_t1 = min([m1, n1, o1]);
         
-        lowerLimit_t2 = vDeg_y_arr_fxy(ite) - vNumDistinctRoots_y(ite-1);
+        lowerLimit_t2 = vDegree_y_arr_fxy(ite) - vNumberDistinctRoots_y(ite-1);
         upperLimit_t2 = min([m2, n2, o2]);
         
     else
@@ -101,16 +101,16 @@ while vDeg_x_arr_fxy(ite,1) > 0 && vDeg_y_arr_fxy(ite,1) > 0
     
     
     % Get total structure of d(x,y)
-    vDeg_x_arr_fxy(ite+1, 1) = t1;
-    vDeg_y_arr_fxy(ite+1, 1) = t2;
+    vDegree_x_arr_fxy(ite+1, 1) = t1;
+    vDegree_y_arr_fxy(ite+1, 1) = t2;
     
     % Get number of distinct roots of f(ite)
-    vNumDistinctRoots_x(ite, 1) = vDeg_x_arr_fxy(ite) - vDeg_x_arr_fxy(ite+1);
-    vNumDistinctRoots_y(ite, 1) = vDeg_y_arr_fxy(ite) - vDeg_y_arr_fxy(ite+1);
+    vNumberDistinctRoots_x(ite, 1) = vDegree_x_arr_fxy(ite) - vDegree_x_arr_fxy(ite+1);
+    vNumberDistinctRoots_y(ite, 1) = vDegree_y_arr_fxy(ite) - vDegree_y_arr_fxy(ite+1);
     
     LineBreakLarge()
-    fprintf([mfilename ' : ' sprintf('The degree of the GCD with respect to x is : %i \n',  vDeg_x_arr_fxy(ite+1,1))]);
-    fprintf([mfilename ' : ' sprintf('The degree of the GCD with respect to y is : %i \n',  vDeg_y_arr_fxy(ite+1,1))]);
+    fprintf([mfilename ' : ' sprintf('The degree of the GCD with respect to x is : %i \n',  vDegree_x_arr_fxy(ite+1,1))]);
+    fprintf([mfilename ' : ' sprintf('The degree of the GCD with respect to y is : %i \n',  vDegree_y_arr_fxy(ite+1,1))]);
     LineBreakLarge()
     
     % Increment the iteration number
@@ -171,8 +171,8 @@ switch SETTINGS.HXY_METHOD
         
 end
 
-vDeg_x_hxy = vDeg_x_arr_fxy(1:end-1) - vDeg_x_arr_fxy(2:end);
-vDeg_y_hxy = vDeg_y_arr_fxy(1:end-1) - vDeg_y_arr_fxy(2:end);
+vDegree_x_hxy = vDegree_x_arr_fxy(1 : end - 1) - vDegree_x_arr_fxy(2 : end);
+vDegree_y_hxy = vDegree_y_arr_fxy(1 : end - 1) - vDegree_y_arr_fxy(2 : end);
 
 
 
@@ -208,16 +208,16 @@ if nEntries_hx > 1
             
     end
     
-    vDeg_x_wxy = vDeg_x_hxy(1:end-1) - vDeg_x_hxy(2:end);
-    vDeg_y_wxy = vDeg_y_hxy(1:end-1) - vDeg_y_hxy(2:end);
+    vDegree_x_wxy = vDegree_x_hxy(1:end-1) - vDegree_x_hxy(2:end);
+    vDegree_y_wxy = vDegree_y_hxy(1:end-1) - vDegree_y_hxy(2:end);
   
     
     % Set the final w_{x}(i+1) to be equal to h_{x}(i+1)
     arr_wxy{end+1,1} = arr_hxy{end};
     
     % Set the final degree structure
-    vDeg_x_wxy(end) = vDeg_x_hxy(end);
-    vDeg_y_wxy(end) = vDeg_y_hxy(end);
+    vDegree_x_wxy(end) = vDegree_x_hxy(end);
+    vDegree_y_wxy(end) = vDegree_y_hxy(end);
   
     
 else
@@ -226,8 +226,8 @@ else
     arr_wxy{1} = arr_hxy{1};
     
     % Get the degree structure of h_{x,i}
-    vDeg_x_wxy(1) = vDeg_x_hxy(1);
-    vDeg_y_wxy(1) = vDeg_y_hxy(1);
+    vDegree_x_wxy(1) = vDegree_x_hxy(1);
+    vDegree_y_wxy(1) = vDegree_y_hxy(1);
   
 end
 

@@ -1,4 +1,6 @@
-function [] = SetGlobalVariables(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method)
+function [] = SetGlobalVariables_GCD(ex_num, emin, emax, mean_method, ...
+    bool_alpha_theta, low_rank_approx_method, apf_method, ...
+    sylvester_build_method, factorisation_build_method, rank_revealing_metric )
 %
 % % Inputs
 %
@@ -15,6 +17,14 @@ function [] = SetGlobalVariables(ex_num, emin, emax, mean_method, bool_alpha_the
 % apf_method
 %
 % sylvester_build_method
+%
+% factorisation_build_method
+%
+% rank_revealing_metric : (String)
+%   * R1 Row Norms
+%   * R1 Row Diagonals
+%   * Minimum Singular Values
+%   * Residuals
 
 global SETTINGS
 
@@ -26,10 +36,9 @@ global SETTINGS
 % Example Number
 SETTINGS.EX_NUM = ex_num;
 
-% bool_plotgraphs (true/false)
-%       true - plot graphs
-%       false - exclude plotting
-
+% bool_plotgraphs (Boolean)
+%   * true : Plot graphs
+%   * false : Exclude plotting
 SETTINGS.PLOT_GRAPHS = true;
 
 
@@ -65,11 +74,11 @@ SETTINGS.THRESHOLD = 1;
 SETTINGS.THRESHOLD_RANK = 1;
 
 % Metric used to compute the degree of the GCD
-% R1 Row Norms
-% R1 Row Diagonals
-% Singular Values
-% Residuals
-SETTINGS.RANK_REVEALING_METRIC = 'Singular Values';
+%   * R1 Row Norms
+%   * R1 Row Diagonals
+%   * Minimum Singular Values
+%   * Residuals
+SETTINGS.RANK_REVEALING_METRIC = rank_revealing_metric;
 
 %--------------------------------------------------------------------------
 %
@@ -79,20 +88,17 @@ SETTINGS.RANK_REVEALING_METRIC = 'Singular Values';
 SETTINGS.MEAN_METHOD = mean_method;
 
 % bool_alpha_theta true/false
-%       true - Include the three preprocessing operations.
-%       false - Exclude the three preprocessing operations.
+%   * true :  Include the three preprocessing operations.
+%   * false :  Exclude the three preprocessing operations.
 
 SETTINGS.BOOL_ALPHA_THETA = bool_alpha_theta;
 
 
 %-------------------------------------------------------------------------
 %
-%       Noise Settings
+% Noise Settings
 %
 %
-
-
-
 % seed - SEED Number for noise generation
 SETTINGS.SEED = 1024;
 
@@ -101,9 +107,7 @@ SETTINGS.EMIN = emin;
 SETTINGS.EMAX = emax;
 %--------------------------------------------------------------------------
 %
-%       Low Rank Approx Settings
-%
-%
+% Low Rank Approx Settings
 %
 
 % LOW_RANK_APPROXIMATION_METHOD 
@@ -126,18 +130,5 @@ SETTINGS.MAX_ITERATIONS_SNTLN = 50;
 SETTINGS.APF_METHOD = apf_method;
 
 %-------------------------------------------------------------------------
-%
-% 
-
-%------------------------------------------------------------------
-%
-%
-% DECONVOLUTION METHOD
-
-% Separate
-% Batch
-SETTINGS.DECONVOLUTION_METHOD = 'Separate';
-
-
 
 end

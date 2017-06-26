@@ -1,5 +1,6 @@
-function [] = o_roots_Bivariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method)
+function [] = o_roots_Bivariate(ex_num, emin, emax, mean_method,...
+    bool_alpha_theta, low_rank_approx_method, apf_method, ...
+    sylvester_build_method, factorisation_build_method, rank_revealing_metric)
 % o_roots_Bivariate(ex_num, el, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method)
 %
 % Given an example number and set of parameters, obtain the roots of the
@@ -41,6 +42,9 @@ function [] = o_roots_Bivariate(ex_num, emin, emax, mean_method, bool_alpha_thet
 %       'HC'
 %       'CG'
 %
+% rank_revealing_metric (String)
+%
+%
 % % Examples
 %
 % >> o_roots_Bivariate('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'Standard APF', 'DTQ', 'HCG')
@@ -53,9 +57,9 @@ folder = fileparts(which(mfilename));
 addpath(genpath(folder));
 
 % Set the global variables
-SetGlobalVariables(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
+SetGlobalVariables_Roots(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
     low_rank_approx_method, apf_method, sylvester_build_method, ...
-    factorisation_build_method)
+    factorisation_build_method, rank_revealing_metric)
 
 % Given the example number, return the coefficients of the bivariate
 % polynomial f(x,y)

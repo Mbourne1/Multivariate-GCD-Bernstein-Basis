@@ -21,7 +21,7 @@ i_matrix = ones(m+1, n+1);
 di_mat = diag(0 : 1 : m);
 i_matrix = di_mat * i_matrix ;
 
-i_vec = GetAsVector(i_matrix);
+i_vec = GetAsVector_Version1(i_matrix);
 
 % Build the matrix of j coefficients
 j_matrix = ones(m+1, n+1);
@@ -29,7 +29,7 @@ j_matrix = ones(m+1, n+1);
 di_mat = diag(0 : 1 : n);
 j_matrix = j_matrix * di_mat;
 
-j_vec = GetAsVector(j_matrix);
+j_vec = GetAsVector_Version1(j_matrix);
 
 i = i_vec(c);
 j = j_vec(c);

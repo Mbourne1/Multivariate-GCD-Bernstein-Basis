@@ -77,6 +77,8 @@ for i1 = 1 : 1 : nSubresultants_k1
         % Preprocessing
         [GM_fx, GM_gx, alpha, th1, th2] = Preprocess_Bivariate_2Polys(fxy, gxy, k1, k2);
         
+        
+        
         % Divide f(x) by geometric mean
         fxy_matrix_n = fxy ./ GM_fx;
         
@@ -194,7 +196,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
         % Set metric
         metric = mat_MinDiagonal_R1 ./ mat_MaxDiagonal_R1;
         
-    case 'Singular Values'
+    case 'Minimum Singular Values'
         
         % Initialise matrix to store minimum singular values of SVD of each
         % S_{k1,k2}

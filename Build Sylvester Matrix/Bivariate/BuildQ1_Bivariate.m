@@ -24,7 +24,7 @@ Q_mat = GetWithBinomials_Bivariate(ones(n1_k1+1,n2_k2+1));
 
 
 % Get the matrix Q as a vector
-Q_vec = GetAsVector(Q_mat);
+Q_vec = GetAsVector_Version1(Q_mat);
 
 
 % Diagonalise Q

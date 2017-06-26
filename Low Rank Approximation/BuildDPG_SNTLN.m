@@ -77,11 +77,11 @@ Q_m = BuildQ1_Bivariate(m1, m2);
 Q_n = BuildQ1_Bivariate(n1, n2);
 
 % Get the thetas corresponding to coefficients of f(x,y)
-th_f = GetAsVector(GetWithThetas(ones(m1+1,m2+1), th1, th2));
+th_f = GetAsVector_Version1(GetWithThetas(ones(m1 + 1, m2 + 1), th1, th2));
 th_f = diag(th_f);
 
 % Get the thetas corresponding to coefficients of g(x,y)
-th_g = GetAsVector(GetWithThetas(ones(n1+1,n2+1), th1, th2));
+th_g = GetAsVector_Version1(GetWithThetas(ones(n1 + 1, n2 + 1), th1, th2));
 th_g = diag(th_g);
 
 % Construct the matrix P

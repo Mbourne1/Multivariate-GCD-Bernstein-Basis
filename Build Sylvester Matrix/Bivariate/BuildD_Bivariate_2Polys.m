@@ -22,7 +22,7 @@ D_mat = GetWithBinomials_Bivariate(ones(m1+n1_k1+1,m2+n2_k2+1));
 
 
 % Get the D_matrix as a vector
-D_vec = GetAsVector(1./D_mat);
+D_vec = GetAsVector_Version1(1./D_mat);
 
 
 % Form a diagonal matrix from the vector D_vec

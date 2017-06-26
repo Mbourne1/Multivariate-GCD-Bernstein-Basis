@@ -125,7 +125,11 @@ while vDegree_y_fxy(ite) > 0
     
 end
 
-%% Obtain the series h_{y}{i}
+
+
+
+
+% % Obtain the series h_{y}{i}
 
 % Get number of elements in the series of polynomials q_{i}
 [~,nEntries_fxy] = size(arr_fxy);
@@ -156,7 +160,14 @@ end
 % Get the number of entires in the array h_{y}
 [~, nEntries_hxy] = size(arr_hxy);
 
-%% obtain the series w_{i}(y) by series of deconvolutions on h_{y}{i}
+
+
+
+
+
+
+
+% % obtain the series w_{i}(y) by series of deconvolutions on h_{y}{i}
 
 nEntries_wxy = nEntries_hxy -1 ;
 

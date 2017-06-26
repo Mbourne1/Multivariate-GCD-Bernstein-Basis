@@ -74,37 +74,45 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
     case 'T'
         
         % Get u(x,y) and v(x,y) as a matrix of coefficients
-        uxy = GetAsMatrix(v_uxy, m1-t1, m2-t2);
-        vxy = GetAsMatrix(v_vxy, n1-t1, n2-t2);
+        uxy = GetAsMatrix(v_uxy, m1 - t1, m2 - t2);
+        vxy = GetAsMatrix(v_vxy, n1 - t1, n2 - t2);
         vxy = GetWithoutBinomials_Bivariate(vxy);
         uxy = GetWithoutBinomials_Bivariate(uxy);
         
     case 'DT'
 
         % Get u(x,y) and v(x,y) as a matrix of coefficients
-        uxy = GetAsMatrix(v_uxy, m1-t1, m2-t2);
-        vxy = GetAsMatrix(v_vxy, n1-t1, n2-t2);
+        uxy = GetAsMatrix(v_uxy, m1 - t1, m2 - t2);
+        vxy = GetAsMatrix(v_vxy, n1 - t1, n2 - t2);
         vxy = GetWithoutBinomials_Bivariate(vxy);
         uxy = GetWithoutBinomials_Bivariate(uxy);
         
     case 'DTQ'
 
         % Get u(x,y) and v(x,y) as a matrix of coefficients
-        uxy = GetAsMatrix(v_uxy, m1-t1, m2-t2);
-        vxy = GetAsMatrix(v_vxy, n1-t1, n2-t2);
+        uxy = GetAsMatrix(v_uxy, m1 - t1, m2 - t2);
+        vxy = GetAsMatrix(v_vxy, n1 - t1, n2 - t2);
         
     case 'DTQ Version 2'
         
         % Get u(x,y) as a matrix of coefficients
-        uxy = GetAsMatrix_Version2(v_uxy, m1-t1, m2-t2);
+        uxy = GetAsMatrix_Version2(v_uxy, m1 - t1, m2 - t2);
         
         % Get v(x,y) as a matrix of coefficients
-        vxy = GetAsMatrix_Version2(v_vxy, n1-t1, n2-t2);
+        vxy = GetAsMatrix_Version2(v_vxy, n1 - t1, n2 - t2);
         
         
     case 'TQ'
         
+        % Get u(x,y) and v(x,y) as a matrix of coefficients
+        uxy = GetAsMatrix(v_uxy, m1 - t1, m2 - t2);
+        vxy = GetAsMatrix(v_vxy, n1 - t1, n2 - t2);
         
+    case 'DTQ Denominator Removed'
+        
+        % Get u(x,y) and v(x,y) as a matrix of coefficients
+        uxy = GetAsMatrix(v_uxy, m1 - t1, m2 - t2);
+        vxy = GetAsMatrix(v_vxy, n1 - t1, n2 - t2);
         
     otherwise
         error('err')

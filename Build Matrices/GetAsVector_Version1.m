@@ -1,4 +1,4 @@
-function f_vec = GetAsVector_Version1(fxy,m1,m2);
+function f_vec = GetAsVector_Version1(fxy, m1, m2);
 
 % Get the degree of f(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);

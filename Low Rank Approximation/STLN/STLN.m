@@ -1,4 +1,4 @@
-function [ fxy_lr,gxy_lr,uxy_lr,vxy_lr] = STLN(fxy, gxy, k1, k2, idx_col)
+function [ fxy_lr, gxy_lr, uxy_lr, vxy_lr] = STLN(fxy, gxy, k1, k2, idx_col)
 % Obtain the low rank approximation by method of SNTLN (Structured
 % Non-Linear Total Least Norm) of the Sylvester matrix S(f,g).
 %

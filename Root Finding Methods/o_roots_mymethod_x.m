@@ -1,7 +1,7 @@
 function [arr_wxy, vDegree_x_wxy, vDegree_y_wxy] = o_roots_mymethod_x(fxy)
 % o_roots_mymethod_x(fxy, M)
 %
-% Inputs
+% % Inputs
 %
 % fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
@@ -112,7 +112,11 @@ while vDegree_x_fxy(ite) > 0
 end
 
 
-%% Obtain the series h_{x}{i} by series of deconvolutions on q_{x}{i}
+
+
+
+
+% % Obtain the series h_{x}{i} by series of deconvolutions on q_{x}{i}
 
 % Get number of elements in the series of polynomials q_{i}
 [~,nEntries_qxy] = size(arr_fxy);
@@ -146,7 +150,15 @@ end
 % Get the number of entries in the array of h_{x}.
 [~, nEntries_hxy] = size(arr_hxy);
 
-%% Obtain the series w_{x}{i} by series of deconvolutions on h_{x}{i}
+
+
+
+
+
+
+
+
+% % Obtain the series w_{x}{i} by series of deconvolutions on h_{x}{i}
 
 % Pre assign the CellArray w_{x}
 nEntries_wxy = nEntries_hxy - 1;

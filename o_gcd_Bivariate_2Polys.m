@@ -1,4 +1,7 @@
-function [dxy_calc] = o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method)
+function [dxy_calc] = o_gcd_Bivariate_2Polys(ex_num, emin, emax, ...
+    mean_method, bool_alpha_theta, low_rank_approx_method, ...
+    apf_method, sylvester_build_method, factorisation_build_method,...
+    rank_revealing_metric)
 % o_gcd_2Polys(ex_num, el, mean_method, bool_alpha_theta, low_rank_approx_method)
 %
 % Given an example number and set of parameters, obtain GCD of the two
@@ -15,39 +18,44 @@ function [dxy_calc] = o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bo
 % emax : (Float) Upper noise level
 %
 % mean_method (String)
-%       'None'
-%       'Geometric Mean Matlab Method'
+%   * 'None'
+%   * 'Geometric Mean Matlab Method'
 %
 % bool_alpha_theta (Boolean)
-%       true : Include Preprocessing
-%       false : Exclude Preprocessing
+%   * true : Include Preprocessing
+%   * false : Exclude Preprocessing
 %
 % low_rank_approx_method (String)
-%       'Standard SNTLN' : Include SNTLN
-%       'Standard STLN : Include STLN
-%       'None' : Exclude SNTLN
+%   * 'Standard SNTLN' : Include SNTLN
+%   * 'Standard STLN : Include STLN
+%   * 'None' : Exclude SNTLN
 %
 % apf_method (String)
-%       'None'
-%       'Standard APF Nonlinear'
-%       'Standard APF Linear'
+%   * 'None'
+%   * 'Standard APF Nonlinear'
+%   * 'Standard APF Linear'
 %
 % sylvester_build_method (String)
-%       'T'
-%       'DT'
-%       'DTQ'
-%       'TQ'
+%   * 'T'
+%   * 'DT'
+%   * 'DTQ'
+%   * 'TQ'
 %
 % factorisation_build_method (String)
+%   * 'HCG'
+%   * 'HC'
 %
-%       'HCG'
-%       'HC'
+% rank_revealing_metric : (String)
+%   * R1 Row Norms
+%   * R1 Row Diagonals
+%   * Minimum Singular Values
+%   * Residuals
 %
 % % Examples
 %
-% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'None', false, 'Standard STLN', 'None', 'DTQ', 'HCG')
-% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ','HCG')
-% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'None', 'DTQ', 'HCG')
+% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'None', false, 'Standard STLN', 'None', 'DTQ', 'HCG', 'Minimum Singular Values')
+% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ','HCG', 'Minimum Singular Values')
+% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'None', 'DTQ', 'HCG', 'Minimum Singular Values')
 
 % %
 % Set Variables
@@ -60,17 +68,13 @@ if emin > emax
 end
 
 % Set global variables
-SetGlobalVariables(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method)
+SetGlobalVariables_GCD(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
+    low_rank_approx_method, apf_method, sylvester_build_method, ...
+    factorisation_build_method, rank_revealing_metric)
 
 % Add subfolders
-restoredefaultpath
-
-% Determine where your m-files folder is.
-folder = fileparts(which(mfilename)); 
-
-% Add that folder plus all subfolders to the path.
-addpath(genpath(folder));
+restoredefaultpath;
+addpath(genpath(pwd));
 
 % Print Parameters to console
 fprintf('INPUTS. \n')
@@ -81,8 +85,9 @@ fprintf('MEAN METHOD : %s \n', mean_method)
 fprintf('PREPROCESSING : %s \n',num2str(bool_alpha_theta))
 fprintf('LOW RANK METHOD : %s \n',low_rank_approx_method)
 fprintf('APF METHOD : %s \n', apf_method)
-fprintf('Sylvester Matrix Type : %s \n', sylvester_build_method);
-fprintf('Factorisation Matrix Type : %s \n', factorisation_build_method);
+fprintf('SYLVESTER MATRIX FORMAT : %s \n', sylvester_build_method);
+fprintf('RANK REVEALING METRIC : %s \n', rank_revealing_metric);
+fprintf('FACTORISATION MATRIX TYPE : %s \n', factorisation_build_method);
 
 % Get Example polynomials
 [fxy_exact, gxy_exact, dxy_exact, uxy_exact, vxy_exact, m, n, t_exact] = Examples_GCD_Bivariate_2Polys(ex_num);
@@ -178,9 +183,8 @@ function []= PrintToFile(m, n, t1, t2, myError)
 % Global settings
 global SETTINGS
 
-v = datevec(now);
+fullFileName = sprintf('Results/Results_o_gcd.txt');
 
-fullFileName = sprintf('Results/Results_o_gcd_%s-%s-%s.txt',num2str(v(1)), num2str(v(2)), num2str(v(3)));
 
 % If file already exists append a line
 if exist(fullFileName, 'file')
@@ -199,7 +203,7 @@ else % File doesnt exist so create it
 end
 
     function WriteNewLine()
-        fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s \n',...
+        fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s \n',...
             datetime(),...
             SETTINGS.EX_NUM,...
             num2str(m),...
@@ -217,12 +221,13 @@ end
             num2str(SETTINGS.LOW_RANK_APPROX_REQ_ITE),...
             SETTINGS.APF_METHOD,...
             num2str(SETTINGS.APF_REQ_ITE),...
-            SETTINGS.SYLVESTER_BUILD_METHOD...
+            SETTINGS.SYLVESTER_BUILD_METHOD,...
+            SETTINGS.RANK_REVEALING_METRIC...
             );
     end
 
     function WriteHeader()
-        fprintf(fileID,'DATE,EX_NUM,m,n,t1,t2,ERROR_UX,ERROR_VX,ERROR_DX,MEAN_METHOD,BOOL_ALPHA_THETA, EMIN, EMAX, LOW_RANK_APPROX_METHOD,LOW_RANK_ITE, APF_METHOD, APF_ITE,sylvester_build_method \n');
+        fprintf(fileID,'DATE,EX_NUM,m,n,t1,t2,ERROR_UX,ERROR_VX,ERROR_DX,MEAN_METHOD,BOOL_ALPHA_THETA, EMIN, EMAX, LOW_RANK_APPROX_METHOD,LOW_RANK_ITE, APF_METHOD, APF_ITE,sylvester_build_method, Rank_Revealing_Metri \n');
     end
 
 

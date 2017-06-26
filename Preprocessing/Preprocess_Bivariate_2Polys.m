@@ -57,6 +57,9 @@ if (SETTINGS.BOOL_ALPHA_THETA)
     fww = GetWithThetas(fxy_n, th1, th2);
     gww = GetWithThetas(gxy_n, th1, th2);
     
+    plotPreproc(fxy, fww);
+    plotPreproc(gxy, alpha.*gww);
+    
     % %
     % Get Maximum and minimum entries of f and g in the normalised and
     % preprocessed form
@@ -74,6 +77,44 @@ else
     
 end
 end
+
+
+function [] = plotPreproc(fxy,fww)
+
+
+
+[m1,m2] = GetDegree_Bivariate(fxy);
+
+nCoefficients = (m1 + 1) * (m2 + 1);
+
+
+
+v_fxy = GetAsVector_Version1((fxy), m1, m2);
+v_fww = GetAsVector_Version1((fww), m1, m2);
+x_vec = 1:1:nCoefficients;
+
+% Get coefficient of maximum and minimum magnitude in f(x,y) and f(w,w)
+max_mag_fxy = max(log10(abs(v_fxy)));
+min_mag_fxy = min(log10(abs(v_fxy)));
+
+max_mag_fww = max(log10(abs(v_fww)));
+min_mag_fww = min(log10(abs(v_fww)));
+
+
+figure()
+hold on
+
+plot(x_vec, log10(v_fxy), 'r-o', 'DisplayName','f(x,y)')
+plot(x_vec, log10(v_fww), 'b-s', 'DisplayName','f(\omega_{1},\omega_{2})')
+hline([max_mag_fxy, min_mag_fxy], {'r','r'});
+hline([max_mag_fww, min_mag_fww], {'b','b'});
+
+legend(gca,'show');
+hold off
+
+
+end
+
 
 function [] = PrintToFile(m1,m2,n1,n2,k1,k2,max_f,min_f,max_g,min_g,alpha,th1,th2,lambda,mu)
 
@@ -142,3 +183,5 @@ g_max = max(max(max_mtrx_g));
 g_min = min(min(min_mtrx_g));
 
 end
+
+
