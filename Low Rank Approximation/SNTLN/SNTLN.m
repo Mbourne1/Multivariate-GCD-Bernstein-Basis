@@ -63,19 +63,19 @@ alpha(ite) = i_alpha;
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Get the number of coefficients in the polynomial f(x,y)
-nCoefficients_fxy = (m1+1) * (m2+1);
+nCoefficients_fxy = (m1 + 1) * (m2 + 1);
 
 % Get the number of coefficients in the polynomial g(x,y)
-nCoefficients_gxy = (n1+1) * (n2+1);
+nCoefficients_gxy = (n1 + 1) * (n2 + 1);
 
 % Get the number of coefficients in both f(x,y) and g(x,y)
 nCoefficients_fg = nCoefficients_fxy + nCoefficients_gxy;
 
 % Get the number of coefficients in v(x,y)
-nCoefficients_vxy = (n1-k1+1) * (n2-k2+1);
+nCoefficients_vxy = (n1 - k1 + 1) * (n2 - k2 + 1);
 
 % Get the number of coefficients in u(x,y)
-nCoefficients_uxy = (m1-k1+1) * (m2-k2+1);
+nCoefficients_uxy = (m1 - k1 + 1) * (m2 - k2 + 1);
 
 % Get the number of coefficients in the unknown vector x, where A_{t}x =
 % c_{t}.
@@ -98,12 +98,12 @@ I = eye(nColumns_Sk, nColumns_Sk);
 % Create the matrix M, such that S(f,g)*M gives A_{t}, the Sylvester Matrix
 % with the optimal column removed.
 M = I;
-M(:,idx_col) = [];
+M(:, idx_col) = [];
 
 % Let e be the column removed from the identity matrix, such that
 % S_{t}(f,g) * e gives the column c_{t}, where c_{t} is the optimal column
 % removed from the Sylvester subresultant.
-e = I(:,idx_col);
+e = I(:, idx_col);
 
 % % Preprocessing
 
@@ -174,13 +174,19 @@ hk_wrt_th2 = DNQ_wrt_th2*e;
 % Get the matrix A_{k}(f,g), which is the subresultant matrix S(f,g) with
 % an opitmal column removed
 Ak_fg = DTQ_fg;
-ck = DTQ_fg(:,idx_col);
-Ak_fg(:,idx_col) = [];
+ck = DTQ_fg(:, idx_col);
+Ak_fg(:, idx_col) = [];
 
 % % Build the matrix D*P*G
 
 DPG = BuildDPG_SNTLN(m1, m2, n1, n2, th1(ite), th2(ite), alpha(ite), k1, k2, idx_col);
 
+% Test
+f = GetAsVector(fxy);
+g = GetAsVector(gxy);
+test1a = DPG * [f;g];
+test1b = ck;
+display(norm(test1a - test1b));
 
 %
 % Calculate the derivatives wrt alpha and theta of the removed column.
@@ -204,8 +210,14 @@ x = [first_part ; 0 ; second_part];
 DYG = BuildDYG_SNTLN(m1, m2, n1, n2, k1, k2, x, alpha(ite), th1(ite), th2(ite));
 
 
+% Test
+test2a = DTQ_fg * x;
+test2b = DYG * [f;g];
+test2 = test2a - test2b;
+display(norm(test2))
+
 % Calculate the initial residual r = ck - (Ak*x)
-res_vec = ck - (DTQ_fg*M*xk);
+vResidual = ck - (DTQ_fg * M * xk);
 
 % % Get the matrix p, which will store all the perturbations returned 
 % from LSE file
@@ -251,11 +263,11 @@ C = [H_z H_x H_alpha H_th1 H_th2];
 % Define the starting vector for the iterations for the LSE problem.
 start_point     =   ...
     [...
-    zk;...
-    xk;...
-    alpha(ite);...
-    th1(ite);...
-    th2(ite)
+        zk;...
+        xk;...
+        alpha(ite);...
+        th1(ite);...
+        th2(ite)
     ];
 
 yy  = start_point;
@@ -264,14 +276,14 @@ f = -(yy - start_point);
 
 % Set the termination criterion to a large value. It will be
 % over written later.
-condition(ite) = norm(res_vec) / norm(ck);
+condition(ite) = norm(vResidual) / norm(ck);
 
 while (condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIONS_SNTLN)
     
     % Use the QR decomposition to solve the LSE problem
     % min |y-p| subject to Cy=q
     
-    y = LSE(E, f, C, res_vec);
+    y = LSE(E, f, C, vResidual);
     
     % Increment the iteration number
     ite = ite + 1;
@@ -280,10 +292,10 @@ while (condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     yy = yy + y;
     
     % Get the entries corresponding to perturbations of f(x,y) and g(x,y)
-    delta_zk = y(1:nCoefficients_fxy + nCoefficients_gxy ,1);
+    delta_zk = y(1 : nCoefficients_fxy + nCoefficients_gxy ,1);
     
     % Remove the entries in vector y corresponding to perturbations of f(x,y) and g(x,y).
-    y(1:nCoefficients_fxy + nCoefficients_gxy) = [];
+    y(1 : nCoefficients_fxy + nCoefficients_gxy) = [];
     
     % Get the coefficients of xk
     delta_xk        = y(1 : nCoefficients_x, 1);
@@ -317,13 +329,13 @@ while (condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     xk = xk + delta_xk;
     
     % Update alpha
-    alpha(ite) = alpha(ite-1) + delta_alpha;
+    alpha(ite) = alpha(ite - 1) + delta_alpha;
     
     % Update theta_{1}
-    th1(ite) = th1(ite-1) + delta_th1;
+    th1(ite) = th1(ite - 1) + delta_th1;
     
     % Update theta_{2}
-    th2(ite) = th2(ite-1) + delta_th2;
+    th2(ite) = th2(ite - 1) + delta_th2;
     
     % %
     % Obtain polynomials in modified bersntein basis a_{i}\theta^{i}
@@ -334,14 +346,14 @@ while (condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     gww = GetWithThetas(gxy, th1(ite), th2(ite));
         
     % Construct the kth Sylvester subresultant matrix DTQ.
-    DTQ_fg = BuildDTQ_Bivariate_2Polys(fww, alpha(ite).*gww,k1,k2);
+    DTQ_fg = BuildDTQ_Bivariate_2Polys(fww, alpha(ite).*gww, k1, k2);
     
     % %
     % Get partial derivatives
     
     % Get the partial derivative of f(\omega_{1},\omega_{2}) with respect 
     % to \alpha
-    fww_wrt_alpha            = zeros(m1+1,m2+1);
+    fww_wrt_alpha            = zeros(m1 + 1, m2 + 1);
     
     % Get the partial derivative of g(\omega_{1},\omega_{2}) with respect
     % to \alpha
@@ -379,12 +391,12 @@ while (condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     % Create the vector of structured perturbations zf and zg applied
     % to F and G.
     vec_z_fx      = zk(1 : nCoefficients_fxy);
-    vec_z_gx      = zk(nCoefficients_fxy + 1 :end);
+    vec_z_gx      = zk(nCoefficients_fxy + 1 : end);
     
     % Get the vectors z_fx and z_gx as matrices, which match the shape of
     % f(x) and g(x).
-    z_fxy = GetAsMatrix_Version1(vec_z_fx, m1, m2);
-    z_gxy = GetAsMatrix_Version1(vec_z_gx, n1, n2);
+    z_fxy = GetAsMatrix(vec_z_fx, m1, m2);
+    z_gxy = GetAsMatrix(vec_z_gx, n1, n2);
     
     % Get matrices z_fw_mat and z_gw_mat, by multiplying rows by
     % theta_{1}^{i} and columns by theta_{2}^{j}
@@ -470,7 +482,7 @@ while (condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
        
     
     % Get residual as a vector
-    res_vec = (ck + hk) - DTNQ*M*xk ;
+    vResidual = (ck + hk) - DTNQ*M*xk ;
     
     % Create the matrix C. This is made up of five submatrices, HZ, Hx,
     % H_alpha and H_theta1 and H_theta2.
@@ -487,11 +499,9 @@ while (condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     
     C = [Hz, Hx, H_alpha, H_th1, H_th2];  % the matrix C
     
-    % Calculate the new right hand vector
-    ek = ck + hk;
-     
+        
     % Calculate the normalised residual of the solution.
-    condition(ite) = norm(res_vec) / norm(ek);
+    condition(ite) = norm(vResidual) / norm(ck + hk);
     
     % Update fnew - used in LSE Problem.
     f = -(yy - start_point);
@@ -517,10 +527,10 @@ PlotSNTLN();
 
 % get the vector zk
 zPert_f_vec = zk(1 : nCoefficients_fxy);
-zPert_f_mat = GetAsMatrix_Version1(zPert_f_vec,m1,m2);
+zPert_f_mat = GetAsMatrix(zPert_f_vec,m1,m2);
 
 zPert_g_vec = zk(nCoefficients_fxy+1 : end);
-zPert_g_mat = GetAsMatrix_Version1(zPert_g_vec, n1, n2);
+zPert_g_mat = GetAsMatrix(zPert_g_vec, n1, n2);
 
 % Get f(x,y) low rank
 fxy_lr = fxy + zPert_f_mat;
@@ -539,8 +549,8 @@ v_vww = x(1:nCoefficients_vxy);
 v_uww = -1.*x(nCoefficients_vxy+1:end);
 
 % Get v(\omega_{1},\omega_{2}) and u(\omega_{1},\omega_{2})
-vww = GetAsMatrix_Version1(v_vww, n1-k1, n2-k2);
-uww = GetAsMatrix_Version1(v_uww, m1-k1, m2-k2);
+vww = GetAsMatrix(v_vww, n1-k1, n2-k2);
+uww = GetAsMatrix(v_uww, m1-k1, m2-k2);
 
 % Get v(x,y) and u(x,y)
 vxy_lr = GetWithoutThetas(vww, th1(ite), th2(ite));

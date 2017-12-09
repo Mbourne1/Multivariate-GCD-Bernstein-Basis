@@ -16,10 +16,12 @@ function [GM_fx] = GetGeometricMean(fxy, n1_k1, n2_k2)
 
 % Build the matrix D^{-1}T_{n_{1}-k_{1},n_{2}-k_{2}}Q, the first partition
 % of the Sylvester subresultant matrix
-DT1Q1 = BuildDT1Q1_Bivariate(fxy,n1_k1,n2_k2);
+DT1Q1 = BuildSubresultant_Partition_Bivariate_2Polys(fxy, n1_k1, n2_k2);
 
 % Get geometric mean of the nonzero entries
-GM_fx = geomean(reshape(abs(DT1Q1(DT1Q1~=0)),1,[]));
+v1 = reshape(abs(DT1Q1(DT1Q1~=0)),1,[]);
+
+GM_fx = geomean(v1);
 
 
 end

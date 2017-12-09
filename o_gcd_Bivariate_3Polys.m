@@ -1,5 +1,7 @@
-function [dxy_calc] = o_gcd_Bivariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method)
-% o_gcd(ex_num, el, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method)
+function [dxy_calc] = o_gcd_Bivariate_3Polys(ex_num, emin, emax, ...
+    mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, ...
+    sylvester_build_method, factorisation_build_method, rank_revealing_metric, nEquations, degree_method)
+% o_gcd(ex_num, el, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method, rank_revealing_metric)
 %
 % Given an example number and set of parameters, obtain GCD of the two
 % polynomials f(x,y) and g(x,y) in the given example file.
@@ -8,46 +10,53 @@ function [dxy_calc] = o_gcd_Bivariate_3Polys(ex_num, emin, emax, mean_method, bo
 %
 % % Inputs
 %
-% ex_num (String) Example Number
+% ex_num : (String) Example Number
 %
 % emin : (Float) Lower noise level
 %
-% emax - (Float) Upper noise level
+% emax : (Float) Upper noise level
 %
-% mean_method (String)
-%       'None'
-%       'Geometric Mean Matlab Method'
+% mean_method : (String)
+%   'None'
+%   'Geometric Mean Matlab Method'
 %
-% bool_alpha_theta (Boolean)
-%       true : Include Preprocessing
-%       false : Exclude Preprocessing
+% bool_alpha_theta : (Boolean)
+%   true : Include Preprocessing
+%   false : Exclude Preprocessing
 %
-% low_rank_approx_method (String)
-%       'Standard SNTLN' : Include SNTLN
-%       'Standard STLN : Include STLN
-%       'None' : Exclude SNTLN
+% low_rank_approx_method : (String)
+%   'Standard SNTLN' : Include SNTLN
+%   'Standard STLN : Include STLN
+%   'None' : Exclude SNTLN
 %
-% apf_method (String)
-%       'None'
-%       'Standard APF Nonlinear'
-%       'Standard APF Linear'
+% apf_method : (String)
+%   'None'
+%   'Standard APF Nonlinear'
+%   'Standard APF Linear'
 %
-% sylvester_build_method (String)
-%       'T'
-%       'DT'
-%       'DTQ'
-%       'TQ'
+% sylvester_build_method : (String)
+%   'T'
+%   'DT'
+%   'DTQ'
+%   'TQ'
 %
-% factorisation_build_method (String)
+% factorisation_build_method : (String)
+%   'HCG' : 
+%   'HC' :
 %
-%   HCG
-%   HC
+% rank_revealing_metric : (String)
+%   'Minimum Singular Values'
+%
+%
 %
 %
 % % Examples
 %
-% >> o_gcd_Bivariate_3Polys('1',1e-12,1e-10,'None',false,'None','None','DTQ', 'HCG')
-% >> o_gcd_Bivariate_3Polys('1',1e-12,1e-10,'Geometric Mean Matlab Method',true,'Standard STLN','None','DTQ', 'HCG')
+% >> o_gcd_Bivariate_3Polys('1',1e-12,1e-10,'None',false,'None','None','DTQ', 'HCG', 'Minimum Singular Values')
+% >> o_gcd_Bivariate_3Polys('1',1e-12,1e-10,'Geometric Mean Matlab Method',true,'Standard STLN','None','DTQ', 'HCG', 'Minimum Singular Values')
+
+
+
 
 % %
 % Set Variables
@@ -59,33 +68,11 @@ if emin > emax
     emax = temp;
 end
 
-% Set global variables
-SetGlobalVariables(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method)
 
-% Add subfolders
-restoredefaultpath
+SetGlobalVariables_GCD_3Polys(ex_num, emin, emax, mean_method, ...
+    bool_alpha_theta, low_rank_approx_method, apf_method, ...
+    sylvester_build_method, factorisation_build_method, rank_revealing_metric, nEquations);
 
-addpath(...
-    'APF',...
-    'Basis Conversion',...
-    'Bernstein Functions',...
-    'Build Factorisation Matrix',...
-    'Build Matrices',...
-    'Deconvolution',...
-    'Formatting',...
-    'Get Cofactor Coefficients',...
-    'Get GCD Coefficients',...
-    'Plotting',...
-    'Preprocessing',...
-    'Results',...
-    'Root Finding Methods',...
-    'Scaling');
-
-addpath(genpath('Build Sylvester Matrix'));
-addpath(genpath('Examples'));
-addpath(genpath('Get GCD Degree'));
-addpath(genpath('Low Rank Approximation'));
 
 % Print Parameters to console
 fprintf('INPUTS. \n')
@@ -93,13 +80,16 @@ fprintf('EXAMPLE NUMBER %s \n',ex_num)
 fprintf('EMIN : %s \n',emin)
 fprintf('EMAX : %s \n',emax)
 fprintf('MEAN METHOD : %s \n', mean_method)
-fprintf('PREPROCESSING : %s \n',bool_alpha_theta)
+fprintf('PREPROCESSING : %s \n', num2str(bool_alpha_theta))
 fprintf('LOW RANK METHOD : %s \n',low_rank_approx_method)
 fprintf('APF METHOD : %s \n', apf_method)
+fprintf('SYLVESTER FORMAT : %s \n', sylvester_build_method)
+fprintf('RANK REVEALING METRIC : %s \n', rank_revealing_metric)
 
 % %
 % Get Example
-[fxy_exact, gxy_exact, hxy_exact, dxy_exact, uxy_exact, vxy_exact, wxy_exact, m, n, o, t_exact] = Examples_GCD_Bivariate_3Polys(ex_num);
+[fxy_exact, gxy_exact, hxy_exact, dxy_exact, uxy_exact, vxy_exact, ...
+    wxy_exact, m, n, o, t_exact] = Examples_GCD_Bivariate_3Polys(ex_num);
 
 % Get the degree of the GCD
 [t1, t2] = GetDegree_Bivariate(dxy_exact);
@@ -121,6 +111,7 @@ fprintf([mfilename ' : ' sprintf('Deg_y of GCD : %i \n',t2)]);
 [m1, m2] = GetDegree_Bivariate(fxy);
 [n1, n2] = GetDegree_Bivariate(gxy);
 [o1, o2] = GetDegree_Bivariate(hxy);
+[t1_exact, t2_exact] = GetDegree_Bivariate(dxy_exact);
 
 
 % Calculate GCD
@@ -133,9 +124,11 @@ upperLimit_t2 = min([m2, n2, o2]);
 limits_t2 = [lowerLimit_t2, upperLimit_t2];
 
 
+rank_range = [0,0];
+
 % Calculate the gcd, and quotient polynomials of f(x,y) and g(x,y)
 [fxy_calc, gxy_calc, hxy_exact, dxy_calc, uxy_calc, vxy_calc, wxy_calc, t1, t2] = ...
-    o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2);
+    o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2, rank_range, degree_method);
 
 % %
 % %
@@ -152,7 +145,7 @@ error.vxy = GetDistance('v', vxy_calc, vxy_exact);
 error.wxy = GetDistance('w', wxy_calc, wxy_exact);
 
 % Output to file
-PrintToFile(m, n, o, t1, t2, error);
+PrintToFile(m, n, o, t1, t2, t1_exact, t2_exact, error);
 
 
 end
@@ -167,7 +160,7 @@ matrix_exact = normalise(matrix_exact);
 
 try
     % Get Distance between f(x,y) computed and f(x,y) exact.
-    dist = norm(matrix_exact-matrix_calc,'fro') ./ norm(matrix_exact,'fro');
+    dist = norm(matrix_exact - matrix_calc,'fro') ./ norm(matrix_exact,'fro');
 catch
     dist = 1000;
 end
@@ -181,7 +174,7 @@ fprintf([mfilename ' : ' sprintf('Distance between exact and calculated matrix: 
 end
 
 
-function []= PrintToFile(m, n, o, t1, t2, error)
+function []= PrintToFile(m, n, o, t1, t2, t1_exact, t2_exact, error)
 % Print the results to a file
 %
 % % Inputs
@@ -202,7 +195,7 @@ function []= PrintToFile(m, n, o, t1, t2, error)
 % Global settings
 global SETTINGS
 
-fullFileName = sprintf('Results/Results_o_gcd_3Polys_%s.txt',datetime('today'));
+fullFileName = sprintf('Results/Results_o_gcd_3Polys.txt');
 
 % If file already exists append a line
 if exist(fullFileName, 'file')
@@ -221,7 +214,7 @@ else % File doesnt exist so create it
 end
 
     function WriteNewLine()
-        fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s \n',...
+        fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s \n',...
             datetime(),...
             SETTINGS.EX_NUM,...
             num2str(m),...
@@ -229,6 +222,8 @@ end
             num2str(o),...
             num2str(t1),...
             num2str(t2),...
+            num2str(t1_exact),...
+            num2str(t2_exact),...
             num2str(error.uxy),...
             num2str(error.vxy),...
             num2str(error.wxy),...
@@ -246,7 +241,7 @@ end
     end
 
     function WriteHeader()
-        fprintf(fileID,'DATE,EX_NUM,m,n,o,t1,t2,ERROR_UXY,ERROR_VXY,ERROR_WXY,ERROR_DX,MEAN_METHOD,BOOL_ALPHA_THETA, EMIN, EMAX, LOW_RANK_APPROX_METHOD,LOW_RANK_ITE, APF_METHOD, APF_ITE,sylvester_build_method \n');
+        fprintf(fileID,'DATE,EX_NUM,m,n,o,t1,t2,t1_exact,t2_exact,ERROR_UXY,ERROR_VXY,ERROR_WXY,ERROR_DX,MEAN_METHOD,BOOL_ALPHA_THETA, EMIN, EMAX, LOW_RANK_APPROX_METHOD,LOW_RANK_ITE, APF_METHOD, APF_ITE,sylvester_build_method \n');
     end
 
 

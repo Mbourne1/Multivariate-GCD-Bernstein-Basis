@@ -33,8 +33,8 @@ global SETTINGS
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Preproecessor One - Normalise by geometric mean
-GM_fx = GetMean(fxy, n1-k1, n2-k2);
-GM_gx = GetMean(gxy, m1-k1, m2-k2);
+GM_fx = GetMean(fxy, n1 - k1, n2 - k2);
+GM_gx = GetMean(gxy, m1 - k1, m2 - k2);
 
 
 % Normalise f(x,y) and g(x,y) by respective geometric means
@@ -47,28 +47,38 @@ if (SETTINGS.BOOL_ALPHA_THETA)
     
     % %
     % Get optimal values of alpha and theta
-    [max_matrix_fxy, min_matrix_f] = GetMaxMin(fxy_n, n1-k1, n2-k2);
-    [max_matrix_gxy, min_matrix_g] = GetMaxMin(gxy_n, m1-k1, m2-k2);
+    [max_matrix_fxy, min_matrix_fxy] = GetMaxMin(fxy_n, n1 - k1, n2 - k2);
+    [max_matrix_gxy, min_matrix_gxy] = GetMaxMin(gxy_n, m1 - k1, m2 - k2);
     
     %alpha = OptimalAlpha(max_mtrx_f,min_mtrx_f,max_mtrx_g,min_mtrx_g);
     
-    [alpha, th1, th2] = OptimalAlphaTheta(max_matrix_fxy, min_matrix_f, max_matrix_gxy, min_matrix_g);
+    [alpha, th1, th2] = OptimalAlphaTheta(max_matrix_fxy, min_matrix_fxy, ...
+        max_matrix_gxy, min_matrix_gxy);
     
     fww = GetWithThetas(fxy_n, th1, th2);
     gww = GetWithThetas(gxy_n, th1, th2);
     
-    plotPreproc(fxy, fww);
-    plotPreproc(gxy, alpha.*gww);
-    
+    if k1 == 1 && k2 == 1
+        PlotCoefficients({fxy, fww},...
+            {...
+            '$f(x,y)$', ...
+            '$\tilde{f}(\omega_{1}, \omega_{2})$'...
+            });
+        PlotCoefficients({gxy, alpha.*gww}, ...
+            {...
+            '$g(x,y)$', ...
+            '$\alpha \tilde{g}(\omega_{1},\omega_{2})$'...
+            });
+    end
     % %
     % Get Maximum and minimum entries of f and g in the normalised and
     % preprocessed form
     a_gww = alpha.*gww;
-  
-    [max_fww,min_fww,max_gww,min_gww] = GetMaxMinPairs(fww, a_gww, k1, k2);
+    
+    [max_fww, min_fww, max_gww, min_gww] = GetMaxMinPairs(fww, a_gww, k1, k2);
     
     PrintToFile(m1, m2, n1, n2, k1, k2, max_fww, min_fww, max_gww, min_gww, alpha, th1, th2, GM_fx, GM_gx);
-
+    
 else
     
     alpha =1;
@@ -79,38 +89,75 @@ end
 end
 
 
-function [] = plotPreproc(fxy,fww)
+function [] = PlotCoefficients(arrPolys, arrNames)
+%
+% % Inputs
+%
+% arrPolys : (Array of Matrices)
+%
+% arrNames : (Array of Strings)
 
 
+nPolys = length(arrPolys);
 
-[m1,m2] = GetDegree_Bivariate(fxy);
-
-nCoefficients = (m1 + 1) * (m2 + 1);
-
-
-
-v_fxy = GetAsVector_Version1((fxy), m1, m2);
-v_fww = GetAsVector_Version1((fww), m1, m2);
-x_vec = 1:1:nCoefficients;
-
-% Get coefficient of maximum and minimum magnitude in f(x,y) and f(w,w)
-max_mag_fxy = max(log10(abs(v_fxy)));
-min_mag_fxy = min(log10(abs(v_fxy)));
-
-max_mag_fww = max(log10(abs(v_fww)));
-min_mag_fww = min(log10(abs(v_fww)));
-
+arrColor = {'r','b'};
 
 figure()
 hold on
 
-plot(x_vec, log10(v_fxy), 'r-o', 'DisplayName','f(x,y)')
-plot(x_vec, log10(v_fww), 'b-s', 'DisplayName','f(\omega_{1},\omega_{2})')
-hline([max_mag_fxy, min_mag_fxy], {'r','r'});
-hline([max_mag_fww, min_mag_fww], {'b','b'});
+for i = 1:1:nPolys
+    
+    fxy = arrPolys{i};
+    plot_name = arrNames{i};
+    
+    [m1, m2] = GetDegree_Bivariate(fxy);
+    
+    nCoefficients = (m1 + 1) * (m2 + 1);
+    
+    v_fxy = GetAsVector_Version1((fxy), m1, m2);
+    x_vec = 1:1:nCoefficients;
+    
+    plot(x_vec, log10(v_fxy), 'Color', arrColor{i}, 'DisplayName',plot_name)
+    
+    % Get coefficient of maximum and minimum magnitude in f(x,y) and f(w,w)
+    max_mag_fxy = max(log10(abs(v_fxy)));
+    min_mag_fxy = min(log10(abs(v_fxy)));
+    
+    hline([max_mag_fxy, min_mag_fxy], {arrColor{i},arrColor{i}});
+   
+    xlim([1, nCoefficients]);
+    
+end
 
-legend(gca,'show');
+% Legends and labels
+
+xlabel('$i$ : Coefficient Index', 'Interpreter', 'latex','FontSize',20)
+ylabel('$\log_{10} \left( \Re \right)$', 'Interpreter', 'latex', 'FontSize',20)
+
+l = legend(gca,'show');
+set(l,{'Interpreter'},{'latex'});
+set(l,{'Location'},{'southeast'});
+set(l,{'FontSize'},{20});
 hold off
+
+
+grid on 
+box on
+
+% location of window and size
+m_left = 100;
+m_bottom = 100;
+m_width = 600;
+m_height = 600;
+
+set(gcf, 'Position', [m_left, m_bottom, m_width, m_height]);
+
+% Position of figure within window
+myplot = gca;
+myval_side = 0.12;
+myval_base = 0.10;
+set(myplot, 'Position', [ myval_side myval_base 0.98 - myval_side 0.98 - myval_base])
+
 
 
 end
@@ -159,10 +206,19 @@ end
 end
 
 
-function [f_max,f_min,g_max,g_min] = GetMaxMinPairs(fxy,gxy,k1,k2)
+function [f_max,f_min,g_max,g_min] = GetMaxMinPairs(fxy, gxy, k1, k2)
 % Get the maximum and minimum entries of each coefficient of f(x,y) and
 % g(x,y) as appearing in the Sylvester subresultant S_{k_{1},k_{2}}(f,g)
-
+%
+% % Inputs
+%
+% fxy : (Matrix) Coefficients of f(x,y)
+%
+% gxy : (Matrix) Coefficients of g(x,y)
+%
+% k1 : (Int)
+%
+% k2 : (Int)
 
 % Get degree of f(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
@@ -171,10 +227,10 @@ function [f_max,f_min,g_max,g_min] = GetMaxMinPairs(fxy,gxy,k1,k2)
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Get the maximum and minimum of each entry of f(x,y) in S_{k_{1},k_{2}}
-[max_mtrx_f, min_mtrx_f] = GetMaxMin(fxy, n1-k1, n2-k2);
+[max_mtrx_f, min_mtrx_f] = GetMaxMin(fxy, n1 - k1, n2 - k2);
 
 % Get the maximum and minimum of each entry of g(x,y) in S_{k_{1},k_{2}}
-[max_mtrx_g, min_mtrx_g] = GetMaxMin(gxy, m1-k1, m2-k2);
+[max_mtrx_g, min_mtrx_g] = GetMaxMin(gxy, m1 - k1, m2 - k2);
 
 
 f_max = max(max(max_mtrx_f));

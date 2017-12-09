@@ -1,5 +1,5 @@
 function [fxy_o, gxy_o, dxy_o, uxy_o, vxy_o, t1, t2] = ...
-    o_gcd_mymethod_Bivariate_2Polys(fxy, gxy, limits_t1, limits_t2)
+    o_gcd_mymethod_Bivariate_2Polys(fxy, gxy, limits_t1, limits_t2, degree_method)
 % o1(fxy_matrix,gxy_matrix,m,n)
 %
 % Given two input polynomials, calculate the GCD and its degree structure
@@ -16,11 +16,11 @@ function [fxy_o, gxy_o, dxy_o, uxy_o, vxy_o, t1, t2] = ...
 %
 % limits_t1 : [(Int) (Int)] Limits on degree of GCD.
 %
-% limits_t2 : 
+% limits_t2 :
 %
 % % Outputs
 %
-% fxy_o : (Matrix) Coefficients of the polynomial f(x,y) 
+% fxy_o : (Matrix) Coefficients of the polynomial f(x,y)
 %
 % gxy_o : (Matrix) Coefficients of the polynomial g(x,y)
 %
@@ -39,17 +39,16 @@ function [fxy_o, gxy_o, dxy_o, uxy_o, vxy_o, t1, t2] = ...
 
 % Get Degree by first finding the total degree, then obtain t1 and t2
 
-% 'All Subresultants Method' : Create all subresultants, get rank revealing 
-% metric for each S_{k1,k2} then compute the GCD by taking the max 
+% 'All Subresultants Method' : Create all subresultants, get rank revealing
+% metric for each S_{k1,k2} then compute the GCD by taking the max
 % difference in both x and y.
 
 % 'Linear Method' : Fix k_{1} = 1, produce all subresultants S_{1,k2}, compute
 % t2, then fix k2 = t2 and compute all subresultants S_{k1,t2}
 
-degree_method = 'All Subresultants Method';
 
 switch degree_method
-    case 'All Subresultants Method'
+    case 'All Subresultants'
         
         [t1, t2, GM_fx, GM_gx, alpha, th1, th2] = ...
             GetGCDDegree_Bivariate_2Polys(fxy, gxy, limits_t1, limits_t2);
@@ -57,7 +56,32 @@ switch degree_method
     case 'Linear Method'
         
         [t1, t2, GM_fx, GM_gx, alpha, th1, th2] = ...
-            GetGCDDegree_Bivariate_2Polys_NewMethod(fxy, gxy, limits_t1, limits_t2);
+            GetGCDDegree_Bivariate_2Polys_Linear(fxy, gxy, limits_t1, limits_t2);
+        
+    case 'Total'
+        
+        %[t1, t2, GM_fx, GM_gx, alpha, th1, th2] = ...
+        %    GetGCDDegree_Bivariate_2Polys(fxy, gxy, limits_t1, limits_t2);
+        
+        [t1_possible, t2_possible, alpha, th1, th2] = GetGCDDegree_Bivariate_2Polys_WithDegreeElevation(fxy, gxy);
+        
+        %if t1_possible < t2_possible
+        
+        t1 = t1_possible;
+        [t1_a, t2_a, GM_fx, GM_gx, alpha, th1, th2] = GetGCDDegree_Bivariate_2Polys_Linear(fxy, gxy, t1, 'x');
+        
+        %else
+        t2 = t2_possible;
+        [t1_b, t2_b, GM_fx, GM_gx, alpha, th1, th2] = GetGCDDegree_Bivariate_2Polys_Linear(fxy, gxy, t2, 'y');
+        
+        % Note this is not correct
+        t1 = t1_a;
+        t2 = t2_a;
+        
+        %end
+        
+    otherwise
+        error('Not valid method')
         
 end
 

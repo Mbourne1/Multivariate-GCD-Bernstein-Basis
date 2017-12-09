@@ -1,5 +1,5 @@
 function [fxy_o, gxy_o, hxy_o, dxy_o, uxy_o, vxy_o, wxy_o, t1, t2, rank_range] = ...
-    o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2, rank_range)
+    o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2, rank_range, degree_method)
 % o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, t_limits)
 %
 % Given two input polynomials, calculate the GCD and its degree structure
@@ -45,36 +45,68 @@ function [fxy_o, gxy_o, hxy_o, dxy_o, uxy_o, vxy_o, wxy_o, t1, t2, rank_range] =
 % 
 % t2 :(Int) Degree of the GCD with respect to y
 
+
+switch degree_method
+    case 'All Subresultants'
+        
+        [t1, t2, GM_fxy, GM_gxy, GM_hxy, lambda, mu, rho, th1, th2, rank_range] ...
+            = GetGCDDegree_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2, rank_range);
+
+        
+    case 'Linear Method'
+        
+        %[t1, t2, GM_fxy, GM_gxy, alpha, th1, th2] = ...
+        %    GetGCDDegree_Bivariate_2Polys_Linear_Naive(fxy, gxy, limits_t1, limits_t2);
+        
+    case 'Total'    
+        
+         
+        [t1_possible, t2_possible, lambda, mu, rho,  th1, th2] = GetGCDDegree_Bivariate_3Polys_WithDegreeElevation(fxy, gxy, hxy);
+        
+       
+            
+        candidate_t1_stage_a = t1_possible;
+        [candidate_t1_stage_a, candidate_t2_stage_a, GM_fxy, GM_gxy, GM_hxy, lambda, mu, rho, th1, th2] = ...
+            GetGCDDegree_Bivariate_3Polys_Linear(fxy, gxy, hxy, candidate_t1_stage_a, 'x');
+        
+        
+        candidate_t2_stage_b = t2_possible;
+        [candidate_t1_stage_b, candidate_t2_stage_b, GM_fxy, GM_gxy, GM_hxy, lambda, mu, rho, th1, th2] = ...
+            GetGCDDegree_Bivariate_3Polys_Linear(fxy, gxy, hxy, candidate_t2_stage_b, 'y');
+        
+        fprintf('First Pair a: %i %i \n', candidate_t1_stage_a, candidate_t2_stage_a);
+        fprintf('First Pair b: %i %i \n', candidate_t1_stage_b, candidate_t2_stage_b);
+        
+    otherwise 
+        error('Not valid method')
+        
+end
 %
-[t1, t2, GM_fx, GM_gx, GM_hx, alpha, beta, th1, th2, rank_range] = GetGCDDegree_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2, rank_range);
 
 fprintf([mfilename ' : ' sprintf('Degree of GCD : t1 = %i, t2 = %i \n', t1, t2)])
 
 % Normalise f(x,y) and g(x,y)
-fxy_n = fxy ./ GM_fx;
-gxy_n = gxy ./ GM_gx;
-hxy_n = hxy ./ GM_hx;
+fxy_n = fxy ./ GM_fxy;
+gxy_n = gxy ./ GM_gxy;
+hxy_n = hxy ./ GM_hxy;
 
 % Preprocess f(x,y) and g(x,y)
-fww_n = GetWithThetas(fxy_n, th1, th2);
-gww_n = GetWithThetas(gxy_n, th1, th2);
-hww_n = GetWithThetas(hxy_n, th1, th2);
+a_fww = lambda .* GetWithThetas(fxy_n, th1, th2);
+b_gww = mu .* GetWithThetas(gxy_n, th1, th2);
+gamma_hww = rho.* GetWithThetas(hxy_n, th1, th2);
 
-a_gww_n = alpha .* gww_n;
-b_hww_n = beta .* hww_n;
 
 % Get optimal column
-St1t2 = BuildDTQ_Bivariate_3Polys(fww_n, a_gww_n, b_hww_n, t1, t2);
-
+St1t2 = BuildSubresultant_Bivariate_3Polys(a_fww, b_gww, gamma_hww, t1, t2);
 idx_col = GetOptimalColumn(St1t2);
 
 % % Get coefficients of u(x,y) and v(x,y).
-[fxy_lr, gxy_lr, hxy_lr, uxy_lr, vxy_lr, wxy_lr, alpha_lr, beta_lr, th1_lr, th2_lr] = ...
-    LowRankApproximation_Bivariate_3Polys(fxy_n, gxy_n, hxy_n, alpha, beta, th1, th2, t1, t2, idx_col);
+[fxy_lr, gxy_lr, hxy_lr, uxy_lr, vxy_lr, wxy_lr, alpha_lr, beta_lr, gamma_lr, th1_lr, th2_lr] = ...
+    LowRankApproximation_Bivariate_3Polys(fxy_n, gxy_n, hxy_n, lambda, mu, rho, th1, th2, t1, t2, idx_col);
 
 % Get coefficients of d(x,y)
-[fxy_lra, gxy_lra, hxy_lra, uxy_lra, vxy_lra, wxy_lra, dxy_lra, alpha_lra, th1_lra, th2_lra] = ...
-    APF_Bivariate_3Polys(fxy_lr, gxy_lr, hxy_lr, uxy_lr, vxy_lr, wxy_lr, t1, t2, alpha_lr, beta_lr, th1_lr, th2_lr);
+[fxy_lra, gxy_lra, hxy_lra, uxy_lra, vxy_lra, wxy_lra, dxy_lra, lambda_lra, mu_lra, rho_lra, th1_lra, th2_lra] = ...
+    APF_Bivariate_3Polys(fxy_lr, gxy_lr, hxy_lr, uxy_lr, vxy_lr, wxy_lr, t1, t2, alpha_lr, beta_lr, gamma_lr, th1_lr, th2_lr);
 
 % Outputs
 fxy_o = fxy_lra;

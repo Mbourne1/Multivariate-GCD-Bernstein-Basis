@@ -1,5 +1,5 @@
 function idx_col = GetOptimalColumn(Sk)
-%% Find Optimal column for removal from S_{t_{1},t_{2}}
+% % Find Optimal column for removal from S_{t_{1},t_{2}}
 % Given that t1 and t2 have been calculated build the sylvester matrix and
 % find the optimal column such that a residual is minimized
 %

@@ -38,7 +38,7 @@ parfor i1 = 1:1:length(ex_num_arr)
                             
                             try
                                 
-                                o_gcd_bivar_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method);
+                                o_gcd_Bivariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method);
                                 fileId = fopen(my_filename, 'a')
                                 fprintf(fileId,'%s %s \n',datetime('now'), 'Success');
                                 fclose(fileId);

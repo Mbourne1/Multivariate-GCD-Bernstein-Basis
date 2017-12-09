@@ -53,8 +53,8 @@ x1_vec = x(1 : nCoefficients_x1);
 x2_vec = x(nCoefficients_x1 + 1 : end);
 
 % Get the vector x1(w,w) and x2(w,w) as a matrix
-x1_ww = GetAsMatrix_Version1(x1_vec, n1_k1, n2_k2);
-x2_ww = GetAsMatrix_Version1(x2_vec, m1_k1, m2_k2);
+x1_ww = GetAsMatrix(x1_vec, n1_k1, n2_k2);
+x2_ww = GetAsMatrix(x2_vec, m1_k1, m2_k2);
 
 % Build the matrix D^{-1}_{m1+n1-k1,m2+n2-k2}
 D = BuildD_Bivariate_2Polys(m1, m2, n1-k1, n2-k2);

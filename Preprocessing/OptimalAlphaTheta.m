@@ -41,11 +41,11 @@ nCoefficients_fxy = (m1 + 1) * (m2 + 1);
 nCoefficients_gxy = (n1 + 1) * (n2 + 1);
 
 
-v_i1_f = GetAsVector(diag(0:1:m1) * ones(m1+1,m2+1));
-v_i2_f = GetAsVector(ones(m1+1,m2+1) * diag(0:1:m2));
+v_i1_f = GetAsVector(diag(0:1:m1) * ones(m1 + 1, m2 + 1));
+v_i2_f = GetAsVector(ones(m1 + 1,m2 + 1) * diag(0 : 1 : m2));
 
-v_i1_g = GetAsVector(diag(0:1:n1) * ones(n1+1,n2+1));
-v_i2_g = GetAsVector(ones(n1+1,n2+1) * diag(0:1:n2));
+v_i1_g = GetAsVector(diag(0:1:n1) * ones(n1 + 1,n2 + 1));
+v_i2_g = GetAsVector(ones(n1 + 1, n2 + 1) * diag(0 : 1 : n2));
 
 PartOne = ...
     [

@@ -1,5 +1,5 @@
-function [fxy_lr, gxy_lr, hxy_lr, uxy_lr, vxy_lr, wxy_lr, dxy_lr, alpha_lr, beta_lr, th1_lr, th2_lr] = ...
-    APF_Bivariate_3Polys(fxy, gxy, hxy, uxy, vxy, wxy, t1, t2, alpha, beta, th1, th2)
+function [fxy_lr, gxy_lr, hxy_lr, uxy_lr, vxy_lr, wxy_lr, dxy_lr, lambda_lr, mu_lr, rho_lr, th1_lr, th2_lr] = ...
+    APF_Bivariate_3Polys(fxy, gxy, hxy, uxy, vxy, wxy, t1, t2, lambda, mu, rho, th1, th2)
 %
 % % Inputs
 %
@@ -14,9 +14,11 @@ function [fxy_lr, gxy_lr, hxy_lr, uxy_lr, vxy_lr, wxy_lr, dxy_lr, alpha_lr, beta
 %
 % [t1, t2] : [Int Int] Degree of d(x,y) with respect to x and y
 %
-% alpha : (Float) Optimal value of \alpha
+% lambda : (Float) Optimal value of \alpha
 % 
-% beta : (Float)
+% mu : (Float)
+%
+% rho : (Float)
 %
 % [th1 , th2] : [Float Float] Optimal values of \theta_{1} and \theta_{2}
 %
@@ -50,9 +52,9 @@ switch SETTINGS.APF_METHOD
     case 'None'
         
         % Get f(\omega_{1},\omega_{2}) and \alpha g(\omega_{1},\omega_{2})
-        fww = GetWithThetas(fxy, th1, th2);
-        a_gww = alpha .* GetWithThetas(gxy, th1, th2);
-        b_hww = beta .* GetWithThetas(hxy, th1, th2);
+        alpha_fww = lambda .* GetWithThetas(fxy, th1, th2);
+        beta_gww = mu .* GetWithThetas(gxy, th1, th2);
+        gamma_hww = rho .* GetWithThetas(hxy, th1, th2);
         
         
         % Get u(\omega_{1},\omega_{2}), v(\omega_{1},\omega_{2}) and
@@ -62,7 +64,7 @@ switch SETTINGS.APF_METHOD
         www = GetWithThetas(wxy, th1, th2);
         
         % Get d(\omega_{1},\omega_{2})
-        [dww] = GetGCD_Coefficients_Bivariate_3Polys(fww, a_gww, b_hww, uww, vww, www, t1, t2);
+        [dww] = GetGCD_Coefficients_Bivariate_3Polys(alpha_fww, beta_gww, gamma_hww, uww, vww, www, t1, t2);
         
         % Get d(x,y)
         dxy_lr = GetWithoutThetas(dww, th1, th2);
@@ -76,8 +78,10 @@ switch SETTINGS.APF_METHOD
         vxy_lr = vxy;
         wxy_lr = wxy;
         
-        alpha_lr = alpha;
-        beta_lr = beta;
+        lambda_lr = lambda;
+        mu_lr = mu;
+        rho_lr = rho;
+        
         th1_lr = th1;
         th2_lr = th2;
         

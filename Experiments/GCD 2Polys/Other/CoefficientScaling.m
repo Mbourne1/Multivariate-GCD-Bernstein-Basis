@@ -20,7 +20,7 @@ function [] = CoefficientScaling(m1, m2, n1 , n2, k1, k2)
 
 
 fxy_vec = ones(m1 + 1 * m2 + 1);
-fxy = GetAsMatrix_Version1(fxy_vec, m1, m2);
+fxy = GetAsMatrix(fxy_vec, m1, m2);
 
 arrT = cell(m1 + 1, m2 + 1);
 arrDT = cell(m1 + 1, m2 + 1);

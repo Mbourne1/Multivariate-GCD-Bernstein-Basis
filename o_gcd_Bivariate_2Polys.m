@@ -1,8 +1,8 @@
 function [dxy_calc] = o_gcd_Bivariate_2Polys(ex_num, emin, emax, ...
     mean_method, bool_alpha_theta, low_rank_approx_method, ...
     apf_method, sylvester_build_method, factorisation_build_method,...
-    rank_revealing_metric)
-% o_gcd_2Polys(ex_num, el, mean_method, bool_alpha_theta, low_rank_approx_method)
+    rank_revealing_metric, degree_method)
+% o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method, rank_revealing_metric)
 %
 % Given an example number and set of parameters, obtain GCD of the two
 % polynomials f(x,y) and g(x,y) in the given example file.
@@ -51,11 +51,16 @@ function [dxy_calc] = o_gcd_Bivariate_2Polys(ex_num, emin, emax, ...
 %   * Minimum Singular Values
 %   * Residuals
 %
+% degree_method : (String)
+% degree_method = 'All Subresultants Method';
+% degree_method = 'Total';
+%
+%
 % % Examples
 %
-% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'None', false, 'Standard STLN', 'None', 'DTQ', 'HCG', 'Minimum Singular Values')
-% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ','HCG', 'Minimum Singular Values')
-% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'None', 'DTQ', 'HCG', 'Minimum Singular Values')
+% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'None', false, 'Standard STLN', 'None', 'DTQ', 'HCG', 'Minimum Singular Values', 'All Subresultants Method')
+% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ','HCG', 'Minimum Singular Values', 'Total')
+% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'None', 'DTQ', 'HCG', 'Minimum Singular Values', 'All Subresultants Method')
 
 % %
 % Set Variables
@@ -68,7 +73,7 @@ if emin > emax
 end
 
 % Set global variables
-SetGlobalVariables_GCD(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
+SetGlobalVariables_GCD_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
     low_rank_approx_method, apf_method, sylvester_build_method, ...
     factorisation_build_method, rank_revealing_metric)
 
@@ -90,7 +95,8 @@ fprintf('RANK REVEALING METRIC : %s \n', rank_revealing_metric);
 fprintf('FACTORISATION MATRIX TYPE : %s \n', factorisation_build_method);
 
 % Get Example polynomials
-[fxy_exact, gxy_exact, dxy_exact, uxy_exact, vxy_exact, m, n, t_exact] = Examples_GCD_Bivariate_2Polys(ex_num);
+[fxy_exact, gxy_exact, dxy_exact, uxy_exact, vxy_exact, m, n, t_exact] = ...
+    Examples_GCD_Bivariate_2Polys(ex_num);
 
 % Get degree of f(x,y), g(x,y) and d(x,y)
 [t1, t2] = GetDegree_Bivariate(dxy_exact);
@@ -106,9 +112,6 @@ fprintf('The Degree Structure of d(x) : t = %i \t t1 = %i \t t2 = %i \n', t_exac
 [fxy_matrix, ~] = AddVariableNoiseToPoly(fxy_exact, emin, emax);
 [gxy_matrix, ~] = AddVariableNoiseToPoly(gxy_exact, emin, emax);
 
-display(fxy_matrix)
-display(gxy_matrix)
-
 % Calculate GCD
 
 % Set upper and lower limit for the degree structure of d(x,y)
@@ -123,50 +126,68 @@ limits_t2 = [lowerLimit_t2 upperLimit_t2];
 
 % Calculate the gcd, and quotient polynomials of f(x,y) and g(x,y)
 [~, ~, dxy_calc, uxy_calc, vxy_calc, t1, t2] = ...
-    o_gcd_mymethod_Bivariate_2Polys(fxy_matrix, gxy_matrix, limits_t1, limits_t2);
+    o_gcd_mymethod_Bivariate_2Polys(fxy_matrix, gxy_matrix, limits_t1, limits_t2, degree_method);
+
 
 % Get error in coefficients of d(x,y), u(x,y) and v(x,y)
-myError.dxy = GetDistance('d', dxy_calc, dxy_exact);
-myError.uxy = GetDistance('u', uxy_calc, uxy_exact);
-myError.vxy = GetDistance('v', vxy_calc, vxy_exact);
- 
+myError.dxy = GetDistance(dxy_exact, dxy_calc);
+myError.uxy = GetDistance(uxy_exact, uxy_calc);
+myError.vxy = GetDistance(vxy_exact, vxy_calc);
+
+
+LineBreakLarge()
+fprintf('Distance u(x,y) : %e \n', myError.uxy)
+fprintf('Distance v(x,y) : %e \n', myError.vxy)
+fprintf('Distance d(x,y) : %e \n', myError.dxy)
+fprintf('Average : %e \n', mean([myError.uxy, myError.vxy, myError.dxy]))
+LineBreakLarge()
+
+
 % Output results to file
-PrintToFile(m, n, t1, t2, myError);
+%PrintToFile(m, n, t1, t2, myError);
 
 
 end
 
 
-function [dist] = GetDistance(name, fxy_calc, fxy_exact)
+function [dist] = GetDistance(fxy, gxy)
 % Given two matrices, get the distance between them.
 %
 % name : (String)
 %
-% fxy_calc : (Matrix) Coefficients of f(x,y) as calculated
+% fxy : (Matrix) Coefficients of f(x,y) as calculated
 %
-% fxy_exact : (Matrix) Coefficients of f(x,y) in exact form
+% fxy : (Matrix) Coefficients of f(x,y) in exact form
 
 % Normalise coefficients
-fxy_calc = normalise(fxy_calc);
-fxy_exact = normalise(fxy_exact);
+fxy = fxy./norm(fxy);
+gxy = gxy./norm(gxy);
+
+fxy = GetPositive(fxy);
+gxy = GetPositive(gxy);
 
 try
     % Get Distance between f(x,y) computed and f(x,y) exact.
-    dist = norm(fxy_exact-fxy_calc,'fro') ./ norm(fxy_exact,'fro');
+    dist = norm(fxy - gxy) ./ norm(fxy);
 
 catch
     
     dist = 1000;
 end
 
-% Printout
-fprintf([mfilename ' : ' sprintf('Analysis of Coefficients of %s(x,y) computed vs %s(x,y) exact: \n',name,name)])
-fprintf([mfilename ' : ' sprintf('Distance between exact and calculated matrix: %2.4e \n',dist)])
+
 
 
 
 end
 
+function fxy = GetPositive(fxy)
+
+if fxy(1,1) <=0
+    fxy = -1.* fxy;
+end
+
+end
 
 function []= PrintToFile(m, n, t1, t2, myError)
 % Print the results to a file

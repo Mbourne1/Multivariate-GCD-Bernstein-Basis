@@ -19,14 +19,14 @@ fxy_matrix_bi = GetWithBinomials_Bivariate(fxy);
 zero_matrix = zeros(m1 + n1_k1 + 1, m2 + n2_k2 + 1);
 
 % Get the number of rows and columns in T_{k_{1},k_{2}}(f(x,y))
-nRowsT1 = (m1+n1_k1 +1 ) * (m2+n2_k2 +1);
+nRowsT1 = (m1 + n1_k1 +1 ) * (m2+n2_k2 +1);
 nColumnsT1 = (n1_k1 + 1) * (n2_k2 + 1);
 
 % Initialise a zero matrix T_{n_{1}-k_{1},n_{2}-k_{2}}
 T1 = zeros(nRowsT1,nColumnsT1);
 
 % For every diagonal of the matrix vxy.
-nDiagonals_vxy = (n2_k2+1)+(n1_k1+1) -1;
+nDiagonals_vxy = (n2_k2 + 1)+(n1_k1 + 1) -1;
 
 % Initialise a count
 count = 1;

@@ -18,7 +18,7 @@ function D = BuildD_Bivariate_2Polys(m1, m2, n1_k1, n2_k2)
 % D : (Matrix) Matrix D^{-1}_{m1+n1-k1,m2+n2-k2}
 
 %
-D_mat = GetWithBinomials_Bivariate(ones(m1+n1_k1+1,m2+n2_k2+1));
+D_mat = GetWithBinomials_Bivariate(ones(m1 + n1_k1 + 1, m2 + n2_k2 + 1));
 
 
 % Get the D_matrix as a vector

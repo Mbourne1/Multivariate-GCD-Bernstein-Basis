@@ -1,4 +1,4 @@
-function [arr_wxy_1,arr_wxy_2,arr_wxy_out] = o_roots_mymethod_xy(arr_wxy_1, arr_wxy_2)
+function [arr_wxy_1, arr_wxy_2, arr_wxy_out] = o_roots_mymethod_xy(arr_wxy_1, arr_wxy_2)
 %
 % Inputs
 %
@@ -67,7 +67,7 @@ for i = 1:1:nEntries_wxy_1
     
 end
 
-%%
+% %
 % For each w_{x,i} get the root
 % get the polynomial, whose roots have multiplicty i, in bernstein
 % form, where coefficients are in terms of (1-y)^{m-i}y^{i}.

@@ -26,10 +26,10 @@ function DTQ = BuildDTQ_Bivariate_2Polys(fxy, gxy, k1, k2)
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Build the matrix D_{m1+n1-k1,m2+n2-k2} * T_{n1-k1,n2-k2}(f) * Q1_{n1-k1,n2-k2}
-DT1Q1 = BuildDT1Q1_Bivariate(fxy, n1-k1, n2-k2);
+DT1Q1 = BuildDT1Q1_Bivariate(fxy, n1 - k1, n2 - k2);
 
 % Build the matrix D_{m1+n1-k1,m2+n2-k2} * T_{m1-k1,m2-k2}(g) * Q1_{m1-k1,m2-k2}
-DT2Q2 = BuildDT1Q1_Bivariate(gxy, m1-k1, m2-k2);
+DT2Q2 = BuildDT1Q1_Bivariate(gxy, m1 - k1, m2 - k2);
 
 % Build the matrix DTQ
 DTQ = [DT1Q1 DT2Q2];

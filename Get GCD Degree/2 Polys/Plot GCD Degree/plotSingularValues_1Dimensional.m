@@ -39,8 +39,8 @@ for i1 = 1:1:nSubresultants_t1
         
 
 end
-vline(lowerLimit_t1);
-vline(upperLimit_t1);
+%vline(lowerLimit_t1);
+%vline(upperLimit_t1);
 grid on
 hold off
 

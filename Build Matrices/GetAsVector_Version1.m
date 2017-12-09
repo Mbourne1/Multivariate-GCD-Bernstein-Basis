@@ -14,7 +14,7 @@ nDiags_fxy = (m1+1)+(m2+1)-1;
 
 % For each diagonal of f(x,y), read into the vector, starting lower left to
 % upper right.
-for tot = 0:1:nDiags_fxy
+for tot = 0 : 1 : nDiags_fxy
     
     for i = tot:-1:0
         j = tot - i;

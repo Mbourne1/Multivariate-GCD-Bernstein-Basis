@@ -1,4 +1,4 @@
-function [arr_wxy, vDegree_x_wxy, vDegree_y_wxy] = o_roots_mymethod_y(fxy)
+function [arr_wxy] = o_roots_mymethod_y(fxy)
 %
 % % Inputs
 %
@@ -22,6 +22,37 @@ function [arr_wxy, vDegree_x_wxy, vDegree_y_wxy] = o_roots_mymethod_y(fxy)
 % vDegree_x_wxy :
 %
 % vDegree_y_wxy :
+
+
+% Get array of polynomials f_{i}(x,y)
+arr_fxy = GetArray_fxy(fxy);
+
+% Get array of polynomials h_{i}(x,y)
+arr_hxy = GetArray_hxy(hxy);
+
+% Get array of polynomials w_{i}(x,y)
+arr_wxy = GetArray_wxy(wxy);
+
+
+
+
+
+
+
+
+
+end
+
+
+function arr_fxy = GetArray_fxy(fxy)
+%
+% % Inputs
+% 
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
+%
+% % Outputs
+%
+% arr_fxy : (Array of Matrices) 
 
 
 % Set the first entry of q to be the input polynomial f(x,y)
@@ -49,14 +80,14 @@ while vDegree_y_fxy(ite) > 0
         % The derivative is a constant
         
         % The GCD is a constant
-        arr_fxy{ite+1} = Differentiate_wrt_y(arr_fxy{ite});
-        arr_uxy{ite+1} = Deconvolve_Bivariate(arr_fxy{ite},arr_fxy{ite+1});
+        arr_fxy{ite + 1} = Differentiate_wrt_y(arr_fxy{ite});
+        arr_uxy{ite + 1} = Deconvolve_Bivariate(arr_fxy{ite},arr_fxy{ite+1});
         
         % Get degree of d(x,y) with respect to x
-        vDegree_x_fxy(ite+1) = 0;
+        vDegree_x_fxy(ite + 1) = 0;
         
         % Get degree of d(x,y) with respect to y
-        vDegree_y_fxy(ite+1) = vDegree_y_fxy(ite);
+        vDegree_y_fxy(ite + 1) = vDegree_y_fxy(ite);
         
         break;
     end
@@ -126,43 +157,66 @@ while vDegree_y_fxy(ite) > 0
 end
 
 
+end
 
+
+
+
+
+function arr_hxy = GetArray_hxy(arr_fxy)
+%
+% % Inputs
+%
+% arr_fxy : (Array of Matrices)
+%
+% % Outputs
+%
+% arr_hxy : (Array of Matrices)
 
 
 % % Obtain the series h_{y}{i}
 
 % Get number of elements in the series of polynomials q_{i}
-[~,nEntries_fxy] = size(arr_fxy);
-nEntries_hxy = nEntries_fxy - 1;
+nPolys_fxy = length(arr_fxy);
+
+nPolys_hxy = nPolys_fxy - 1;
 
 % Preassign CellArray for h_{y} to have one less element that the
 % CellArray q_{y}
-arr_hxy = cell(1, nEntries_hxy);
+arr_hxy = cell(1, nPolys_hxy);
 
 % Initialise vectors to store the degrees of h(y)
-vDegree_x_hxy = zeros(1, nEntries_hxy);
-vDegree_y_hxy = zeros(1, nEntries_hxy);
+%vDegree_x_hxy = zeros(1, nPolys_hxy);
+%vDegree_y_hxy = zeros(1, nPolys_hxy);
 
 % For every q_{y,i}, deconvolve with q_{y,i+1} to obtain h_{y,i}
-for i = 1:1:nEntries_hxy
+for i = 1:1:nPolys_hxy
     
     % Perform Deconvolution to obtain h_{y,i}
-    arr_hxy{i} = Deconvolve_Bivariate(arr_fxy{i},arr_fxy{i+1});
+    arr_hxy{i} = Deconvolve_Bivariate(arr_fxy{i}, arr_fxy{i+1});
     
     % Get the degree of h_{y,i} with respect to x
-    vDegree_x_hxy(i) = vDegree_x_fxy(i) - vDegree_x_fxy(i+1);
+    %vDegree_x_hxy(i) = vDegree_x_fxy(i) - vDegree_x_fxy(i+1);
     
     % Get the degree of h_{y,i} with respect to y
-    vDegree_y_hxy(i) = vDegree_y_fxy(i) - vDegree_y_fxy(i+1);
+    %vDegree_y_hxy(i) = vDegree_y_fxy(i) - vDegree_y_fxy(i+1);
     
 end
 
-% Get the number of entires in the array h_{y}
-[~, nEntries_hxy] = size(arr_hxy);
+
+end
 
 
 
-
+function arr_wxy = GetArray_wxy(arr_hxy)
+%
+% % Inputs
+%
+% arr_hxy : (Array of Matrices)
+%
+% % Outputs
+%
+% arr_wxy : (Array of Matrices)
 
 
 
@@ -173,8 +227,8 @@ nEntries_wxy = nEntries_hxy -1 ;
 
 arr_wxy = cell(1,nEntries_wxy);
 
-vDegree_x_wxy = zeros(1,nEntries_wxy);
-vDegree_y_wxy = zeros(1,nEntries_wxy);
+%vDegree_x_wxy = zeros(1,nEntries_wxy);
+%vDegree_y_wxy = zeros(1,nEntries_wxy);
 
 
 % for each pair, perform a deconvolution to obtain w_{x}
@@ -184,20 +238,20 @@ if nEntries_hxy > 1
         arr_wxy{i} = Deconvolve_Bivariate(arr_hxy{i},arr_hxy{i+1});
         
         % Set the degree of w with respect to x
-        vDegree_x_wxy(i) = vDegree_x_hxy(i) - vDegree_x_hxy(i+1);
+        %vDegree_x_wxy(i) = vDegree_x_hxy(i) - vDegree_x_hxy(i+1);
         
         % Set the degree of w with respect to y
-        vDegree_y_wxy(i) = vDegree_y_hxy(i) - vDegree_y_hxy(i+1);
+        %vDegree_y_wxy(i) = vDegree_y_hxy(i) - vDegree_y_hxy(i+1);
         
     end
     % Include the final element of hx in wx
     arr_wxy{i+1} = arr_hxy{i+1};
     
     % Set its degree with respect to x
-    vDegree_x_wxy(i+1) = vDegree_x_hxy(i+1);
+    %vDegree_x_wxy(i+1) = vDegree_x_hxy(i+1);
     
     % Set its degree with respect to y
-    vDegree_y_wxy(i+1) = vDegree_y_hxy(i+1);
+    %vDegree_y_wxy(i+1) = vDegree_y_hxy(i+1);
     
     
 else
@@ -206,11 +260,12 @@ else
     arr_wxy{1} = arr_hxy{1};
     
     % Set the degree with respect to x
-    vDegree_x_wxy(1) = vDegree_x_hxy(1);
+    %vDegree_x_wxy(1) = vDegree_x_hxy(1);
     
     % Set the degree with respect to y
-    vDegree_y_wxy(1) = vDegree_y_hxy(1);
+    %vDegree_y_wxy(1) = vDegree_y_hxy(1);
     
 end
+
 
 end

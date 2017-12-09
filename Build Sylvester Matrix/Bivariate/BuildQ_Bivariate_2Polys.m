@@ -19,12 +19,12 @@ function Q = BuildQ_Bivariate_2Polys(n1_k1, n2_k2, m1_k1, m2_k2)
 % m2_k2 : (Int) Degree of polynomial u(x,y) with respect to y
 
 % Build the matrix Q_{1}
-Q1 = BuildQ1_Bivariate(n1_k1,n2_k2);
+Q1 = BuildQ1_Bivariate(n1_k1, n2_k2);
 
 % Build the matrix Q_{2}
-Q2 = BuildQ1_Bivariate(m1_k1,m2_k2);
+Q2 = BuildQ1_Bivariate(m1_k1, m2_k2);
 
 % Build the matrix Q
-Q = blkdiag(Q1,Q2);
+Q = blkdiag(Q1, Q2);
 
 end

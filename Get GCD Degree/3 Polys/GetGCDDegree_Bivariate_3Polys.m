@@ -1,8 +1,8 @@
-function [t1, t2, GM_fxy, GM_gxy, GM_hxy, alpha, beta, th1, th2, rank_range] = ...
+function [t1, t2, GM_fxy, GM_gxy, GM_hxy, alpha, beta, gamma, th1, th2, rank_range] = ...
     GetGCDDegree_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2, rank_range)
 % Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two
 % polynomials f(x,y) and g(x,y)
-%
+% 
 % % Inputs.
 %
 % fxy : (Matrix) Coefficient matrix of polynomial f(x,y)
@@ -67,11 +67,12 @@ nSubresultants_k1 = upperLimit_k1 - lowerLimit_k1 + 1;
 nSubresultants_k2 = upperLimit_k2 - lowerLimit_k2 + 1;
 
 % Initialise some vectors
-arrSingularValues = cell(nSubresultants_k1, nSubresultants_k2);
+arrSk1k2 = cell(nSubresultants_k1, nSubresultants_k2);
 matAlpha = zeros(nSubresultants_k1, nSubresultants_k2);
 matBeta = zeros(nSubresultants_k1, nSubresultants_k2);
 matTheta1 = zeros(nSubresultants_k1, nSubresultants_k2);
 matTheta2 = zeros(nSubresultants_k1, nSubresultants_k2);
+
 matGM_fxy = zeros(nSubresultants_k1, nSubresultants_k2);
 matGM_gxy = zeros(nSubresultants_k1, nSubresultants_k2);
 matGM_hxy = zeros(nSubresultants_k1, nSubresultants_k2);
@@ -87,7 +88,8 @@ for i1 = 1 : 1 : nSubresultants_k1
         k2 = lowerLimit_k2 + (i2 - 1);
         
         % Preprocess polynomials f(x,y), g(x,y) and h(x,y)
-        [GM_fxy, GM_gxy, GM_hxy, alpha, beta, th1, th2] = Preprocess_Bivariate_3Polys(fxy, gxy, hxy, k1, k2);
+        [GM_fxy, GM_gxy, GM_hxy, alpha, beta, gamma, th1, th2] = ...
+            Preprocess_Bivariate_3Polys(fxy, gxy, hxy, k1, k2);
         
         % Store the values from preprocessing
         matGM_fxy(i1,i2) = GM_fxy;
@@ -103,16 +105,29 @@ for i1 = 1 : 1 : nSubresultants_k1
         gxy_n = gxy ./ GM_gxy;
         hxy_n = hxy ./ GM_hxy;
         
+        
+      
+        
+        
+        
         % Get f(w1,w2), g(w1,w2) and h(w1,w2)
-        fww = GetWithThetas(fxy_n, th1, th2);
-        gww = GetWithThetas(gxy_n, th1, th2);
-        hww = GetWithThetas(hxy_n, th1, th2);
+        lambda_fww = alpha .* GetWithThetas(fxy_n, th1, th2);
+        mu_gww = beta .* GetWithThetas(gxy_n, th1, th2);
+        rho_hww = gamma .* GetWithThetas(hxy_n, th1, th2);
         
         % Build the k1,k2 subresultant matrix
-        Sk1k2 = BuildDTQ_Bivariate_3Polys(fww, alpha.*gww, beta.*hww, k1, k2);
+        arrSk1k2{i1,i2} = BuildSubresultant_Bivariate_3Polys(lambda_fww, mu_gww, rho_hww, k1, k2);
         
-        % Get the singular values of S_{k1,k2}
-        arrSingularValues{i1, i2} = svd(Sk1k2);
+        if i1 == 1 && i2 == 1
+        
+            arr_Polys = {fxy, gxy, hxy, lambda_fww, mu_gww, rho_hww};
+            arr_Names = {'$f(x,y)$', '$g(x,y)$', '$h(x,y)$', ...
+                '$\lambda \tilde{f}(\omega_{1}, \omega_{2})$',...
+                '$\mu \tilde{g}(\omega_{1}, \omega_{2})$',...
+                '$\rho \tilde{h}(\omega_{1}, \omega_{2})$'};
+            PlotCoefficients(arr_Polys, arr_Names);
+            
+        end
         
         
     end
@@ -134,24 +149,38 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         error('error : Code not complete')
         
-    case 'Singular Values'
+    case 'Minimum Singular Values'
         
         matMinimumSingularValues = zeros(nSubresultants_k1, nSubresultants_k2);
+        matNormalisedMinimumSingularValues = zeros(nSubresultants_k1, nSubresultants_k2);
         
-        for i1 = 1:1:nSubresultants_k1
-            for i2 = 1:1:nSubresultants_k2
+        for i1 = 1 : 1 : nSubresultants_k1
+            for i2 = 1 : 1 : nSubresultants_k2
                 
-                matMinimumSingularValues(i1,i2) = min(arrSingularValues{i1,i2});
+                % Get the singular values of S_{k1,k2}
+                vSingularValues = svd(arrSk1k2{i1,i2});
+                
+                vNormalisedSingularValues = vSingularValues./vSingularValues(1);
+                
+                % Get minimum singular value
+                matMinimumSingularValues(i1,i2) = min(vSingularValues);
+                matNormalisedMinimumSingularValues(i1,i2) = min(vNormalisedSingularValues);
                 
             end
         end
         
         if (SETTINGS.PLOT_GRAPHS)
+            
             %plotSingularValues(arrSingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
-            plotMinimumSingularValues(matMinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2, rank_range);
+            %plotMinimumSingularValues( matMinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2, rank_range);
+            
+            plotMinimumSingularValues( matNormalisedMinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2, rank_range);
+            
         end
         
-        vMetric = log10(matMinimumSingularValues);
+        vMetric = log10(matNormalisedMinimumSingularValues);
+        
+        
         
     case 'Residuals'
         
@@ -203,6 +232,33 @@ LineBreakMedium()
 
 end
 
+
+function PlotCoefficients(arr_Polys, arr_Names)
+
+nPolys = length(arr_Polys);
+
+figure()
+
+hold on
+
+for i = 1 : 1 : nPolys
+   
+    fxy = arr_Polys{i};
+    fxy = GetAsVector(fxy);
+    vec_x = 1 : 1: length(fxy);
+    fx_str = arr_Names{i};
+    plot(vec_x, log10(fxy),'DisplayName',fx_str);
+        
+end
+
+l = legend(gca,'show')
+set(l, 'Interpreter','latex');
+set(l, 'FontSize',20);
+box on
+grid on
+
+
+end
 
 
 

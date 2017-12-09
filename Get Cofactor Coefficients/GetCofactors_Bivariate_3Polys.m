@@ -16,13 +16,13 @@ function [uxy, vxy, wxy] = GetCofactors_Bivariate_3Polys(fxy, gxy, hxy, t1, t2)
 %
 % % Outputs
 %
-% uxy : Coefficients of polynomial u(x,y), the quotient polynomial such
+% uxy : (Matrix) Coefficients of polynomial u(x,y), the quotient polynomial such
 % that f(x,y)/u(x,y) = d(x,y)
 %
-% vxy : Coefficients of polynomial u(x,y), the quotient polynomial such
+% vxy : (Matrix) Coefficients of polynomial u(x,y), the quotient polynomial such
 % that g(x,y)/v(x,y) = d(x,y)
 %
-% wxy : Coefficients of polynomial u(x,y), the quotient polynomial such
+% wxy : (Matrix) Coefficients of polynomial u(x,y), the quotient polynomial such
 % that h(x,y)/w(x,y) = d(x,y)
 
 
@@ -30,20 +30,14 @@ function [uxy, vxy, wxy] = GetCofactors_Bivariate_3Polys(fxy, gxy, hxy, t1, t2)
 % Initialise Global Variables
 global SETTINGS
 
-% % 
-%
 
-% Get the degrees of polynomial f(x,y)
+% Get the degrees of polynomial f(x,y), g(x,y) and h(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get the degrees of polynomial g(x,y)
 [n1, n2] = GetDegree_Bivariate(gxy);
-
-% Get the degrees of polynomial h(x,y)
 [o1, o2] = GetDegree_Bivariate(hxy);
 
 % Build the (t1,t2)-th subresultant
-Sk1k2 = BuildDTQ_Bivariate_3Polys(fxy, gxy, hxy, t1, t2);
+Sk1k2 = BuildSubresultant_Bivariate_3Polys(fxy, gxy, hxy, t1, t2);
 
 
 % Find Optimal column for removal from S_{t1,t2}
@@ -53,13 +47,13 @@ opt_col_index = GetOptimalColumn(Sk1k2);
 
 % Get the matrix A_{t_{1},t_{2}} 
 At = Sk1k2;
-At(:,opt_col_index) = [];
+At(:, opt_col_index) = [];
 
 % Get the vector c_{t_{1},t_{2}} removed from S_{t_{1},t_{2}}
-ct = Sk1k2(:,opt_col_index);
+ct = Sk1k2(:, opt_col_index);
 
 
-%% Get the coefficients for u(x,y) and v(x,y)
+% % Get the coefficients for u(x,y) and v(x,y)
 x_ls = SolveAx_b(At,ct);
 
 
@@ -70,9 +64,9 @@ vecx =[
     x_ls(opt_col_index:end);
     ];
 
-nCoefficients_vxy = (n1-t1+1) * (n2-t2+1);
+nCoefficients_vxy = (n1 - t1 + 1) * (n2 - t2 + 1);
 
-nCoefficients_wxy = (o1-t1+1) * (o2-t2+1);
+nCoefficients_wxy = (o1 - t1 + 1) * (o2 - t2 + 1);
 
 
 % Get coefficients of u(x,y) as a vector 
@@ -85,35 +79,35 @@ v_uxy = -1 .* vecx(nCoefficients_vxy + nCoefficients_wxy + 1 : end);
 
 
 % Get u(x,y) as a matrix of coefficients
-uxy = GetAsMatrix(v_uxy, m1-t1, m2-t2);
+uxy = GetAsMatrix(v_uxy, m1 - t1, m2 - t2);
 
 % Get v(x,y) as a matrix of coefficients
-vxy = GetAsMatrix(v_vxy, n1-t1, n2-t2);
+vxy = GetAsMatrix(v_vxy, n1 - t1, n2 - t2);
 
 % Get w(x,y) as a matrix of coefficients
-wxy = GetAsMatrix(v_wxy, o1-t1, o2-t2);
+wxy = GetAsMatrix(v_wxy, o1 - t1, o2 - t2);
 
 switch SETTINGS.SYLVESTER_BUILD_METHOD
     case 'T'
-        
-        vxy = GetWithoutBinomails_Bivariate(vxy);
-        uxy = GetWithoutBinomails_Bivariate(uxy);
-        wxy = GetWithoutBinomails_Bivariate(wxy);
+              
+        vxy = GetWithoutBinomials_Bivariate(vxy);
+        uxy = GetWithoutBinomials_Bivariate(uxy);
+        wxy = GetWithoutBinomials_Bivariate(wxy);
         
     case 'DT'
         
-        vxy = GetWithoutBinomails_Bivariate(vxy);
-        uxy = GetWithoutBinomails_Bivariate(uxy);
-        wxy = GetWithoutBinomails_Bivariate(wxy);
+        vxy = GetWithoutBinomials_Bivariate(vxy);
+        uxy = GetWithoutBinomials_Bivariate(uxy);
+        wxy = GetWithoutBinomials_Bivariate(wxy);
         
     case 'DTQ'
         
     case 'TQ'
         
-        
+    case 'DTQ Denominator Removed'
 
     otherwise
-        error('err')
+        error('err %s is not a valid SYLVESTER BUILD METHOD', SETTINGS.SYLVESTER_BUILD_METHOD)
 end
 
 end

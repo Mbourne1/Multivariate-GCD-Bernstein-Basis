@@ -1,12 +1,28 @@
-function [GM_fx, GM_gx, GM_hx, alpha, beta, th1, th2] = Preprocess_Bivariate_3Polys(fxy, gxy, hxy, k1, k2)
+function [GM_fxy, GM_gxy, GM_hxy, lambda, mu, rho, th1, th2] = ...
+    Preprocess_Bivariate_3Polys(fxy, gxy, hxy, k1, k2)
 
-    GM_fx = 1;
-    GM_gx = 1;
-    GM_hx = 1; 
-    alpha = 1;
-    beta = 1;
-    th1 = 1;
-    th2 = 1;
+
+global SETTINGS
+
+switch SETTINGS.SYLVESTER_MATRIX_3POLY_N_EQUATIONS
+    
+    
+    case '2'
+        [GM_fxy, GM_gxy, GM_hxy, lambda, mu, rho, th1, th2] = ...
+            Preprocess_Bivariate_3Polys_2Eqns(fxy, gxy, hxy, k1, k2);
+        
+    case '3'
+        
+        [GM_fxy, GM_gxy, GM_hxy, lambda, mu, rho, th1, th2] = ...
+            Preprocess_Bivariate_3Polys_3Eqns(fxy, gxy, hxy, k1, k2);
+        
+        
+    otherwise
+        error('err variable nEquations must be 2 or 3')
+        
+        
+end
+
 
 
 end

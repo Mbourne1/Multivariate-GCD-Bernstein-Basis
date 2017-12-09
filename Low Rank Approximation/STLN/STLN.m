@@ -44,15 +44,15 @@ ite = 1;
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Get the number of coefficients in the polynomial f(x,y) and g(x,y)
-nCoefficients_fxy = (m1+1) * (m2+1);
-nCoefficients_gxy = (n1+1) * (n2+1);
+nCoefficients_fxy = (m1 + 1) * (m2 + 1);
+nCoefficients_gxy = (n1 + 1) * (n2 + 1);
 
 % Get the number of coefficients in both f(x,y) and g(x,y)
 nCoefficients_fg = nCoefficients_fxy + nCoefficients_gxy;
 
 % Get the number of coefficients in v(x,y) and u(x,y)
-nCoefficients_vxy = (n1-k1+1) * (n2-k2+1);
-nCoefficients_uxy = (m1-k1+1) * (m2-k2+1);
+nCoefficients_vxy = (n1 - k1 + 1) * (n2 - k2 + 1);
+nCoefficients_uxy = (m1 - k1 + 1) * (m2 - k2 + 1);
 
 % Get the number of coefficients in the unknown vector x, where A_{t}x =
 % c_{t}.
@@ -109,9 +109,9 @@ zk = zeros(nCoefficients_fg , 1);
 DPG = BuildDPG_SNTLN(m1, m2, n1, n2, 1, 1, 1, k1, k2, idx_col);
 
 % Test
-f = GetAsVector(fxy);
+b = GetAsVector(fxy);
 g = GetAsVector(gxy);
-test1a = DPG * [f;g];
+test1a = DPG * [b;g];
 test1b = ck;
 display(norm(test1a - test1b));
 
@@ -130,23 +130,28 @@ DYG = BuildDYG_SNTLN(m1, m2, n1, n2, k1, k2, x, 1, 1, 1);
 
 % Test
 test2a = DTQ*x;
-test2b = DYG*[f;g];
+test2b = DYG*[b;g];
 test2 = test2a - test2b;
 display(norm(test2))
 
 % %
 % Calculate the initial residual r = ck - (Ak*x)
-res_vec = ck - (DTQ*M*xk);
+t = ck - (DTQ*M*xk);
 
 % Get the matrix p, which will store all the perturbations returned from LSE file
 nEntries = nCoefficients_fxy...
     + nCoefficients_gxy ...
-    + nCoefficients_xls ...
-    + 3;
+    + nCoefficients_xls ;
 
+
+D = blkdiag( nCoefficients_vxy .* eye(nCoefficients_fxy), ...
+    nCoefficients_uxy .* eye(nCoefficients_gxy));
 
 % Set the intial value of E to the identity matrix
-E = eye(nEntries);
+%E = [D   zeros(nCoefficients_fxy + nCoefficients_gxy, nCoefficients_uxy + nCoefficients_vxy - 1)];
+
+E = eye(nCoefficients_fxy + nCoefficients_gxy + nCoefficients_uxy + nCoefficients_vxy - 1);
+
 
 % %
 % Create the matrix D(T+N)Q, initially N is empty so this is the same as T.
@@ -168,17 +173,21 @@ start_point = ...
 
 yy = start_point;
 
-f = -(yy - start_point);
+s = E * (start_point - yy);
 
 % Set the termination criterion to a large value. It will be
 % over written later.
-condition(ite) = norm(res_vec)/norm(ck);
+condition(ite) = norm(t)/norm(ck);
 
 while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIONS_SNTLN
     % Use the QR decomposition to solve the LSE problem
     % min |y-p| subject to Cy=q
     
-    y = LSE(E, f, C, res_vec);
+    % minimise Ax = b subject to Cx = d
+    
+    %x = lse(A,b,C,d)
+    %y = LSE_new(E, s, C, t);
+    y = LSE(E, s, C, t);
     
     % Increment the iteration number
     ite = ite + 1;
@@ -188,6 +197,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
         
     % Get the coefficients of z_{f}(x,y) and z_{g}(x,y)
     delta_zk = y(1 : nCoefficients_fxy + nCoefficients_gxy ,1);
+    delta_xk = y(nCoefficients_fg + 1 : end);
     
     % Update variables z_{k}, where z_{k} are perturbations in the
     % coefficients of f and g.
@@ -202,8 +212,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     z_fxy = GetAsMatrix(vec_z_fxy, m1, m2);
     z_gxy = GetAsMatrix(vec_z_gxy, n1, n2);
        
-    % Get the coefficients corresponding to x
-    delta_xk = y(nCoefficients_fg+1 : end);
+
     
     % Update x_{k}, where x_{k}
     xk = xk + delta_xk;
@@ -237,13 +246,12 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     DYG = BuildDYG_SNTLN(m1, m2, n1, n2, k1, k2, x, 1, 1, 1);
   
     % Get residual as a vector
-    res_vec = (ck + hk) - DTNQ*M*xk ;
+    t = (ck + hk) - DTNQ*M*xk ;
     
     % Create the matrix C. This is made up of five submatrices, HZ, Hx,
     % H_alpha and H_theta1 and H_theta2.
     
     Hz          = DYG - DPG;
-    
     Hx          = DTNQ*M;
     
     % Update the matrix C for LSE Problem
@@ -253,11 +261,11 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     ek = ck + hk;
     
     % Calculate the normalised residual of the solution.
-    condition(ite) = norm(res_vec) / norm(ek);
+    condition(ite) = norm(t) / norm(ek);
     
     % Update fnew - used in LSE Problem.
-    f = -(yy - start_point);
-    
+    %b = -(yy - start_point);
+    s = E * (start_point - yy);
     
 end
 

@@ -58,7 +58,7 @@ if abs(maxDelta) < SETTINGS.THRESHOLD
 else
     
     % Delta value is significant
-    fprintf([mfilename ' : ' 'Significant Change' ]);
+    fprintf([mfilename ' : ' 'Significant Change detected \n' ]);
     t = myLowerLimit + (idxMaxChange - 1);
    
     

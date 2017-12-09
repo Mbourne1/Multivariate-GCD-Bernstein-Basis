@@ -1,4 +1,4 @@
-function [t1, t2, GM_fx, GM_gx, alpha, th1, th2] = GetGCDDegree_Bivariate_2Polys_NewMethod(fxy, gxy, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
+function [t1, t2, GM_fx, GM_gx, alpha, th1, th2] = GetGCDDegree_Bivariate_2Polys_TotalDegree(fxy, gxy, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
 % Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two
 % polynomials f(x,y) and g(x,y). This is done by first setting k_{1} = 1.
 % Computing the set of Sylvester subresultant matrices S_{k1,k2} for all

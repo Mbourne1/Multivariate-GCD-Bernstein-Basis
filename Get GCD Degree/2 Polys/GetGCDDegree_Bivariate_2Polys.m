@@ -49,13 +49,12 @@ upperLimit_k1 = limits_k1(2);
 lowerLimit_k2 = limits_k2(1);
 upperLimit_k2 = limits_k2(2);
 
+
+% Get number of subresultant matrices
 nSubresultants_k1 = upperLimit_k1 - lowerLimit_k1 + 1;
 nSubresultants_k2 = upperLimit_k2 - lowerLimit_k2 + 1;
 
-% Initialise some vectors
-arr_SingularValues = cell(nSubresultants_k1, nSubresultants_k2);
-
-
+% Initialise matrices to store values
 matrix_Alpha = zeros(nSubresultants_k1, nSubresultants_k2);
 matrix_Theta1 = zeros(nSubresultants_k1, nSubresultants_k2);
 matrix_Theta2 = zeros(nSubresultants_k1, nSubresultants_k2);
@@ -77,44 +76,29 @@ for i1 = 1 : 1 : nSubresultants_k1
         % Preprocessing
         [GM_fx, GM_gx, alpha, th1, th2] = Preprocess_Bivariate_2Polys(fxy, gxy, k1, k2);
         
-        
-        
-        % Divide f(x) by geometric mean
+        % Divide f(x,y) and g(x,y) by geometric mean
         fxy_matrix_n = fxy ./ GM_fx;
-        
-        % Divide g(x) by geometric mean
         gxy_matrix_n = gxy ./ GM_gx;
         
-        % Get f(w,w) from f(x,y)
+        % Get f(w,w) from f(x,y) and g(w,w) from g(x,y)
         fww_matrix = GetWithThetas(fxy_matrix_n, th1, th2);
-        
-        % Get g(w,w) from g(x,y)
         gww_matrix = GetWithThetas(gxy_matrix_n, th1, th2);
         
         % Build the Sylvester subresultant matrix S_{k1,k2}(f,g)
         arr_Sk1k2{i1,i2} = BuildSubresultant_Bivariate_2Polys(fww_matrix, alpha.*gww_matrix, k1, k2);
         
-              
-        
-        % Store the optimal alpha
+        % Store the optimal alpha, th1, th2, gm_fx, gm_gx
         matrix_Alpha(i1, i2) = alpha;
-        
-        % Store the optimal theta_{1}
         matrix_Theta1(i1, i2) = th1;
-        
-        % Store the optimal theta_{2}
         matrix_Theta2(i1, i2) = th2;
-        
-        % Store the optimal lambda
         matrix_GM_fx(i1, i2) = GM_fx;
-        
-        % Store the optimal mu
         matrix_GM_gx(i1, i2) = GM_gx;
         
     end
 end
 
 
+PlotAlphas(matrix_Alpha, limits_k1, limits_k2, limits_t1, limits_t2);
 
 
 
@@ -125,6 +109,7 @@ end
 % Residuals
 
 switch SETTINGS.RANK_REVEALING_METRIC
+    
     case 'R1 Row Norms'
         
      
@@ -139,9 +124,9 @@ switch SETTINGS.RANK_REVEALING_METRIC
             
             for i2 = 1:1:nSubresultants_k2
                 
-                [~,R] = qr(arr_Sk1k2{i1,i2});
+                [~,R] = qr(arr_Sk1k2{i1, i2});
                 [~,c] = size(R);
-                arr_R1{i1, i2} = R(1:c,1:c);
+                arr_R1{i1, i2} = R(1 : c, 1 : c);
                 
                 
                 arr_R1_RowNorms{i1, i2} = sqrt(sum(arr_R1{i1, i2}.^2,2))./norm(arr_R1{i1, i2});
@@ -161,7 +146,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
         end
         
         % Set Metric
-        metric = mat_MinRowNorm./mat_MaxRowNorm;
+        metric = mat_MinRowNorm ./ mat_MaxRowNorm;
         
     case 'R1 Row Diagonals'
         
@@ -198,19 +183,23 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
     case 'Minimum Singular Values'
         
+        
+        
+        % Initialise some vectors
+        arr_SingularValues = cell(nSubresultants_k1, nSubresultants_k2);
+       
         % Initialise matrix to store minimum singular values of SVD of each
         % S_{k1,k2}
         mat_MinimumSingularValues = zeros(min(m1,n1)+1, min(m2,n2)+1);
+        
         
         for i1 = 1:1:nSubresultants_k1
             
             for i2 = 1:1:nSubresultants_k2
                 
                 % Get the singular values
-                arr_SingularValues{i1, i2} = svd(arr_Sk1k2{i1,i2});
-                
-                % k1 = lowerLimit_k1 + (i1 - 1)
-                % k2 = lowerLimit_k2 + (i2 - 1)
+                vSingularValues = svd(arr_Sk1k2{i1,i2});
+                arr_SingularValues{i1, i2} = vSingularValues;
                 mat_MinimumSingularValues(i1,i2) = min(min(arr_SingularValues{i1,i2}));
                 
             end
@@ -218,15 +207,61 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         % Plot Graphs
         if(SETTINGS.PLOT_GRAPHS)
-            plotSingularValues(arr_SingularValues, limits_k1, limits_k2, limits_t1, limits_t2)
+            
+            %plotSingularValues(arr_SingularValues, limits_k1, limits_k2, limits_t1, limits_t2)
             plotMinimumSingularValues(mat_MinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2)
+            
         end
-        
-        
         
         % Set metric
         metric = mat_MinimumSingularValues;
+       
         
+        
+    case 'Normalised Minimum Singular Values'
+        
+        
+        
+        % Initialise some vectors
+        %arr_SingularValues = cell(nSubresultants_k1, nSubresultants_k2);
+        arr_NormalisedSingularValues = cell(nSubresultants_k1, nSubresultants_k2);
+        
+        % Initialise matrix to store minimum singular values of SVD of each
+        % S_{k1,k2}
+        %mat_MinimumSingularValues = zeros(min(m1,n1)+1, min(m2,n2)+1);
+        mat_NormalisedMinimumSingularValues = zeros(min(m1,n1)+1, min(m2,n2)+1);
+        
+        for i1 = 1:1:nSubresultants_k1
+            
+            for i2 = 1:1:nSubresultants_k2
+                
+                % Get the singular values
+                
+                vSingularValues = svd(arr_Sk1k2{i1,i2});
+                
+                %arr_SingularValues{i1, i2} = vSingularValues;
+                arr_NormalisedSingularValues{i1, i2} = vSingularValues./ vSingularValues(1);
+                
+                %mat_MinimumSingularValues(i1,i2) = min(min(arr_SingularValues{i1,i2}));
+                mat_NormalisedMinimumSingularValues(i1, i2) = min(min(arr_NormalisedSingularValues{i1,i2}));
+                
+                
+                
+            end
+        end
+        
+        % Plot Graphs
+        if(SETTINGS.PLOT_GRAPHS)
+            
+            %plotSingularValues(arr_SingularValues, limits_k1, limits_k2, limits_t1, limits_t2)
+            %plotMinimumSingularValues(mat_MinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2)
+            plotMinimumSingularValues(mat_NormalisedMinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2)
+            
+        end
+        
+        % Set metric
+        %metric = mat_MinimumSingularValues;
+        metric = mat_NormalisedMinimumSingularValues;    
     case 'Residuals'
         
         error('Error : Code not yet developed for this branch')
@@ -238,17 +273,33 @@ switch SETTINGS.RANK_REVEALING_METRIC
 end
 
 
+% 26/09/2017 - A more robust method is required here
 
 % Compute the degree of the GCD
 delta_x = diff(log10(metric),1,1);
-vDelta_x = sum(delta_x,2);
-[~, index] = max(vDelta_x);
-t1 = index + lowerLimit_k1 -1;
-
 delta_y = diff(log10(metric),1,2);
-vDelta_y = sum(delta_y,1);
-[~, index] = max(vDelta_y);
-t2 = index + lowerLimit_k1 -1;
+
+
+new_delta_y = [delta_y, zeros(min(m1,n1) + 1, 1)];
+new_delta_x = [delta_x ; zeros(1, min(m2,n2) + 1)];
+
+total_delta_x_y = new_delta_x + new_delta_y;
+total_delta_x_y(1,1) = 0;
+
+[M, I] = max(total_delta_x_y(:));
+[r,c] = ind2sub(size(total_delta_x_y),I);
+
+t1 = r - 1;
+t2 = c - 1;
+
+%vDelta_x = sum(delta_x,2);
+%[~, index] = max(vDelta_x);
+%t1 = index + lowerLimit_k1 -1;
+
+
+%vDelta_y = sum(delta_y,1);
+%[~, index] = max(vDelta_y);
+%t2 = index + lowerLimit_k1 -1;
 
 
 % Outputs
@@ -266,6 +317,91 @@ LineBreakMedium()
 
 end
 
+function [] = PlotAlphas(matrix_alpha, limits_k1, limits_k2, limits_t1, limits_t2)
+% % Inputs
+%
+% matMinimumSingularValues : (Matrix) Stores the minimum singular values of
+% each Sylvester subresultant matrix S_{k1,k2} for k1 =
+% lowerlim,...,upperlim and k2 = lowerlim,...,upperlim
+%
+% limits_k1 : [Int Int]
+%
+% limits_k2 : [Int Int]
+%
+% limits_t1 : [Int Int]
+%
+% limits_t2 : [Int Int]
+%
+% rank_range : [Float Float]
 
+global SETTINGS
+
+% Get upper and lower limit
+lowerLimit_k1 = limits_k1(1);
+upperLimit_k1 = limits_k1(2);
+
+%
+lowerLimit_k2 = limits_k2(1);
+upperLimit_k2 = limits_k2(2);
+
+% 
+v_i1 = lowerLimit_k1 : 1 : upperLimit_k1;
+v_i2 = lowerLimit_k2 : 1 : upperLimit_k2;
+
+
+
+
+try
+[X,Y] = meshgrid(v_i1,v_i2);
+
+figure_name = sprintf('alpha : %s', SETTINGS.SYLVESTER_BUILD_METHOD);
+figure('name',figure_name)
+hold on
+%title('Minimum Singular Values');
+
+surf(X, Y, log10(matrix_alpha)');
+
+% Labels
+xlabel('$k_{1}$', 'Interpreter', 'latex', 'FontSize', 20);
+ylabel('$k_{2}$', 'Interpreter', 'latex', 'FontSize', 20);
+zlabel('$\log_{10} \left( \alpha_{k_{1}, k_{2}} \right)$', 'Interpreter', 'latex', 'FontSize', 20);
+
+% Set view angle
+az = -30;
+el = 20;
+view(az, el);
+
+
+% Display
+grid on
+box on
+
+% Set location of window and size
+m_left = 100;
+m_bottom = 100;
+m_width = 600;
+m_height = 600;
+
+set(gcf, 'Position', [m_left, m_bottom, m_width, m_height]);
+
+% Position of figure within window
+myplot = gca;
+myval_side = 0.12;
+myval_base = 0.10;
+set(myplot, 'Position', [ myval_side myval_base 0.98 - myval_side 0.98 - myval_base])
+
+
+hold off
+catch
+    
+end
+
+
+
+
+
+
+
+end
 
 

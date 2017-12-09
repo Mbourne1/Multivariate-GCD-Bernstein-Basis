@@ -20,7 +20,7 @@ function Q1 = BuildQ1_Bivariate(n1_k1, n2_k2)
 
 % Get a matrix of binomial coefficients corresponding to the polynomial
 % v(x,y).
-Q_mat = GetWithBinomials_Bivariate(ones(n1_k1+1,n2_k2+1));
+Q_mat = GetWithBinomials_Bivariate(ones(n1_k1 + 1, n2_k2 + 1));
 
 
 % Get the matrix Q as a vector

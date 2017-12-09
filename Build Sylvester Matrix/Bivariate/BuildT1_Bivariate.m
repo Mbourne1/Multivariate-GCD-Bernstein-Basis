@@ -20,13 +20,14 @@ function T1 = BuildT1_Bivariate(fxy, n1_k1, n2_k2)
 
 global SETTINGS
 switch SETTINGS.VECTORISATION_METHOD
-    case {'Version 1'}
+    case 'Version 1'
         
         T1 = BuildT1_Bivariate_Version1(fxy, n1_k1, n2_k2);
         
-    case {'Version 2'}
+    case 'Version 2'
         
         T1 = BuildT1_Bivariate_Version2(fxy, n1_k1, n2_k2);
+        
     otherwise
         error('error')
         

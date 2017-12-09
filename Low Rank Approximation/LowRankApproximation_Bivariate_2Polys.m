@@ -119,6 +119,25 @@ end
 
 
 function [] = PlotSingularValues(fxy, gxy, fxy_lr, gxy_lr, fww, a_gww, fww_lr, a_gww_lr)
+%
+% % Inputs
+%
+% fxy : (matrix)
+% 
+% gxy : (Matrix)
+%
+% fxy_lr : (Matrix)
+%
+% gxy_lr : (Matrix)
+%
+% fww : (Matrix)
+%
+% a_gww : (Matrix)
+%
+% fww_lr : (Matrix)
+%
+% gww_lr : (Matrix)
+
 
 global SETTINGS
 
@@ -135,16 +154,48 @@ vSingularValues4 = svd(S4);
 
 if (SETTINGS.PLOT_GRAPHS)
     figure()
-    plot(log10(vSingularValues1),'-s','DisplayName','fxy,gxy');
     hold on
-    plot(log10(vSingularValues2),'-s','DisplayName','fxy_lr,gxy_lr');
-    plot(log10(vSingularValues3),'-s','DisplayName','fww gww');
-    plot(log10(vSingularValues4),'-s','DisplayName','fww_lr gww_lr');
+       
+    plot(log10(vSingularValues1),'-s','DisplayName','$f(x,y), g(x,y)$');
+    plot(log10(vSingularValues2),'-s','DisplayName','$f(x,y), g(x,y) LR$');
+    
+    plot(log10(vSingularValues3),'-s','DisplayName','$\tilde{f}(\omega_{1}, \omega_{2}), \alpha \tilde{g}(\omega_{1}, \omega_{2})$');
+    
+    plot(log10(vSingularValues4),'-s','DisplayName','$\tilde{f}(\omega_{1}, \omega_{2}), \alpha \tilde{g}(\omega_{1}, \omega_{2}) LR$');
     legend(gca,'show');
     hold off
 end
 
+% Legend and labels
+l = legend(gca, 'show');
+set(l, {'Interpreter'}, {'latex'})
+set(l, {'FontSize'}, {20})
+set(l, {'Location'}, {'southwest'})
 
+xlabel('$i$', 'Interpreter', 'latex', 'FontSize', 20)
+ylabel('$\log_{10} \left( \sigma_{i} \right)$', 'Interpreter', 'latex', 'FontSize', 20)
+
+grid on
+box on
+
+
+
+% Set location of window and size
+m_left = 100;
+m_bottom = 100;
+m_width = 600;
+m_height = 600;
+
+set(gcf, 'Position', [m_left, m_bottom, m_width, m_height]);
+
+% Position of figure within window
+myplot = gca;
+myval_side = 0.12;
+myval_base = 0.10;
+set(myplot, 'Position', [ myval_side myval_base 0.98 - myval_side 0.98 - myval_base])
+
+
+hold off
 
 end
 

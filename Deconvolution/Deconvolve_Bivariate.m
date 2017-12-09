@@ -19,7 +19,7 @@ function [hxy] = Deconvolve_Bivariate(fxy, gxy)
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Build the matrix C_{m1-n1,m2-n2}(g) 
-T1 = BuildT1_Bivariate(gxy, m1-n1, m2-n2);
+T1 = BuildT1_Bivariate(gxy, m1 - n1, m2 - n2);
 
 % Get the polynomial f in vector form
 vec_fxy = GetAsVector(fxy);
@@ -28,7 +28,7 @@ vec_fxy = GetAsVector(fxy);
 D = BuildD_Bivariate_2Polys(0, 0, m1, m2);
 
 % Build the Matrix G
-G = BuildG_Bivariate(m1-n1, m2-n2);
+G = BuildG_Bivariate(m1 - n1, m2 - n2);
 
 % Get coefficients vector h containing coefficients of polynomial h(x,y)
 h = SolveAx_b(D*T1*G, vec_fxy);

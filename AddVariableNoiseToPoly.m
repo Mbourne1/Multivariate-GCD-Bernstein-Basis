@@ -26,12 +26,14 @@ rng(SETTINGS.SEED)
 
 % Get random variables
 
-y = (2*rand(m1+1,m2+1))-ones(m1+1,m2+1);
+% Get set of random variables in the interval [-1, 1]
+r = (2*rand(m1 + 1, m2 + 1)) - ones(m1 + 1, m2 + 1);
 
-s = eu *ones(m1+1,m2+1) -  y.*(eu-el);
+
+epslon = eu .* ones(m1 + 1, m2 + 1) -  r.*(eu - el);
 
 % Get noise matrix
-noise_matrix = fxy.*s;
+noise_matrix = r .* fxy .* epslon;
 
 % Get f(x,y) with noise
 fxy_noisy = fxy + noise_matrix;

@@ -44,20 +44,20 @@ parfor i1 = 1:1:length(ex_num_arr)
                                                               
                                 filename = sprintf('Results/log_GCD_2Polys.txt');
                                 
-                                %try
+                                try
                                     
                                     o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, arrFactorisation_build_method, rank_revealing_metric);
                                     fileId = fopen(filename,'a')
                                     fprintf(fileId,'%s, %s \n',datetime('now'),'success');
                                     fclose(fileId);
                                     
-                                %catch err
+                                catch err
                                     
-                                %    fileId = fopen(filename,'a')
-                                %    fprintf(fileId,'%s, %s \n\n\n',datetime('now'),getReport(err));
-                                %    fclose(fileId);
+                                    fileId = fopen(filename,'a')
+                                    fprintf(fileId,'%s, %s \n\n\n',datetime('now'),getReport(err));
+                                    fclose(fileId);
                                     
-                                %end
+                                end
                             end
                         end
                     end

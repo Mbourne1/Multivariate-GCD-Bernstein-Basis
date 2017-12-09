@@ -24,18 +24,9 @@ function [fxy,gxy,dxy,uxy,vxy,m,n,t] = Examples_GCD_Bivariate_2Polys(ex_num)
 
 
 
-EXAMPLE_TYPE = 'From Coefficients';
 
-switch EXAMPLE_TYPE
-    case 'From Roots'
-        [fxy, gxy, dxy, uxy, vxy, m, n, t] = Examples_GCD_FromRoots_Bivariate_2Polys(ex_num);
-        
-    case 'From Coefficients'
-        [fxy, gxy, dxy, uxy, vxy, m, n, t] = Examples_GCD_FromCoefficients_Bivariate_2Polys(ex_num);
-        
-    otherwise
-        error('err');
-end
+[fxy, gxy, dxy, uxy, vxy, m, n, t] = Examples_GCD_FromCoefficients_Bivariate_2Polys(ex_num);
+
 
 
 end

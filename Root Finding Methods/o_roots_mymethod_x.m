@@ -1,4 +1,4 @@
-function [arr_wxy, vDegree_x_wxy, vDegree_y_wxy] = o_roots_mymethod_x(fxy)
+function [arr_wxy] = o_roots_mymethod_x(fxy)
 % o_roots_mymethod_x(fxy, M)
 %
 % % Inputs
@@ -9,6 +9,28 @@ function [arr_wxy, vDegree_x_wxy, vDegree_y_wxy] = o_roots_mymethod_x(fxy)
 %
 % arr_wxy : (Array of Matrices) : Array containing matrices of coefficients
 % of the polynomials w_{i}(x,y)
+
+
+arr_fxy = GetArray_fxy(fxy);
+
+arr_hxy = GetArray_hxy(arr_fxy);
+
+arr_wxy = GetArray_wxy(arr_hxy);
+
+
+
+
+
+
+
+
+
+
+end
+
+
+function arr_fxy = GetArray_fxy(fxy)
+
 
 
 % Set the first entry of q to be the input polynomial f(x,y)
@@ -112,7 +134,10 @@ while vDegree_x_fxy(ite) > 0
 end
 
 
+end
 
+
+function arr_hxy = GetArray_hxy(arr_fxy)
 
 
 
@@ -147,27 +172,37 @@ for i = 1:1:nEntries_hxy
 end
 
 
-% Get the number of entries in the array of h_{x}.
-[~, nEntries_hxy] = size(arr_hxy);
+
+end
 
 
-
-
-
-
+function arr_wxy = GetArray_wxy(arr_hxy)
+%
+%
+% % Inputs
+%
+% arr_hxy : (Array of Matrices)
+%
+% % Outputs
+%
+% arr_wxy : (Array of Matrices)
 
 
 
 % % Obtain the series w_{x}{i} by series of deconvolutions on h_{x}{i}
 
-% Pre assign the CellArray w_{x}
-nEntries_wxy = nEntries_hxy - 1;
+% Get number of polynomials in array h_{i}(x,y)
+nPolys_hxy = length(arr_hxy);
 
-arr_wxy = cell(1, nEntries_wxy);
+% Pre assign the CellArray w_{x}
+nPolys_wxy = nPolys_hxy - 1;
+
+% Initialise array
+arr_wxy = cell(1, nPolys_wxy);
 
 % Initialise vectors to store the degrees of w(x).
-vDegree_x_wxy = zeros(1, nEntries_wxy);
-vDegree_y_wxy = zeros(1, nEntries_wxy);
+vDegree_x_wxy = zeros(1, nPolys_wxy);
+vDegree_y_wxy = zeros(1, nPolys_wxy);
 
 % For each pair, perform a deconvolution to obtain w_{x}
 if nEntries_hxy > 1

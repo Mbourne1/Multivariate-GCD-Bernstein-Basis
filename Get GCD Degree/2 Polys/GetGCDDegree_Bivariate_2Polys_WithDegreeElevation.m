@@ -1,4 +1,4 @@
-function [t_star, th1, th2] = GetGCDDegree_Bivariate_2Polys_WithDegreeElevation(fxy, gxy, p1, p2, q1, q2, limits_t)
+function [t1_possible, t2_possible, alpha, th1, th2] = GetGCDDegree_Bivariate_2Polys_WithDegreeElevation(fxy, gxy)
 % GetGCDDegree_Total_Bivariate_2Polys(fxy, gxy, m, n, limits_t)
 %
 % Get the total degree t of the two input polynomials f(x,y) and g(x,y)
@@ -27,30 +27,67 @@ function [t_star, th1, th2] = GetGCDDegree_Bivariate_2Polys_WithDegreeElevation(
 global SETTINGS
 
 
+% Get degree of f(x,y) and g(x,y)
+[m1, m2] = GetDegree_Bivariate(fxy);
+[n1, n2] = GetDegree_Bivariate(gxy);
 
-% Degree elevate f(x,y) so that its coefficients are contained in a square
-fxy_matrix_delv = DegreeElevate_Bivariate(fxy, p1, p2);
 
-
-% Degree elevate g(x,y) so that its coefficients are contained in a square
-% matrix.
-gxy_matrix_delv = DegreeElevate_Bivariate(gxy, q1, q2);
 
 
 
 % Set my_limits : Always compute all Sylvester subresultant matrices. Use
 % limits_t as an indicator of where the GCD degree should be.
-myLimits = [0 min(m_star, n_star)];
+method = 1;
 
-myLowerLimit = myLimits(1);
-myUpperLimit = myLimits(2);
+switch method 
+    case 1
+         
+        m_star = max(m1, m2);
+        n_star = max(n1, n2);
+
+        %m_star = m1 + m2;
+        %n_star = n1 + n2;
+        
+        p1 = m_star - m1;
+        p2 = m_star - m2;
+        q1 = n_star - n1; 
+        q2 = n_star - n2;
+        
+        fprintf('Degree Elevations f wrt x %i \n', p1);
+        fprintf('Degree Elevations f wrt y %i \n', p2);
+        fprintf('Degree Elevations g wrt x %i \n', q1);
+        fprintf('Degree Elevations g wrt y %i \n', q2);
+        
+        limits_k = [1 min(m_star, n_star)];
+        
+    case 2
+        p1 = 0 ;
+        p2 = 0;
+        q1 = 0; 
+        q2 = 0;
+        k_star = min(m1,n1) + min(m2,n2);
+        
+        limits_k = [0 k_star];
+        
+end
+
+
+% Degree elevate f(x,y) so that its coefficients are contained in a square
+fxy_matrix_delv = DegreeElevate_Bivariate(fxy, p1, p2);
+gxy_matrix_delv = DegreeElevate_Bivariate(gxy, q1, q2);
+
+        
+limits_t = limits_k;
+
+lowerLimit_k = limits_k(1);
+upperLimit_k = limits_k(2);
 
 % Set the number of subresultants to be built
-nSubresultants = myUpperLimit - myLowerLimit + 1;
+nSubresultants = upperLimit_k - lowerLimit_k + 1;
 
 % if upper limit is equal to lower limit
-if myUpperLimit == myLowerLimit
-    t_star = myUpperLimit;
+if upperLimit_k == lowerLimit_k
+    t_star = upperLimit_k;
     th1 = 1;
     th2 = 1;
     return;
@@ -74,13 +111,13 @@ arr_R1 = cell(nSubresultants, 1);
 arr_SingularValues = cell(nSubresultants, 1);
 
 % for each possible total degree
-for i = 1:1:nSubresultants
+for i = 1 : 1 : nSubresultants
     
-    k = myLowerLimit + (i-1);
+    k = lowerLimit_k + (i-1);
     
     % Apply preprocessing
     [vGM_fx(i),vGM_gx(i),vAlpha(i), vTh1(i),vTh2(i)] = ...
-        Preprocess(fxy_matrix_delv, gxy_matrix_delv, k, k);
+        Preprocess_Bivariate_2Polys(fxy_matrix_delv, gxy_matrix_delv, k, k);
     
     % Get f(x,y) normalized by geometric mean lambda.
     fxy_matrix_n = fxy_matrix_delv./vGM_fx(i);
@@ -95,7 +132,7 @@ for i = 1:1:nSubresultants
     gww_matrix = GetWithThetas(gxy_matrix_n, vTh1(i), vTh2(i));
     
     % Build the k-th subresultant matrix.
-    arr_Sk{i} = BuildDTQ_Bivariate_2Polys_NewMethod(fww_matrix, vAlpha(i).*gww_matrix, 1, k);
+    arr_Sk{i} = BuildSubresultant_Bivariate_2Polys(fww_matrix, vAlpha(i).*gww_matrix, k, k);
     
     % Get the matrix R1 from QR decomposition of S_{k}
     arr_R1{i} = GetR1(arr_Sk{i});
@@ -115,7 +152,7 @@ fprintf('Metric used to compute the degree of the GCD : %s \n', SETTINGS.RANK_RE
 % Residuals
 switch SETTINGS.RANK_REVEALING_METRIC
     
-    case 'Singular Values'
+    case 'Minimum Singular Values'
         
         % Initialise vector to store minimum singular values
         vMinimumSingularValues = zeros(nSubresultants, 1);
@@ -132,8 +169,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         % Plot Graphs
         if(SETTINGS.PLOT_GRAPHS)
-            %plotSingularValues_TotalDegree(arr_SingularValues);
-            plotMinimumSingularValues_TotalDegree(vMinimumSingularValues, myLimits);
+            %plotSingularValues_1Dimensional(arr_SingularValues, limits_k, limits_t);
+            plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, limits_k, limits_t);
         end
         
     case 'R1 Row Norms'
@@ -144,7 +181,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
         vMinRowNorm = zeros(nSubresultants,1);
         
         
-        for i = 1:1:nSubresultants
+        for i = 1 : 1 : nSubresultants
             
             % Get Norms of each row in the matrix R1
             arr_R1_RowNorm{i} = sqrt(sum(arr_R1{i}.^2,2))./norm(arr_R1{i});
@@ -177,7 +214,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         % Plot graphs
         if(SETTINGS.PLOT_GRAPHS)
-            plotMaxMinDiagonals_R1_Total(vMaxDiagonal_R1, vMinDiagonal_R1, myLimits, limits_t);
+            %plotMaxMinDiagonals_R1_Total(vMaxDiagonal_R1, vMinDiagonal_R1, myLimits, limits_t);
             %plotDiagonals_R1(arr_R1_diag);
         end
         
@@ -190,35 +227,47 @@ end
 
 
 
-if myUpperLimit == myLowerLimit
+if upperLimit_k == lowerLimit_k
     
-    t_star = GetGCDDegree_OneSubresultant(metric, myLimits);
+    t_star = GetGCDDegree_OneSubresultant(metric, limits_k);
     
     
     
 else
     
-    t_star = GetGCDDegree_MultipleSubresultants(metric, myLimits);
-    
-    
+    t_star = GetGCDDegree_MultipleSubresultants(metric, limits_k);
+
     
 end
 
 if t_star == 0
     th1 = 1;
     th2 = 1;
+    alpha = 1;
     return;
 end
-%%
+
 
 
 % Set the optimal theta 1 and theta 2
-th1 = vTh1(t_star - myLowerLimit + 1);
-th2 = vTh2(t_star - myLowerLimit + 1);
+th1 = vTh1(t_star - lowerLimit_k + 1);
+th2 = vTh2(t_star - lowerLimit_k + 1);
+alpha = vAlpha(t_star - lowerLimit_k + 1);
+
+fprintf('%s : Value of t* is given by : %i \n', mfilename, t_star)
+
+t1_possible = t_star - (min(p1, q1));
+t2_possible = t_star - (min(p2, q2));
 
 LineBreakLarge();
-fprintf('%s : Value of t* is given by : %i \n', mfilename, t_star)
+fprintf('Either \n')
+fprintf('t1 : %i \n', t1_possible );
+fprintf('t2 : %i \n', t2_possible );
 LineBreakLarge();
+
+
+
+
 
 end
 
