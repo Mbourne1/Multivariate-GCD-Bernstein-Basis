@@ -4,17 +4,17 @@ function [] = CoefficientScaling_WithCoefficients(m1, m2, n1 , n2, k1, k2)
 %
 % % Inputs
 %
-% m1 : (Int)
+% m1 : (Int) Degree of the polynomail f(x,y) with respect to x
 %
-% m2 : (Int)
+% m2 : (Int) Degree of the polynomial f(x,y) with respect to y
 %
-% n1 : (Int)
+% n1 : (Int) Degree of the polynomail g(x,y) with respect to x
 %
-% n2 : (Int)
+% n2 : (Int) Degree of the polynomail g(x,y) with respect to y
 %
-% k1 : (Int)
+% k1 : (Int) Index of subresultant matrix 
 %
-% k2 : (Int)
+% k2 : (Int) Index of subresultant matrix
 %
 % >> CoefficientScaling(5, 5, 11, 11, 3, 2) 
 

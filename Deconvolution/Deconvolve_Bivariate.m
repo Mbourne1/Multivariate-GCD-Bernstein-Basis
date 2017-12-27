@@ -34,6 +34,6 @@ G = BuildG_Bivariate(m1 - n1, m2 - n2);
 h = SolveAx_b(D*T1*G, vec_fxy);
 
 % Get vector h as a matrix of coefficients of h(x,y)
-hxy = GetAsMatrix(h, m1-n1, m2-n2);
+hxy = GetAsMatrix(h, m1 - n1, m2 - n2);
 
 end

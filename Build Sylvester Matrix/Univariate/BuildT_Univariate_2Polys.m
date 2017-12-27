@@ -21,10 +21,10 @@ m = GetDegree_Univariate(fx);
 n = GetDegree_Univariate(gx);
 
 % Build Toeplitz matrix of f(x), the first partiton T_{n-k}(f)
-T1 = BuildT1_univar(fx, n-k);
+T1 = BuildT1_univar(fx, n - k);
 
 % Build Toeplitz matrix of g(x), the second partition T_{m-k}(g)
-T2 = BuildT1_univar(gx, m-k);
+T2 = BuildT1_univar(gx, m - k);
 
 % Concatenate the partitions.
 T = [T1 T2];

@@ -9,9 +9,9 @@ function [Sk1k2] = BuildSubresultant_Bivariate_3Polys(fxy, gxy, hxy, k1, k2)
 %
 % hxy : (Matrix) Coefficients of the polynomial h(x,y)
 %
-% k1 : (Int)
+% k1 : (Int) Index of subresultant matrix S_{k_{1}, k_{2}}(f, g, h)
 %
-% k2 : (Int)
+% k2 : (Int) Index of subresultant matrix S_{k_{1}, k_{2}}(f, g, h)
 
 
 

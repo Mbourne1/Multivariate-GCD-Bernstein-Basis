@@ -1,10 +1,11 @@
-function [] = plotMaxMinDiagonalsR1_1Dimensional(vec_MaxDiagonals_R1, vec_MinDiagonals_R1, limits_k1, limits_t1)
+function [] = plotMaxMinDiagonalsR1_1Dimensional(vMaxDiagonals_R1, ...
+    vMinDiagonals_R1, limits_k1, limits_t1)
 %
 % % Inputs
 %
-% mat_MaxDiagonals_R1 : (Matrix)
+% vMaxDiagonals_R1 : (Matrix)
 %
-% mat_MinDiagonals_R1 : (Matrix)
+% vMinDiagonals_R1 : (Matrix)
 %
 % limits_k1 : (Int Int) Upper and lower bound for k_{1}
 %
@@ -23,7 +24,7 @@ upperLimit_t1 = limits_t1(1);
 v_k1 = lowerLimit_k1:1:upperLimit_k1;
 
 % Get rank revealing metric
-metric = log10(vec_MinDiagonals_R1./vec_MaxDiagonals_R1);
+metric = log10(vMinDiagonals_R1./vMaxDiagonals_R1);
 
 % Plot
 figure_name = 'Plot Max:Min Values';

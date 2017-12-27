@@ -16,10 +16,8 @@ function [DTQ] = BuildDTQ_Univariate(fx, gx, k)
 % inputs to this function.
 
 
-% Get degree of polynomial f(w)
+% Get degree of polynomials f(x) and g(x)
 m = GetDegree_Univariate(fx);
-
-% Get degree of polynomial g(w)
 n = GetDegree_Univariate(gx);
 
 % Build matrix D^{-1}

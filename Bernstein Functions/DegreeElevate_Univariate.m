@@ -1,4 +1,4 @@
-function [fx_elevated] = DegreeElevate_Univariate(fx,r)
+function [fx_elevated] = DegreeElevate_Univariate(fx, r)
 % Function performs degree elevation on polynomial f(x).
 %
 % % Inputs
@@ -7,11 +7,15 @@ function [fx_elevated] = DegreeElevate_Univariate(fx,r)
 %
 % r : (Int) Number of degree elevations
 %
+%
 % % Outputs
 %
 % fx_elevated : (Vector) Coefficients of degree elevated f(x)
 
-% Get degree of f(x)
+
+
+
+% Get the degree of polynomial f(x)
 m = GetDegree_Univariate(fx);
 
 % Initialise vector of coefficients of degree elevated form
@@ -32,9 +36,10 @@ end
 
 
 % Get control points of the input polynomial over unit interval
-fx = zeros(m+1,1);
-for i = 0:1:m
-    fx(i+1) = i./m;
+fx = zeros(m + 1, 1);
+
+for i = 0 : 1 : m
+    fx(i + 1) = i ./ m;
 end
 CP_f = [fx'; fx'];
 

@@ -81,7 +81,7 @@ switch degree_method
         %end
         
     otherwise
-        error('Not valid method')
+        error('Not valid method - Method must be *All Subresultants, *Linear Method or *Total')
         
 end
 

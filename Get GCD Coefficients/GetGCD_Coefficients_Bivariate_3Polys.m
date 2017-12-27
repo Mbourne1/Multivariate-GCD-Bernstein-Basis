@@ -19,13 +19,9 @@ function [dxy] = GetGCD_Coefficients_Bivariate_3Polys(fxy, gxy, hxy, uxy, vxy, w
 % dxy : Coefficients of polynomial d(x,y)
 
 
-% Get the degrees of polynomial f(x,y)
+% Get the degrees of polynomial f(x,y), g(x,y) and h(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get the degrees of polynomial g(x,y)
 [n1, n2] = GetDegree_Bivariate(gxy);
-
-% Get the degrees of polynomial h(x,y)
 [o1, o2] = GetDegree_Bivariate(hxy);
 
 
@@ -55,12 +51,9 @@ G = BuildG_Bivariate(t1, t2);
 % Build the Coefficient Matrix HCG 
 HCG = H*C*G;
 
-% Get f(x,y) as a vector
+% Get f(x,y), g(x,y) and h(x,y) as vectors
 fxy_vec = GetAsVector(fxy);
-
-% Get g(x,y) as a vector
 gxy_vec = GetAsVector(gxy);
-
 hxy_vec = GetAsVector(hxy);
 
 % Create the right hand side vector

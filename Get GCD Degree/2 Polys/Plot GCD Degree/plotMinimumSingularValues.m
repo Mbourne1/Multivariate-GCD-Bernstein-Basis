@@ -1,4 +1,5 @@
-function [] = plotMinimumSingularValues(matMinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2, rank_range)
+function [] = plotMinimumSingularValues(matMinimumSingularValues, ...
+    limits_k1, limits_k2, limits_t1, limits_t2, rank_range)
 %
 % % Inputs
 %

@@ -20,11 +20,12 @@ fxy_matrix = zeros(m1+1, m2+1);
 % of coefficients of of f).
 count = 1;
 
-% get number of diagonals in the matrix fxy.
+% Get number of diagonals in the matrix fxy.
 nDiagonals = (m1+1) + (m2+1) -1;
 
-for tot = 0:1:nDiagonals - 1
-    for i = tot:-1:0
+
+for tot = 0 : 1 : nDiagonals - 1
+    for i = tot : -1 : 0
 
         j = tot-i;
         
@@ -34,7 +35,7 @@ for tot = 0:1:nDiagonals - 1
             
         else
             
-            fxy_matrix(i+1,j+1) = fxy_vec(count);
+            fxy_matrix(i + 1, j + 1) = fxy_vec(count);
             count = count + 1;
         end
     end

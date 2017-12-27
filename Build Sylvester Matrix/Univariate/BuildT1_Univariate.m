@@ -33,7 +33,7 @@ T1 = zeros(m+n_k+1, n_k+1);
 % for each column of T1
 for j = 0:1:n_k
     
-    T1(j+1:m+j+1,j+1) = fx_bi;
+    T1(j + 1 : m + j + 1, j + 1) = fx_bi;
     
 end
 

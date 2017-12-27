@@ -114,8 +114,8 @@ for i = 1:1:nPolys
     
     nCoefficients = (m1 + 1) * (m2 + 1);
     
-    v_fxy = GetAsVector_Version1((fxy), m1, m2);
-    x_vec = 1:1:nCoefficients;
+    v_fxy = GetAsVector_Version1(fxy);
+    x_vec = 1 : 1 : nCoefficients;
     
     plot(x_vec, log10(v_fxy), 'Color', arrColor{i}, 'DisplayName',plot_name)
     

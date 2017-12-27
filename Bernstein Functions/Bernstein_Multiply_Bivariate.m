@@ -13,10 +13,8 @@ function hxy = Bernstein_Multiply_Bivariate(fxy, gxy)
 % and g(x,y)
 %
 
-% Get the dimensions and degrees of polynomial fxy
+% Get the dimensions and degrees of polynomial f(x, y) and g(x, y)
 [m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get the dimensions and degrees of polynomial gxy
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Get the dimensions and degrees of the product hxy = fxy * gxy

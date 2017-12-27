@@ -6,15 +6,13 @@ function [DTQ] = BuildDTQ_Bivariate_2Polys_Version2(fxy, gxy, k1, k2)
 %
 % gxy : (Matrix) Coefficients of polynomial g(x,y)
 %
-% k1 : (Int)
+% k1 : (Int) Index of the subresultant matrix S_{k_{1}, k_{2}}
 %
-% k2 : (Int)
+% k2 : (Int) Index of the subresultant matrix S_{k_{1}, k_{2}}
 
 
-% Get degree of f(x,y) with respect to x and y
+% Get degree of f(x,y) and g(x,y) with respect to x and y
 [m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get degree of g(x,y) with respect to x and y
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Build matrices D^{-1}T(f)Q and D^{-1}T(g)Q

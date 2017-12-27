@@ -1,4 +1,5 @@
-function [] = plotMaxMinDiagonalsR1(mat_MaxDiagonals_R1, mat_MinDiagonals_R1, limits_k1, limits_k2, limits_t1, limits_t2)
+function [] = plotMaxMinDiagonalsR1(mat_MaxDiagonals_R1, ...
+    mat_MinDiagonals_R1, limits_k1, limits_k2, limits_t1, limits_t2)
 %
 % % Inputs
 %

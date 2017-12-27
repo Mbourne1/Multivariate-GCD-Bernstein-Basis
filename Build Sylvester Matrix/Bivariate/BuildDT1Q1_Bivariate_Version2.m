@@ -23,24 +23,28 @@ end
 %
 arrMatrix = cell(m2 + n2_k2 + 1, n2_k2 + 1);
 
-% For each column-partition
-for j = 0:1:n2_k2
+% For each column-partition of the subresultant matrix
+for j = 0 : 1 : n2_k2
     
-    % For each row-partition
-    for i = 0:1:m2+n2_k2
+    % For each row-partition of the subresultant matrix
+    for i = 0 : 1 : m2 + n2_k2
 
-        if (i-j>=0) && (i-j <= m2)
+        if (i - j >= 0) && (i - j <= m2)
             
             % Get f_{i}(x)
-            fx = arrVectors{i-j+1};
+            fx = arrVectors{i - j + 1};
             
             % Build matrix 
-            arrMatrix{i+1,j+1} = BuildDT1Q1_Univariate(fx, n1_k1) * nchoosek(m2, i-j) * nchoosek(n2_k2, j) ./ nchoosek(m2+n2_k2, i);
+            arrMatrix{i + 1, j + 1} = ...
+                BuildDT1Q1_Univariate(fx, n1_k1) ...
+                * nchoosek(m2, i-j) ...
+                * nchoosek(n2_k2, j) ...
+                ./ nchoosek(m2 + n2_k2, i);
             
             
         else
             
-            arrMatrix{i+1,j+1} = zeros(m1+n1_k1+1, n1_k1+1);
+            arrMatrix{i+1,j+1} = zeros(m1 + n1_k1 + 1, n1_k1 + 1);
             
         end
         

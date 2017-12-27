@@ -1,4 +1,5 @@
-function [] = plotMaxMinRowNorms(mat_MaxRowNorm, mat_MinRowNorm, limits_k1, limits_k2, limits_t1, limits_t2)
+function [] = plotMaxMinRowNorms(mat_MaxRowNorm, mat_MinRowNorm, ...
+    limits_k1, limits_k2, limits_t1, limits_t2)
 %
 % % Inputs
 %

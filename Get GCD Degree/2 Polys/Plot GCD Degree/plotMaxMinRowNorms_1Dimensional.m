@@ -1,4 +1,5 @@
-function [] = plotMaxMinRowNorms_1Dimensional(vMaxRowNorm, vMinRowNorm, limits_k1, limits_t1)
+function [] = plotMaxMinRowNorms_1Dimensional(vMaxRowNorm, vMinRowNorm,...
+    limits_k1, limits_t1)
 %
 % % Inputs
 %

@@ -19,10 +19,8 @@ function DTQ = BuildDTQ_Bivariate_2Polys(fxy, gxy, k1, k2)
 % DTQ : (Matrix) D^{-1}T(f(x,y),g(x,y))Q
 
 
-% Get the degree of f(x,y) with respect to x and y
+% Get the degree of f(x,y) and g(x,y) with respect to x and y
 [m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get the degree of g(x,y) with respect to x and y
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Build the matrix D_{m1+n1-k1,m2+n2-k2} * T_{n1-k1,n2-k2}(f) * Q1_{n1-k1,n2-k2}

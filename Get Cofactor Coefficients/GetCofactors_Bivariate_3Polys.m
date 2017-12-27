@@ -78,13 +78,9 @@ v_wxy = vecx(nCoefficients_vxy + 1 : nCoefficients_vxy + nCoefficients_wxy);
 v_uxy = -1 .* vecx(nCoefficients_vxy + nCoefficients_wxy + 1 : end);
 
 
-% Get u(x,y) as a matrix of coefficients
+% Get u(x,y), v(x,y) and w(x,y) as matrices of coefficients
 uxy = GetAsMatrix(v_uxy, m1 - t1, m2 - t2);
-
-% Get v(x,y) as a matrix of coefficients
 vxy = GetAsMatrix(v_vxy, n1 - t1, n2 - t2);
-
-% Get w(x,y) as a matrix of coefficients
 wxy = GetAsMatrix(v_wxy, o1 - t1, o2 - t2);
 
 switch SETTINGS.SYLVESTER_BUILD_METHOD

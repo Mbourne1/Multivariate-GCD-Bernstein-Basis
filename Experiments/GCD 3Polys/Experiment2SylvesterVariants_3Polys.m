@@ -1,7 +1,23 @@
 function [] = Experiment2SylvesterVariants_3Polys(ex_num, bool_preproc)
+% This experiment considers the variants of the subresultant matrices in
+% the computation of the degree of the GCD of three bivariate polynomials.
+%
+% % Inputs
+%
+% ex_num : (String) Example number
+%
+% bool_preproc : (Boolean) Determines whether polynomails f(x,y), g(x,y)
+% and h(x,y) are preprocessed in the subresultant matrices in the
+% computation of their GCD
+%
+%
+% % Examples
+%
+% Experiment2SylvesterVariants_3Polys('1', true);
 
 
-close all; clc;
+close all; 
+clc;
 
 % Examples to not use
 % 3 - This is univariate
@@ -11,10 +27,16 @@ close all; clc;
 % 8 - Degree t2 = min(m2,n2,k2)
 
 
-
+%
 emin = 1e-12;
 emax = 1e-10;
+
+% % Low Rank Approximation Method
+% 'None'
+% 'Standard STLN'
 low_rank_approx_method = 'None';
+
+
 apf_method = 'None';
 
 %ex_num_arr = {strcat(ex_num,'a'), strcat(ex_num,'b'), strcat(ex_num,'c')};
@@ -22,19 +44,36 @@ ex_num_arr = {strcat(ex_num,'a')};
 
 
 factorisation_build_method = 'HCG';
+
+% % Rank Revealing Metric
+% 'Minimum Singular Values'
 rank_revealing_metric = 'Minimum Singular Values';
 
+% Set preprocessing related variables
 switch bool_preproc
+    
     case true
+        
         mean_method = 'Geometric Mean Matlab Method';
         bool_alpha_theta = true;
+        
     case false
+        
         mean_method = 'None';
         bool_alpha_theta = false;
+        
 end
 
-%arrSylvesterFormats = {'T','DT','TQ', 'DTQ'};
-arrSylvesterFormats = {'DTQ'};
+arrSylvesterFormats = {...
+    'T',...
+    'DT',...
+    'TQ',...
+    'DTQ'};
+
+
+% nEquations determines the structure of subresultant matrix
+% 2 : A (2x3) partitioned subresultant matrix is used
+% 3 : A (3x3) partitioned subresultant matrix is used
 nEquations = '2';
 
 for i2 = 1 : 1 : length(ex_num_arr)

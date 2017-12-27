@@ -1,14 +1,20 @@
 function [fx] = GetBernsteinCoefficientsFromRoots(ex_num)
+%
 % Given a set of Roots and Multiplicities of the roots of a polynomial 
 % f(x), get the coefficients of the polynomial.
+%
+% % Inputs
+%
+% ex_num
 
-% Get the roots and multiplicities.
-A = Examples_Roots_fx(ex_num)
+
+% Get the roots and multiplicities of polynomial f(x).
+A = Examples_Roots_fx(ex_num);
 
 % Get the coefficients of polynomial f in terms of scaled bernstein basis,
 % taht is, each element of the vector includes the corresponding binomial
 % coefficient
-f_bi = B_poly(A)
+f_bi = B_poly(A);
 
 % Get degree of polynomial f = num of rows - 1;
 m = size(f_bi,1) -1;
@@ -41,23 +47,31 @@ function [f_bi] = B_poly(A)
 % A(k,1) stores the value of the root, and A(k,2) stores its multiplicity.
   
     f_bi = 1;
+    
     for k = 1:1:r
         w = B_conv(A(k,1),A(k,2));    
         f_bi = conv(f_bi,w) ;
-    end    
+    end
+    
     f_bi = f_bi';
+    
 end
 
 
-function [t]=B_conv(root,mult)
+function [t] = B_conv(root, mult)
 % This function convolves the vector [-r 1-r] with itself m times.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Inputs:
-% r : root
-% m : multiplicity of root
-% Outputs:
+%
+% % Inputs:
+%
+% root : root of f
+%
+% mult : multiplicity of root
+%
+%
+% % Outputs:
+%
 % t : vector which stores the result from this convolution.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 % Note that (y-r) = -r(1-y) + (1-r)y and thus the polynomial y-r in the
@@ -66,11 +80,11 @@ function [t]=B_conv(root,mult)
 
 
     if mult==1
-        t=[-root,1-root];
+        t=[-root, 1-root];
     else
 
-        q=[-root,1-root];
-        t=[-root,1-root];
+        q=[-root, 1 - root];
+        t=[-root, 1 - root];
         for k=2:1:mult
             t=conv(t,q);
         end

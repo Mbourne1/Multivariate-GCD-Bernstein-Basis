@@ -19,29 +19,29 @@ function fxy_vec = GetAsVector_Symbolic(fxy)
 count = 1;
 
 % Initialise the vector of coefficients of f(x,y)
-fxy_vec = sym(zeros((m1+1)*(m2+1),1));
+fxy_vec = sym(zeros((m1 + 1)*(m2 + 1), 1));
 
 % Get number of diagonals in fxy_matrix
-nDiagonals_fxy = (m1+1)+(m2+1)-1;
+nDiagonals_fxy = (m1 + 1) + (m2 + 1)-1;
 
 % For each diagonal of f(x,y), read into the vector, starting lower left to
 % upper right.
 
-method = 'rearranged';
+method = 'Rearranged';
 
 switch method
-    case 'standard'
-        for tot = 0:1:nDiagonals_fxy
+    case 'Standard'
+        for tot = 0 : 1:nDiagonals_fxy
             
-            for i = tot:-1:0
-                j = tot - i;
+            for i1 = tot : -1 : 0
+                i2 = tot - i1;
                 
-                if(i > m1 || j > m2)
+                if(i1 > m1 || i2 > m2)
                     % Do nothing
                 else
                     
                     % Assign matrix entry to next available vector entry
-                    fxy_vec(count) = fxy(i+1,j+1);
+                    fxy_vec(count) = fxy(i1 + 1, i2 + 1);
                     
                     % Increment counter
                     count = count + 1;
@@ -50,12 +50,14 @@ switch method
             end
             
         end
-    case 'rearranged'
         
-        for i = 0:1:m1
-            for j = 0:1:m2
+        
+    case 'Rearranged'
+        
+        for i1 = 0:1:m1
+            for i2 = 0:1:m2
                 
-                fxy_vec(count) = fxy(i+1,j+1);
+                fxy_vec(count) = fxy(i1 + 1, i2 + 1);
            
                 count = count + 1;
                 

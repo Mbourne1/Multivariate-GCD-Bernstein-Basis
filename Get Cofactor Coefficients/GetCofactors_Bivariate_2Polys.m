@@ -65,7 +65,7 @@ v_vxy = vecx(1:nCoefficients_vxy);
 % Get coefficients of v(w,w) as a vector
 v_uxy = -1 .* vecx(nCoefficients_vxy+1 : nCoefficients_uxy + nCoefficients_vxy);
 
-% Get u(x,y) and v(x,y) as a matrix of coefficients
+% Get u(x,y) and v(x,y) as matrices of coefficients
 uxy = GetAsMatrix(v_uxy, m1 - t1, m2 - t2);
 vxy = GetAsMatrix(v_vxy, n1 - t1, n2 - t2);
 

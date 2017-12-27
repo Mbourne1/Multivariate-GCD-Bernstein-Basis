@@ -3,6 +3,7 @@ function [] = DifferentiatePowerBasis(f)
 % coefficient is of highest degree. Differentiate to obtain a set of
 % coefficients of the derivative.
 
+
 % Get the degree of the polynomial.
 m = size(f,1) -1;
 

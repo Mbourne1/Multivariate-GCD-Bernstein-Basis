@@ -4,8 +4,8 @@ function deg_elv_fxy_matrix = DegreeElevate_Bivariate(fxy, ad_rows, ad_cols)
 % B_{m1 + ad_rows}(x) in x
 % B_{m2 + ad_cols}(y) in y
 %
-% % Inputs:
 %
+% % Inputs:
 %
 % fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
@@ -13,8 +13,7 @@ function deg_elv_fxy_matrix = DegreeElevate_Bivariate(fxy, ad_rows, ad_cols)
 %
 % ad_cols : (Int) Number of degree elevations with respect to y.
 
-% % Get the degree of input polynomial f(x,y)
-% [m1, m2] = GetDegree_Bivariate(fxy);
+
 
 % let r_f be the number of rows being added
 r_f = ad_rows;

@@ -19,12 +19,12 @@ function H1 = BuildH1_Bivariate(m1, m2)
 
 
 % Get Matrix of binomial coefficients
-Binom_matrix = GetWithBinomials_Bivariate(ones(m1+1,m2+1));
+Binom_matrix = GetWithBinomials_Bivariate(ones(m1 + 1, m2 + 1));
 
 % Convert to vector
 Binom_vector = GetAsVector(Binom_matrix);
 
 % Diagonalize
-H1 = diag(1./Binom_vector);
+H1 = diag(1 ./ Binom_vector);
 
 end

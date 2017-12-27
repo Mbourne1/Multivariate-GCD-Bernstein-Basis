@@ -1,4 +1,4 @@
-function [t] = B_conv(root, mult)
+function [t] = B_conv(root, multiplicity)
 % B_conv(rooot, mult)
 % 
 % This function convolves the vector [-r 1-r] with itself m times, where r
@@ -9,13 +9,13 @@ function [t] = B_conv(root, mult)
 %
 % root : (Float) Root
 %
-% mult : (Int) Multiplicity of root
+% multiplicity : (Int) Multiplicity of root
 %
 % Outputs:
 %
 %
 % t : (Vector) Coefficients of the polynomial obtained from convolution of 
-% the factor (x-r) m times.
+% the factor (x - r) m times.
 
 
 
@@ -24,22 +24,22 @@ function [t] = B_conv(root, mult)
 % scaled Bernstein basis.
 
 
-if mult == 1 
-    t = [-root; 1-root];
+if multiplicity == 1 
+    t = [-root; 1 - root];
 else
     
     q =...
         [...
         -root;
-        1-root
+        1 - root
         ];
     t =...
         [...
         -root;
-        1-root
+        1 - root
         ];
     
-    for k=2:1:mult
+    for k = 2 : 1 : multiplicity
     
         t=conv(t,q);
     end

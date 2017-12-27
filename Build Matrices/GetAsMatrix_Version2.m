@@ -20,7 +20,7 @@ fxy_matrix = zeros(m1+1, m2+1);
 
 for i2 = 0:1:m2
    
-    start_position = (i2*(m1+1)) + 1;
+    start_position = (i2*(m1 + 1)) + 1;
     
     temp_vec = fxy_vec(start_position : start_position + m1);
     

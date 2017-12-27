@@ -58,9 +58,9 @@ function [dxy_calc] = o_gcd_Bivariate_2Polys(ex_num, emin, emax, ...
 %
 % % Examples
 %
-% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'None', false, 'Standard STLN', 'None', 'DTQ', 'HCG', 'Minimum Singular Values', 'All Subresultants Method')
+% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'None', false, 'Standard STLN', 'None', 'DTQ', 'HCG', 'Minimum Singular Values', 'All Subresultants')
 % >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ','HCG', 'Minimum Singular Values', 'Total')
-% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'None', 'DTQ', 'HCG', 'Minimum Singular Values', 'All Subresultants Method')
+% >> o_gcd_Bivariate_2Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'None', 'DTQ', 'HCG', 'Minimum Singular Values', 'All Subresultants')
 
 % %
 % Set Variables
@@ -116,10 +116,10 @@ fprintf('The Degree Structure of d(x) : t = %i \t t1 = %i \t t2 = %i \n', t_exac
 
 % Set upper and lower limit for the degree structure of d(x,y)
 lowerLimit_t1 = 0;
-upperLimit_t1 = min(m1, n1);
+upperLimit_t1 = min([m1, n1]);
 
 lowerLimit_t2 = 0;
-upperLimit_t2 = min(m2, n2);
+upperLimit_t2 = min([m2, n2]);
 
 limits_t1 = [lowerLimit_t1 upperLimit_t1];
 limits_t2 = [lowerLimit_t2 upperLimit_t2];

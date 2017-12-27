@@ -1,4 +1,4 @@
-function DTQ = BuildDTQ_Bivariate_3Polys_2Eqns(fxy, gxy, hxy, k1, k2)
+function DTQ = BuildDTQ_Bivariate_3Polys(fxy, gxy, hxy, k1, k2)
 % BuildDTQ(fxy, gxy, hxy, k1, k2)
 %
 % Build the sylvester subresultant matrix S_{k1,k2}(f,g,h).
@@ -21,7 +21,7 @@ function DTQ = BuildDTQ_Bivariate_3Polys_2Eqns(fxy, gxy, hxy, k1, k2)
 % DTQ : (Matrix) Bivariate Sylvester subresultant matrix
 
 
-% Get the degree of f(x,y) with respect to x and y
+% Get the degree of f(x,y), g(x,y) and h(x,y) with respect to x and y
 [m1, m2] = GetDegree_Bivariate(fxy);
 [n1, n2] = GetDegree_Bivariate(gxy);
 [o1, o2] = GetDegree_Bivariate(hxy);
