@@ -126,7 +126,8 @@ limits_t2 = [lowerLimit_t2 upperLimit_t2];
 
 % Calculate the gcd, and quotient polynomials of f(x,y) and g(x,y)
 [~, ~, dxy_calc, uxy_calc, vxy_calc, t1, t2] = ...
-    o_gcd_mymethod_Bivariate_2Polys(fxy_matrix, gxy_matrix, limits_t1, limits_t2, degree_method);
+    o_gcd_mymethod_Bivariate_2Polys(fxy_matrix, gxy_matrix, ...
+    limits_t1, limits_t2, degree_method);
 
 
 % Get error in coefficients of d(x,y), u(x,y) and v(x,y)

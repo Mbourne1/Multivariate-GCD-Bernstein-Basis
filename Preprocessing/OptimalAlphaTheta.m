@@ -1,9 +1,10 @@
-function [alpha, th1, th2] = OptimalAlphaTheta(max_matrix_fxy, min_matrix_fxy, max_matrix_gxy, min_matrix_gxy)
+function [alpha, th1, th2] = OptimalAlphaTheta(max_matrix_fxy, ...
+    min_matrix_fxy, max_matrix_gxy, min_matrix_gxy)
 % OptimalAlphaTheta(max_mtrx_f,min_mtrx_f, max_mtrx_g,min_mtrx_g)
 %
 % Obtain the optimal value of alpha, \theta_{1} and \theta_{2} in
 % preprocessing the Sylvester matrix
-% S_{k_{1},k_{2}}(f,g)
+% S_{k_{1},k_{2}}(f(x,y),g(x,y)) 
 %
 % Inputs.
 %
@@ -22,7 +23,7 @@ function [alpha, th1, th2] = OptimalAlphaTheta(max_matrix_fxy, min_matrix_fxy, m
 % Outputs
 %
 % alpha : (Float) Optimal value \alpha such that the two partitions of
-% S_{k_{1},k_{2}} are balanced.
+% S_{k_{1},k_{2}}(f,g) are balanced.
 %
 % th1 : (Float) Optimal value of \theta_{1}
 %
@@ -31,7 +32,7 @@ function [alpha, th1, th2] = OptimalAlphaTheta(max_matrix_fxy, min_matrix_fxy, m
 % Define vector f
 f = [1 -1 0 0 0];
 
-% Get the degree of polynomial f(x,y)
+% Get the degree of polynomials f(x,y) and g(x,y)
 [m1, m2] = GetDegree_Bivariate(max_matrix_fxy);
 [n1, n2] = GetDegree_Bivariate(max_matrix_gxy);
 
@@ -41,13 +42,13 @@ nCoefficients_fxy = (m1 + 1) * (m2 + 1);
 nCoefficients_gxy = (n1 + 1) * (n2 + 1);
 
 
-v_i1_f = GetAsVector(diag(0:1:m1) * ones(m1 + 1, m2 + 1));
-v_i2_f = GetAsVector(ones(m1 + 1,m2 + 1) * diag(0 : 1 : m2));
+v_i1_f = GetAsVector_Version1(diag(0:1:m1) * ones(m1 + 1, m2 + 1));
+v_i2_f = GetAsVector_Version1(ones(m1 + 1,m2 + 1) * diag(0 : 1 : m2));
 
-v_i1_g = GetAsVector(diag(0:1:n1) * ones(n1 + 1,n2 + 1));
-v_i2_g = GetAsVector(ones(n1 + 1, n2 + 1) * diag(0 : 1 : n2));
+v_i1_g = GetAsVector_Version1(diag(0:1:n1) * ones(n1 + 1,n2 + 1));
+v_i2_g = GetAsVector_Version1(ones(n1 + 1, n2 + 1) * diag(0 : 1 : n2));
 
-PartOne = ...
+matPartOne = ...
     [
     ones(nCoefficients_fxy, 1) ...
     zeros(nCoefficients_fxy, 1) ...
@@ -56,7 +57,7 @@ PartOne = ...
     zeros(nCoefficients_fxy, 1)
     ];
 
-PartTwo = ...
+matPartTwo = ...
     [
     ones(nCoefficients_gxy, 1) ...
     zeros(nCoefficients_gxy, 1) ...
@@ -65,7 +66,7 @@ PartTwo = ...
     -1.* ones(nCoefficients_gxy, 1)
     ];
 
-PartThree = ...
+matPartThree = ...
     [
     zeros(nCoefficients_fxy, 1) ...
     -1.* ones(nCoefficients_fxy, 1) ...
@@ -74,7 +75,7 @@ PartThree = ...
     zeros(nCoefficients_fxy, 1)
     ];
 
-PartFour = ...
+matPartFour = ...
     [
     zeros(nCoefficients_gxy,1) ...
     -1 .* ones(nCoefficients_gxy,1) ...
@@ -84,35 +85,22 @@ PartFour = ...
     ];
 
 % Now build the vector b
-lambda_vec = GetAsVector(abs(max_matrix_fxy));
-mu_vec = GetAsVector(abs(max_matrix_gxy));
-rho_vec = GetAsVector(abs(min_matrix_fxy));
-tau_vec = GetAsVector(abs(min_matrix_gxy));
+vLambda = GetAsVector_Version1(abs(max_matrix_fxy));
+vMu = GetAsVector_Version1(abs(max_matrix_gxy));
+vRho = GetAsVector_Version1(abs(min_matrix_fxy));
+vTau = GetAsVector_Version1(abs(min_matrix_gxy));
 
-% % Find any zeros in the lambda vector
-indeces = find(lambda_vec == 0);
-PartOne(indeces,:) = [];
-lambda_vec(indeces,:) = [];
+% Remove zeros from vectors and remove corresponding rows from matrices
+[vLambda, matPartOne] = RemoveZeros(vLambda, matPartOne);
+[vMu, matPartTwo] = RemoveZeros(vMu, matPartTwo);
+[vRho, matPartThree] = RemoveZeros(vRho, matPartThree);
+[vTau, matPartFour] = RemoveZeros(vTau, matPartFour);
 
-% Find any zeros in the mu vector
-indeces = find(mu_vec == 0);
-PartTwo(indeces,:) = [];
-mu_vec(indeces,:) = [];
+% % Set up linprog problem
 
-% Find any zeros in the rho vector
-indeces = find(rho_vec == 0);
-PartThree(indeces,:) = [];
-rho_vec(indeces,:) = [];
+b = [log10(vLambda); log10(vMu); -log10(vRho);-log10(vTau)];
 
-% Find any zeros in the tau vector
-indeces = find(tau_vec == 0);
-PartFour(indeces,:) = [];
-tau_vec(indeces,:) = [];
-
-
-b = [log10(lambda_vec); log10(mu_vec); -log10(rho_vec);-log10(tau_vec)];
-
-A = [PartOne; PartTwo; PartThree; PartFour];
+A = [matPartOne; matPartTwo; matPartThree; matPartFour];
 
 warning('off')
 x = linprog(f,-A,-b);
@@ -122,10 +110,28 @@ try
     th1 = 10^x(3);
     th2 = 10^x(4);
     alpha  = 10^x(5);
+    
 catch
     alpha = 1;
     th1 = 1;
     th2 = 1;
 end
+
+end
+
+
+function [vLambda, matPartOne] = RemoveZeros(vLambda, matPartOne)
+% Remove any zeros in the vector and remove corresponding rows in the
+% matrix
+%
+% vLambda : (Vector)
+%
+% matPartOne : (Matrix)
+
+
+% % Find any zeros in the lambda vector
+indeces = find(vLambda == 0);
+matPartOne(indeces,:) = [];
+vLambda(indeces,:) = [];
 
 end

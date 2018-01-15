@@ -1,4 +1,5 @@
-function [fxy, gxy, dxy, uxy, vxy, m, n, t] = Examples_GCD_FromCoefficients_Bivariate_2Polys(ex_num)
+function [fxy, gxy, dxy, uxy, vxy, m, n, t] = ...
+    Examples_GCD_FromCoefficients_Bivariate_2Polys(ex_num)
 % Given an example number, get coefficient matrices of polynomials f(x,y),
 % g(x,y) and their greatest common divisor d(x,y).
 %

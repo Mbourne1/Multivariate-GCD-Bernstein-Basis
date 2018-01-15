@@ -25,7 +25,8 @@ function [fxy,gxy,dxy,uxy,vxy,m,n,t] = Examples_GCD_Bivariate_2Polys(ex_num)
 
 
 
-[fxy, gxy, dxy, uxy, vxy, m, n, t] = Examples_GCD_FromCoefficients_Bivariate_2Polys(ex_num);
+[fxy, gxy, dxy, uxy, vxy, m, n, t] = ...
+    Examples_GCD_FromCoefficients_Bivariate_2Polys(ex_num);
 
 
 

@@ -40,6 +40,8 @@ SETTINGS.EX_NUM = ex_num;
 %   * true : Plot graphs
 %   * false : Exclude plotting
 SETTINGS.PLOT_GRAPHS = true;
+SETTINGS.PLOT_GRAPHS_LRA = false;
+SETTINGS.PLOT_GRAPHS_PREPROCESSING = false;
 
 
 % ------------------------------------------------------------------------

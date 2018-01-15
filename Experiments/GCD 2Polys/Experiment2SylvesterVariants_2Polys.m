@@ -62,12 +62,15 @@ switch bool_preproc
 end
 
 % Get array of subresutlant matrix variants
-arrSylvesterSubresultantVariants = {'T', 'DT', 'TQ', 'DTQ'};
+arrSylvesterSubresultantVariants = {'T', ...
+    'DT', ...
+    'TQ', ...
+    'DTQ'};
 
 % For each subresultant matrix variant
 for i = 1 : 1 : length(arrSylvesterSubresultantVariants)
     
-    %
+    % Set variant
     sylvester_build_method = arrSylvesterSubresultantVariants{i};
     
     % Get GCD

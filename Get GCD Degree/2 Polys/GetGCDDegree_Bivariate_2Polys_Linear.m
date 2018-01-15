@@ -89,8 +89,6 @@ for i = 1 : 1 : nSubresultants
     end
     
     
-    
-    
     % Preprocessing
     [GM_fx, GM_gx, alpha, th1, th2] = Preprocess_Bivariate_2Polys(fxy, gxy, k1, k2);
     
@@ -142,10 +140,34 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         % Plot Graphs
         if(SETTINGS.PLOT_GRAPHS)
-            %plotSingularValues_1Dimensional(arr_SingularValues, limits_k, limits_t);
+            
             limits_t = limits_k;
+            plotSingularValues_1Dimensional(arr_SingularValues, limits_k, limits_t);
             plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, limits_k, limits_t);
         end
+        
+    case 'Normalised Minimum Singular Values'
+        
+        % Initialise vector to store minimum singular values
+        vMinimumSingularValues = zeros(nSubresultants, 1);
+        
+        for i = 1 : 1 : nSubresultants
+            
+            % Get SVD of unproc and processed Sylvester Surbesultant S_{k,k}
+            vMinimumSingularValues(i) = min(arr_SingularValues{i});
+            
+        end
+        
+        % Set metric
+        metric = vMinimumSingularValues ./ vMinimumSingularValues(1);
+        
+        % Plot Graphs
+        if(SETTINGS.PLOT_GRAPHS)
+            
+            limits_t = limits_k;
+            plotSingularValues_1Dimensional(arr_SingularValues, limits_k, limits_t);
+            plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, limits_k, limits_t);
+        end    
         
     case 'R1 Row Norms'
         

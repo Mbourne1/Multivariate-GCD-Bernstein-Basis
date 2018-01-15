@@ -172,6 +172,28 @@ switch SETTINGS.RANK_REVEALING_METRIC
             %plotSingularValues_1Dimensional(arr_SingularValues, limits_k, limits_t);
             plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, limits_k, limits_t);
         end
+    
+        case 'Normalised Minimum Singular Values'
+        
+        % Initialise vector to store minimum singular values
+        vMinimumSingularValues = zeros(nSubresultants, 1);
+        
+        for i = 1 : 1 : nSubresultants
+            
+            % Get SVD of unproc and processed Sylvester Surbesultant S_{k,k}
+            vMinimumSingularValues(i) = min(arr_SingularValues{i});
+            
+        end
+        
+        % Set metric
+        metric = vMinimumSingularValues ./ vMinimumSingularValues(1);
+        
+        % Plot Graphs
+        if(SETTINGS.PLOT_GRAPHS)
+            %plotSingularValues_1Dimensional(arr_SingularValues, limits_k, limits_t);
+            plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, limits_k, limits_t);
+        end
+        
         
     case 'R1 Row Norms'
         

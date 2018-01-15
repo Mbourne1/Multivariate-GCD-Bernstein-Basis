@@ -46,6 +46,7 @@ limits_k2 = [0 min(m2,n2)];
 
 lowerLimit_k1 = limits_k1(1);
 upperLimit_k1 = limits_k1(2);
+
 lowerLimit_k2 = limits_k2(1);
 upperLimit_k2 = limits_k2(2);
 
@@ -70,10 +71,12 @@ for i1 = 1 : 1 : nSubresultants_k1
     
     for i2 = 1 : 1 : nSubresultants_k2
         
-        k1 = lowerLimit_k1 + (i1-1);
-        k2 = lowerLimit_k2 + (i2-1);
+        k1 = lowerLimit_k1 + (i1 - 1);
+        k2 = lowerLimit_k2 + (i2 - 1);
         
-        % Preprocessing
+        % Get geometric means of entries of f(x,y) and g(x,y) in the
+        % k_{1},k_{2} -th subresultant matrix, and get optimal values of
+        % alpha, theta_{1} and theta_{2}
         [GM_fx, GM_gx, alpha, th1, th2] = Preprocess_Bivariate_2Polys(fxy, gxy, k1, k2);
         
         % Divide f(x,y) and g(x,y) by geometric mean
@@ -84,8 +87,9 @@ for i1 = 1 : 1 : nSubresultants_k1
         fww_matrix = GetWithThetas(fxy_matrix_n, th1, th2);
         gww_matrix = GetWithThetas(gxy_matrix_n, th1, th2);
         
-        % Build the Sylvester subresultant matrix S_{k1,k2}(f,g)
-        arr_Sk1k2{i1,i2} = BuildSubresultant_Bivariate_2Polys(fww_matrix, alpha.*gww_matrix, k1, k2);
+        % Build the subresultant matrix S_{k1, k2}(f,g)
+        arr_Sk1k2{i1, i2} = BuildSubresultant_Bivariate_2Polys(fww_matrix, ...
+            alpha .* gww_matrix, k1, k2);
         
         % Store the optimal alpha, th1, th2, gm_fx, gm_gx
         matrix_Alpha(i1, i2) = alpha;
@@ -98,8 +102,9 @@ for i1 = 1 : 1 : nSubresultants_k1
 end
 
 
-PlotAlphas(matrix_Alpha, limits_k1, limits_k2, limits_t1, limits_t2);
-
+if SETTINGS.PLOT_GRAPHS_PREPROCESSING == true
+    PlotAlphas(matrix_Alpha, limits_k1, limits_k2, limits_t1, limits_t2);
+end
 
 
 % Metric used to compute the degree of the GCD
@@ -112,7 +117,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
     
     case 'R1 Row Norms'
         
-     
+        
         % Initialise matrices to store max and minimum row norms
         arr_R1_RowNorms = cell(nSubresultants_k1, nSubresultants_k2);
         mat_MaxRowNorm = zeros(nSubresultants_k1, nSubresultants_k2);
@@ -139,10 +144,10 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         % Plot graphs
         if(SETTINGS.PLOT_GRAPHS)
-        
+            
             plotR1RowNorms(arr_R1_RowNorms, limits_k1, limits_k2, limits_t1, limits_t2)
             plotMaxMinRowNorms(mat_MaxRowNorm, mat_MinRowNorm, limits_k1, limits_k2, limits_t1, limits_t2);
-        
+            
         end
         
         % Set Metric
@@ -172,10 +177,10 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         % Plot graphs
         if(SETTINGS.PLOT_GRAPHS)
-        
+            
             plotR1Diagonals(arr_R1, limits_k1, limits_k2, limits_t1, limits_t2);
             plotMaxMinDiagonalsR1(mat_MaxDiagonal_R1, mat_MinDiagonal_R1, limits_k1, limits_k2, limits_t1, limits_t2);
-        
+            
         end
         
         % Set metric
@@ -187,20 +192,20 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         % Initialise some vectors
         arr_SingularValues = cell(nSubresultants_k1, nSubresultants_k2);
-       
+        
         % Initialise matrix to store minimum singular values of SVD of each
         % S_{k1,k2}
         mat_MinimumSingularValues = zeros(min(m1,n1)+1, min(m2,n2)+1);
         
         
-        for i1 = 1:1:nSubresultants_k1
+        for i1 = 1 : 1 : nSubresultants_k1
             
-            for i2 = 1:1:nSubresultants_k2
+            for i2 = 1 : 1 : nSubresultants_k2
                 
                 % Get the singular values
                 vSingularValues = svd(arr_Sk1k2{i1,i2});
                 arr_SingularValues{i1, i2} = vSingularValues;
-                mat_MinimumSingularValues(i1,i2) = min(min(arr_SingularValues{i1,i2}));
+                mat_MinimumSingularValues(i1,i2) = min(min(arr_SingularValues{i1, i2}));
                 
             end
         end
@@ -209,13 +214,15 @@ switch SETTINGS.RANK_REVEALING_METRIC
         if(SETTINGS.PLOT_GRAPHS)
             
             %plotSingularValues(arr_SingularValues, limits_k1, limits_k2, limits_t1, limits_t2)
-            plotMinimumSingularValues(mat_MinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2)
+            plotMinimumSingularValues(mat_MinimumSingularValues, ...
+                limits_k1, limits_k2, ...
+                limits_t1, limits_t2)
             
         end
         
         % Set metric
         metric = mat_MinimumSingularValues;
-       
+        
         
         
     case 'Normalised Minimum Singular Values'
@@ -239,10 +246,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
                 
                 vSingularValues = svd(arr_Sk1k2{i1,i2});
                 
-                %arr_SingularValues{i1, i2} = vSingularValues;
                 arr_NormalisedSingularValues{i1, i2} = vSingularValues./ vSingularValues(1);
                 
-                %mat_MinimumSingularValues(i1,i2) = min(min(arr_SingularValues{i1,i2}));
                 mat_NormalisedMinimumSingularValues(i1, i2) = min(min(arr_NormalisedSingularValues{i1,i2}));
                 
                 
@@ -253,15 +258,14 @@ switch SETTINGS.RANK_REVEALING_METRIC
         % Plot Graphs
         if(SETTINGS.PLOT_GRAPHS)
             
-            %plotSingularValues(arr_SingularValues, limits_k1, limits_k2, limits_t1, limits_t2)
-            %plotMinimumSingularValues(mat_MinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2)
-            plotMinimumSingularValues(mat_NormalisedMinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2)
+            plotMinimumSingularValues(mat_NormalisedMinimumSingularValues, ...
+                limits_k1, limits_k2, limits_t1, limits_t2)
             
         end
         
         % Set metric
-        %metric = mat_MinimumSingularValues;
-        metric = mat_NormalisedMinimumSingularValues;    
+        
+        metric = mat_NormalisedMinimumSingularValues;
     case 'Residuals'
         
         error('Error : Code not yet developed for this branch')
@@ -317,7 +321,8 @@ LineBreakMedium()
 
 end
 
-function [] = PlotAlphas(matrix_alpha, limits_k1, limits_k2, limits_t1, limits_t2)
+function [] = PlotAlphas(matrix_alpha, limits_k1, limits_k2, ...
+    limits_t1, limits_t2)
 % % Inputs
 %
 % matMinimumSingularValues : (Matrix) Stores the minimum singular values of
@@ -344,7 +349,7 @@ upperLimit_k1 = limits_k1(2);
 lowerLimit_k2 = limits_k2(1);
 upperLimit_k2 = limits_k2(2);
 
-% 
+%
 v_i1 = lowerLimit_k1 : 1 : upperLimit_k1;
 v_i2 = lowerLimit_k2 : 1 : upperLimit_k2;
 
@@ -352,46 +357,46 @@ v_i2 = lowerLimit_k2 : 1 : upperLimit_k2;
 
 
 try
-[X,Y] = meshgrid(v_i1,v_i2);
-
-figure_name = sprintf('alpha : %s', SETTINGS.SYLVESTER_BUILD_METHOD);
-figure('name',figure_name)
-hold on
-%title('Minimum Singular Values');
-
-surf(X, Y, log10(matrix_alpha)');
-
-% Labels
-xlabel('$k_{1}$', 'Interpreter', 'latex', 'FontSize', 20);
-ylabel('$k_{2}$', 'Interpreter', 'latex', 'FontSize', 20);
-zlabel('$\log_{10} \left( \alpha_{k_{1}, k_{2}} \right)$', 'Interpreter', 'latex', 'FontSize', 20);
-
-% Set view angle
-az = -30;
-el = 20;
-view(az, el);
-
-
-% Display
-grid on
-box on
-
-% Set location of window and size
-m_left = 100;
-m_bottom = 100;
-m_width = 600;
-m_height = 600;
-
-set(gcf, 'Position', [m_left, m_bottom, m_width, m_height]);
-
-% Position of figure within window
-myplot = gca;
-myval_side = 0.12;
-myval_base = 0.10;
-set(myplot, 'Position', [ myval_side myval_base 0.98 - myval_side 0.98 - myval_base])
-
-
-hold off
+    [X,Y] = meshgrid(v_i1,v_i2);
+    
+    figure_name = sprintf('alpha : %s', SETTINGS.SYLVESTER_BUILD_METHOD);
+    figure('name',figure_name)
+    hold on
+    %title('Minimum Singular Values');
+    
+    surf(X, Y, log10(matrix_alpha)');
+    
+    % Labels
+    xlabel('$k_{1}$', 'Interpreter', 'latex', 'FontSize', 20);
+    ylabel('$k_{2}$', 'Interpreter', 'latex', 'FontSize', 20);
+    zlabel('$\log_{10} \left( \alpha_{k_{1}, k_{2}} \right)$', 'Interpreter', 'latex', 'FontSize', 20);
+    
+    % Set view angle
+    az = -30;
+    el = 20;
+    view(az, el);
+    
+    
+    % Display
+    grid on
+    box on
+    
+    % Set location of window and size
+    m_left = 100;
+    m_bottom = 100;
+    m_width = 600;
+    m_height = 600;
+    
+    set(gcf, 'Position', [m_left, m_bottom, m_width, m_height]);
+    
+    % Position of figure within window
+    myplot = gca;
+    myval_side = 0.12;
+    myval_base = 0.10;
+    set(myplot, 'Position', [ myval_side myval_base 0.98 - myval_side 0.98 - myval_base])
+    
+    
+    hold off
 catch
     
 end

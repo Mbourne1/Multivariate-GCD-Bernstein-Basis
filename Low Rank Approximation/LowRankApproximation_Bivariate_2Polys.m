@@ -51,8 +51,9 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         fww_lr = GetWithThetas(fxy_lr, th1_lr, th2_lr);
         a_gww_lr = alpha_lr .* GetWithThetas(gxy_lr, th1_lr, th2_lr);
         
+        if SETTINGS.PLOT_GRAPHS_LRA == true
         PlotSingularValues(fxy, gxy, fxy_lr, gxy_lr, fww, a_gww, fww_lr, a_gww_lr)
-        
+        end
         
         
     case 'Standard STLN'
@@ -80,8 +81,9 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         th1_lr = th1;
         th2_lr = th2;
         
+        if SETTINGS.PLOT_GRAPHS_LRA == true
         PlotSingularValues(fxy, gxy, fxy_lr, gxy_lr, fww, a_gww, fww_lr, a_gww_lr)
-        
+        end
         
         
         
@@ -107,7 +109,9 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         fww_lr = GetWithThetas(fxy_lr, th1_lr, th2_lr);
         a_gww_lr = alpha_lr.* GetWithThetas(gxy_lr, th1_lr, th2_lr);
         
-        PlotSingularValues(fxy,gxy,fxy_lr,gxy_lr, fww, a_gww, fww_lr, a_gww_lr);
+        if SETTINGS.PLOT_GRAPHS_LRA == true
+            PlotSingularValues(fxy, gxy, fxy_lr, gxy_lr, fww, a_gww, fww_lr, a_gww_lr);
+        end
         
         SETTINGS.LOW_RANK_APPROX_REQ_ITE = 0;
         

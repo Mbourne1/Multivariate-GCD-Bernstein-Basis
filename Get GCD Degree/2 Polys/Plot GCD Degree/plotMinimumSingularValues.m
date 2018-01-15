@@ -44,7 +44,7 @@ try
     % Labels
     xlabel('$k_{1}$', 'Interpreter', 'latex', 'FontSize', 20);
     ylabel('$k_{2}$', 'Interpreter', 'latex', 'FontSize', 20);
-    zlabel('$\log_{10} \left( \sigma_{k_{1}, k_{2}} \right)$', 'Interpreter', 'latex', 'FontSize', 20);
+    zlabel('$\log_{10} \left( \dot{\sigma}_{k_{1}, k_{2}} \right)$', 'Interpreter', 'latex', 'FontSize', 20);
     
     % Set view angle
     az = -30;
@@ -70,6 +70,13 @@ try
     myval_base = 0.10;
     set(myplot, 'Position', [ myval_side myval_base 0.98 - myval_side 0.98 - myval_base])
     
+    myText = sprintf("emin : %e",  SETTINGS.EMIN);
+    
+    dim = [.1 .65 .3 .3];
+    %str = 'Straight Line Plot from 1 to 10';
+    annotation('textbox',dim,'String',myText,'FitBoxToText','on');
+    
+   
     
     hold off
 catch

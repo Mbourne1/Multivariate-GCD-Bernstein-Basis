@@ -53,32 +53,35 @@ switch degree_method
         [t1, t2, GM_fx, GM_gx, alpha, th1, th2] = ...
             GetGCDDegree_Bivariate_2Polys(fxy, gxy, limits_t1, limits_t2);
         
-    case 'Linear Method'
+    case 'Linear Method' % Dont use this method
         
         [t1, t2, GM_fx, GM_gx, alpha, th1, th2] = ...
             GetGCDDegree_Bivariate_2Polys_Linear(fxy, gxy, limits_t1, limits_t2);
         
     case 'Total'
         
-        %[t1, t2, GM_fx, GM_gx, alpha, th1, th2] = ...
-        %    GetGCDDegree_Bivariate_2Polys(fxy, gxy, limits_t1, limits_t2);
+      
+        [t1_candidate, t2_candidate, alpha, th1, th2] = ... 
+            GetGCDDegree_Bivariate_2Polys_WithDegreeElevation(fxy, gxy);
         
-        [t1_possible, t2_possible, alpha, th1, th2] = GetGCDDegree_Bivariate_2Polys_WithDegreeElevation(fxy, gxy);
         
-        %if t1_possible < t2_possible
+        % Assume t_{1} candidate is correct and compute t_{2}
+        [t1_a, t2_a, GM_fx_a, GM_gx_a, alpha_a, th1_a, th2_a] = ...
+            GetGCDDegree_Bivariate_2Polys_Linear(fxy, gxy, t1_candidate, 'x');
         
-        t1 = t1_possible;
-        [t1_a, t2_a, GM_fx, GM_gx, alpha, th1, th2] = GetGCDDegree_Bivariate_2Polys_Linear(fxy, gxy, t1, 'x');
-        
-        %else
-        t2 = t2_possible;
-        [t1_b, t2_b, GM_fx, GM_gx, alpha, th1, th2] = GetGCDDegree_Bivariate_2Polys_Linear(fxy, gxy, t2, 'y');
+        % Assume t_{2} candidate is correct and compute t_{1}
+        [t1_b, t2_b, GM_fx_b, GM_gx_b, alpha_b, th1_b, th2_b] = ...
+            GetGCDDegree_Bivariate_2Polys_Linear(fxy, gxy, t2_candidate, 'y');
         
         % Note this is not correct
         t1 = t1_a;
         t2 = t2_a;
+        GM_fx = GM_fx_a;
+        GM_gx = GM_gx_a;
+        alpha = alpha_a;
+        th1 = th1_a;
+        th2 = th2_a;
         
-        %end
         
     otherwise
         error('Not valid method - Method must be *All Subresultants, *Linear Method or *Total')
@@ -95,7 +98,7 @@ gxy_n = gxy ./ GM_gx;
 % Preprocess f(x,y) and g(x,y)
 fww_n = GetWithThetas(fxy_n, th1, th2);
 gww_n = GetWithThetas(gxy_n, th1, th2);
-a_gww_n = alpha.* gww_n;
+a_gww_n = alpha .* gww_n;
 
 % Get optimal column for removal
 St1t2 = BuildSubresultant_Bivariate_2Polys(fww_n, a_gww_n, t1, t2);

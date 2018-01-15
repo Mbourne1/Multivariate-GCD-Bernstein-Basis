@@ -1,7 +1,7 @@
 function [GM_fx, GM_gx, alpha, th1, th2] = Preprocess_Bivariate_2Polys(fxy, gxy, k1, k2)
 % Preprocess(fxy,gxy,k1,k2)
 %
-% Get lamda,mu, alpha, theta_{1} and theta_{2}
+% Get \lamda, \mu, \alpha, \theta_{1} and \theta_{2}
 %
 % Inputs.
 %
@@ -38,8 +38,8 @@ GM_gx = GetMean(gxy, m1 - k1, m2 - k2);
 
 
 % Normalise f(x,y) and g(x,y) by respective geometric means
-fxy_n = fxy./ GM_fx;
-gxy_n = gxy./ GM_gx;
+fxy_n = fxy ./ GM_fx;
+gxy_n = gxy ./ GM_gx;
 
 
 if (SETTINGS.BOOL_ALPHA_THETA)
@@ -47,13 +47,23 @@ if (SETTINGS.BOOL_ALPHA_THETA)
     
     % %
     % Get optimal values of alpha and theta
+    
+    % Get maximum and minimum entry of each coefficient of f(x,y) in the k1
+    % k2 - th subresultant matrix.
     [max_matrix_fxy, min_matrix_fxy] = GetMaxMin(fxy_n, n1 - k1, n2 - k2);
     [max_matrix_gxy, min_matrix_gxy] = GetMaxMin(gxy_n, m1 - k1, m2 - k2);
     
-    %alpha = OptimalAlpha(max_mtrx_f,min_mtrx_f,max_mtrx_g,min_mtrx_g);
+    %alpha = OptimalAlpha(max_matrix_fxy, min_matrix_fxy, ...
+    %    max_matrix_gxy, min_matrix_gxy);
     
-    [alpha, th1, th2] = OptimalAlphaTheta(max_matrix_fxy, min_matrix_fxy, ...
-        max_matrix_gxy, min_matrix_gxy);
+    %th1 = 1;
+    %th2 = 1;
+    
+     [alpha, th1, th2] = OptimalAlphaTheta(max_matrix_fxy, min_matrix_fxy, ...
+         max_matrix_gxy, min_matrix_gxy);
+    
+    
+    
     
     fww = GetWithThetas(fxy_n, th1, th2);
     gww = GetWithThetas(gxy_n, th1, th2);
@@ -70,18 +80,19 @@ if (SETTINGS.BOOL_ALPHA_THETA)
             '$\alpha \tilde{g}(\omega_{1},\omega_{2})$'...
             });
     end
+    
     % %
     % Get Maximum and minimum entries of f and g in the normalised and
     % preprocessed form
-    a_gww = alpha.*gww;
+    % a_gww = alpha.*gww;
     
-    [max_fww, min_fww, max_gww, min_gww] = GetMaxMinPairs(fww, a_gww, k1, k2);
+    %[max_fww, min_fww, max_gww, min_gww] = GetMaxMinPairs(fww, a_gww, k1, k2);
     
-    PrintToFile(m1, m2, n1, n2, k1, k2, max_fww, min_fww, max_gww, min_gww, alpha, th1, th2, GM_fx, GM_gx);
+    %PrintToFile(m1, m2, n1, n2, k1, k2, max_fww, min_fww, max_gww, min_gww, alpha, th1, th2, GM_fx, GM_gx);
     
 else
     
-    alpha =1;
+    alpha = 1;
     th1 = 1;
     th2 = 1;
     
@@ -90,12 +101,17 @@ end
 
 
 function [] = PlotCoefficients(arrPolys, arrNames)
+% Plot the coefficients of the set of polynomials
 %
 % % Inputs
 %
-% arrPolys : (Array of Matrices)
+% arrPolys : (Array of Matrices) An array of matrices containing
+% coefficients of a set of polynomials
 %
-% arrNames : (Array of Strings)
+% arrNames : (Array of Strings) the names (labels) given to each of the
+% polynomials
+%
+% 
 
 
 nPolys = length(arrPolys);
@@ -220,10 +236,8 @@ function [f_max,f_min,g_max,g_min] = GetMaxMinPairs(fxy, gxy, k1, k2)
 %
 % k2 : (Int)
 
-% Get degree of f(x,y)
+% Get degree of f(x,y) and g(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get degree of g(x,y)
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Get the maximum and minimum of each entry of f(x,y) in S_{k_{1},k_{2}}
