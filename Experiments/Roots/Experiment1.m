@@ -49,4 +49,5 @@ o_roots_Bivariate(ex_num, emin, emax, mean_method,...
     sylvester_build_method, factorisation_build_method, rank_revealing_metric, nEquations)
 
 
+
 end

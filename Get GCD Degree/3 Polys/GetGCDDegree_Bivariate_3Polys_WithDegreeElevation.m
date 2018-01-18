@@ -190,7 +190,15 @@ switch SETTINGS.RANK_REVEALING_METRIC
         % Plot Graphs
         if(SETTINGS.PLOT_GRAPHS)
             %plotSingularValues_1Dimensional(arr_SingularValues, limits_k, limits_t);
-            plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, limits_k, limits_t);
+            
+            txtXlabel = "k";
+            txtYlabel = "\sigma_{k,k}";
+            txtTitle = "Singular Values of Sk";
+            
+            plotMinimumSingularValues_1Dimensional(vMinimumSingularValues,...
+                limits_k, limits_t, txtTitle, txtXlabel, txtYlabel);
+            
+            
         end
         
     case 'R1 Row Norms'

@@ -77,8 +77,12 @@ switch degree_method
         fprintf('First Pair a: %i %i \n', candidate_t1_stage_a, candidate_t2_stage_a);
         fprintf('First Pair b: %i %i \n', candidate_t1_stage_b, candidate_t2_stage_b);
         
+        
+        t1 = candidate_t1_stage_a;
+        t2 = candidate_t2_stage_a;
+        
     otherwise 
-        error('Not valid method')
+        error('Not valid method. Must be *All Subresultants *Linear Method *Total')
         
 end
 %

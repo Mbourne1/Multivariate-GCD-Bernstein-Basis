@@ -1,5 +1,6 @@
 function [] = plotMinimumSingularValues_1Dimensional( ...
-    vMinimumSingularValues, limits_k, limits_t)
+    vMinimumSingularValues, limits_k, limits_t, ...
+    txtTitle, txtXLabel, txtYLabel)
 %
 % % Inputs
 %
@@ -32,6 +33,9 @@ title('Minimum Singular Values');
 %vline(lowerLimit_t1);
 %vline(upperLimit_t1);
 
+title(txtTitle);
+xlabel(txtXLabel);
+ylabel(txtYLabel);
 
 plot(vec_x, log10(vMinimumSingularValues)', '-s');
 hold off

@@ -14,27 +14,27 @@ function [t1, t2, GM_fxy, GM_gxy, GM_hxy, lambda, mu, rho, th1, th2] = GetGCDDeg
 %
 % % Outputs
 %
-% t1 : (Int)
+% t1 : (Int) The degree of the GCD with respect to x
 %
-% t2 : (Int)
+% t2 : (Int) The degree of the GCD with respect to y
 %
-% GM_fxy : (Float)
+% GM_fxy : (Float) Geometric mean of the coefficients of f(x,y)
 %
-% GM_gxy : (Float)
+% GM_gxy : (Float) Geometric mean of the coefficients of g(x,y)
 %
-% GM_hxy : (Float)
+% GM_hxy : (Float) Geometric mean of the coefficients of h(x,y)
 %
-% lambda : (Float)
+% lambda : (Float) Optimal value \lambda
 %
-% mu : (Float)
+% mu : (Float) Optimal value \mu
 %
-% rho : (Float)
+% rho : (Float) Optimal value \rho
 %
-% th1 : (Float)
+% th1 : (Float) Optimal value \theta_{1}
 %
-% th2 : (Float)
+% th2 : (Float) Optimal value \theta_{2}
 
-
+% Get the degree of the polynomials f(x,y), g(x,y) and h(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
 [n1, n2] = GetDegree_Bivariate(gxy);
 [o1, o2] = GetDegree_Bivariate(hxy);
@@ -44,6 +44,7 @@ if strcmp(str_variable , 'x')
     
     k1 = t_known;
     t1 = t_known;
+    
     % t2 is to be determined
     
     % Get limits for k2
@@ -64,6 +65,7 @@ else
     upperLimit_k = min([m1, n1, o1]);
     limits_k = [lowerLimit_k, upperLimit_k];
     
+    % Get number of subresultant matrices
     nSubresultants = upperLimit_k - lowerLimit_k + 1;
     
 end
@@ -103,9 +105,10 @@ for i = 1 : 1 : nSubresultants
     
     
     % Preprocessing
-    [GM_fxy, GM_gxy, GM_hxy, lambda, mu, rho, th1, th2] = Preprocess_Bivariate_3Polys(fxy, gxy, hxy, k1, k2);
+    [GM_fxy, GM_gxy, GM_hxy, lambda, mu, rho, th1, th2] = ...
+        Preprocess_Bivariate_3Polys(fxy, gxy, hxy, k1, k2);
     
-    % Divide f(x,y) and g(x,y) by geometric mean
+    % Divide f(x,y), g(x,y) and h(x,y) by their respective geometric mean
     fxy_matrix_n = fxy ./ GM_fxy;
     gxy_matrix_n = gxy ./ GM_gxy;
     hxy_matrix_n = hxy ./ GM_hxy;
@@ -133,7 +136,7 @@ for i = 1 : 1 : nSubresultants
     vGM_fxy(i, 1) = GM_fxy;
     vGM_gxy(i, 1) = GM_gxy;
     vGM_hxy(i, 1) = GM_hxy;
-
+    
 end
 
 
@@ -163,7 +166,26 @@ switch SETTINGS.RANK_REVEALING_METRIC
         if(SETTINGS.PLOT_GRAPHS)
             %plotSingularValues_1Dimensional(arr_SingularValues, limits_k, limits_t);
             limits_t = limits_k;
-            plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, limits_k, limits_t);
+            
+            
+            if strcmp(str_variable , 'x')
+                % t2 is to be determined
+                txtXlabel = "k_{2}";
+                txtYlabel = "\sigma_{t_{1},k_{2}}";
+                txtTitle = "Singular Values of St1k2";
+                
+            else
+                % t1 is to be determined
+                txtXlabel = "k_{1}";
+                txtYlabel = "\sigma_{k_{1},t_{2}}";
+                txtTitle = "Singular Values of Sk1t2";
+                
+                
+            end
+            
+            plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, ...
+                limits_k, limits_t, ...
+                txtTitle, txtXlabel, txtYlabel);
         end
         
     case 'R1 Row Norms'
@@ -229,7 +251,7 @@ if upperLimit_k == lowerLimit_k
 else
     
     t_star = GetGCDDegree_MultipleSubresultants(metric, limits_k);
-
+    
     
 end
 
@@ -242,7 +264,7 @@ end
 
 
 if strcmp(str_variable, 'x')
-   
+    
     t2 = t_star;
     
 else
@@ -253,12 +275,12 @@ end
 
 
 
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
 end

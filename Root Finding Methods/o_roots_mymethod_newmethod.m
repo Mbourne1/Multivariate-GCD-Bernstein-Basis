@@ -1,10 +1,20 @@
 function [arr_wxy] = o_roots_mymethod_newmethod(fxy_matrix)
 % Given a bivariate polynomial compute the roots by differentiating with
 % respect to x.
+%
+% % Inputs
+%
+% fxy_matrix : (Matrix) Coefficients of the polynomial f(x,y)
+%
+% % Outputs
+%
+% arr_wxy : (Array of Matrices) Array containing the coefficients of the
+% set of polynomials w_{i}(x,y) where each w_{i}(x,y) is the product of
+% factors of f(x,y) with multiplicity i.
 
 
 % Get the array of polynomials f_{i}(x,y)
-arr_fxy = GetArray_fxy(fxy_matrix);
+arr_fxy = GetArray_fxy(fxy_matrix, 'Total');
 
 % Get the array of polynomials h_{i}(x,y)
 arr_hxy = GetArray_hxy(arr_fxy);
@@ -47,11 +57,17 @@ end
 
 
 
-function arr_fxy = GetArray_fxy(fxy_matrix)
+function arr_fxy = GetArray_fxy(fxy_matrix, degree_computation_method)
 %
 % % Inputs
 %
 % fxy_matrix : (Matrix) Coefficients of the polynomial f(x,y)
+%
+% degree_computation_method : (String) 
+%   All Subresutlants
+%   Linear Method : 
+%   
+%   
 %
 % % Outputs
 %
@@ -145,9 +161,14 @@ while vDegree_x_arr_fxy(ite,1) > 0 && vDegree_y_arr_fxy(ite,1) > 0
     limits_t1 = [lowerLimit_t1, upperLimit_t1];
     limits_t2 = [lowerLimit_t2, upperLimit_t2];
     
+    
+    
+    
     % Compute GCD
     [fxy_o, gxy_o, hxy_o, dxy_o, uxy_o, vxy_o, wxy_o, t1, t2, rank_range] = ...
-        o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2, rank_range);
+        o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2, rank_range, degree_computation_method);
+    
+    
     
     %[arr_fxy{ite,1},~,arr_fxy{ite+1,1},arr_uxy{ite,1},arr_vxy{ite,1},t,t1,t2] = o_gcd_mymethod(arr_fxy{ite},gxy,m,n,);
     arr_fxy{ite, 1} = fxy_o;
