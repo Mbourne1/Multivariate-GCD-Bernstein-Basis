@@ -32,7 +32,7 @@ nSubresultants_t2 = upperLimit_k2 - lowerLimit_k2 +1 ;
 global SETTINGS
 
 % Figure Head
-figure_name = sprintf('Diagonals of R1 from QR decomp of %s',SETTINGS.SYLVESTER_BUILD_METHOD);
+figure_name = sprintf('Diagonals of R1 from QR decomp of %s',SETTINGS.SYLVESTER_MATRIX_VARIANT);
 figure('name', figure_name)
 hold on
 

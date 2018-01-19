@@ -24,7 +24,7 @@ global SETTINGS
 % TO DO - Write code for 'T Version 2' 'DT Version 2' 'TQ Version 2'
 
 
-switch SETTINGS.SYLVESTER_BUILD_METHOD
+switch SETTINGS.SYLVESTER_MATRIX_VARIANT
     
     case 'T'
         

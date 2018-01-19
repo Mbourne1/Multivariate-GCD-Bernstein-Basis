@@ -35,8 +35,12 @@ low_rank_approx_method = 'None';
 
 apf_method = 'None';
 
-
-sylvester_build_method = 'DTQ';
+% Sylvester Subresultant Matrix Variants
+% 'T'
+% 'DT'
+% 'TQ'
+% 'DTQ'
+sylvester_matrix_variant = 'DTQ';
 
 factorisation_build_method = 'HCG';
 
@@ -46,7 +50,7 @@ nEquations = '2';
 
 o_roots_Bivariate(ex_num, emin, emax, mean_method,...
     bool_alpha_theta, low_rank_approx_method, apf_method, ...
-    sylvester_build_method, factorisation_build_method, rank_revealing_metric, nEquations)
+    sylvester_matrix_variant, factorisation_build_method, rank_revealing_metric, nEquations)
 
 
 

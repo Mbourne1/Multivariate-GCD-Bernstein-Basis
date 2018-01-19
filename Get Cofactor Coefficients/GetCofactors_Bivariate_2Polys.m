@@ -70,7 +70,7 @@ uxy = GetAsMatrix(v_uxy, m1 - t1, m2 - t2);
 vxy = GetAsMatrix(v_vxy, n1 - t1, n2 - t2);
 
 
-switch SETTINGS.SYLVESTER_BUILD_METHOD
+switch SETTINGS.SYLVESTER_MATRIX_VARIANT
     case 'T'
         
         % Get u(x,y) and v(x,y) as a matrix of coefficients

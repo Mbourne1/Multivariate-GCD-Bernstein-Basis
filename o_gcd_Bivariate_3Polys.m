@@ -1,7 +1,10 @@
 function [dxy_calc] = o_gcd_Bivariate_3Polys(ex_num, emin, emax, ...
     mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, ...
-    sylvester_build_method, factorisation_build_method, rank_revealing_metric, nEquations, degree_method)
-% o_gcd(ex_num, el, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method, rank_revealing_metric)
+    sylvester_matrix_variant, factorisation_build_method, ...
+    rank_revealing_metric, nEquations, degree_method)
+% o_gcd(ex_num, el, mean_method, bool_alpha_theta, ...
+% low_rank_approx_method, apf_method, sylvester_build_method, ...
+% factorisation_build_method, rank_revealing_metric)
 %
 % Given an example number and set of parameters, obtain GCD of the two
 % polynomials f(x,y) and g(x,y) in the given example file.
@@ -34,7 +37,7 @@ function [dxy_calc] = o_gcd_Bivariate_3Polys(ex_num, emin, emax, ...
 %   'Standard APF Nonlinear'
 %   'Standard APF Linear'
 %
-% sylvester_build_method : (String)
+% sylvester_matrix_variant : (String)
 %   'T'
 %   'DT'
 %   'DTQ'
@@ -71,7 +74,7 @@ end
 
 SetGlobalVariables_GCD_3Polys(ex_num, emin, emax, mean_method, ...
     bool_alpha_theta, low_rank_approx_method, apf_method, ...
-    sylvester_build_method, factorisation_build_method, rank_revealing_metric, nEquations);
+    sylvester_matrix_variant, factorisation_build_method, rank_revealing_metric, nEquations);
 
 
 % Print Parameters to console
@@ -83,7 +86,7 @@ fprintf('MEAN METHOD : %s \n', mean_method)
 fprintf('PREPROCESSING : %s \n', num2str(bool_alpha_theta))
 fprintf('LOW RANK METHOD : %s \n',low_rank_approx_method)
 fprintf('APF METHOD : %s \n', apf_method)
-fprintf('SYLVESTER FORMAT : %s \n', sylvester_build_method)
+fprintf('SYLVESTER MATRIX VARIANT : %s \n', sylvester_matrix_variant)
 fprintf('RANK REVEALING METRIC : %s \n', rank_revealing_metric)
 
 % %
@@ -127,8 +130,9 @@ limits_t2 = [lowerLimit_t2, upperLimit_t2];
 rank_range = [0,0];
 
 % Calculate the gcd, and quotient polynomials of f(x,y) and g(x,y)
-[fxy_calc, gxy_calc, hxy_exact, dxy_calc, uxy_calc, vxy_calc, wxy_calc, t1, t2] = ...
-    o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, limits_t2, rank_range, degree_method);
+[fxy_calc, gxy_calc, hxy_exact, dxy_calc, uxy_calc, vxy_calc, wxy_calc, ...
+    t1, t2] = o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, limits_t1, ...
+    limits_t2, rank_range, degree_method);
 
 % %
 % %
@@ -153,6 +157,19 @@ end
 
 function [dist] = GetDistance(name, matrix_calc, matrix_exact)
 % Given two matrices, get the distance between them.
+%
+% % Inputs
+%
+% name : (String)
+% 
+% matrix_calc : (Matrix) The inexact matrix
+%
+% matrix_exact : (Matrix) The exact matrix
+%
+% % Outputs
+%
+% dist : (Float) Distance between the exact and inexact matrix
+
 
 % Normalise coefficients
 matrix_calc = normalise(matrix_calc);
@@ -183,10 +200,11 @@ function []= PrintToFile(m, n, o, t1, t2, t1_exact, t2_exact, error)
 %
 % n : (Int) Total degree of polynomail g(x,y)
 %
-% t1 : (Int) Degree of d(x,y) with respect to x
+% t1 : (Int) The computed Degree of d(x,y) with respect to x
 %
-% t2  : (Int) Degree of d(x,y) with respect to y
+% t2  : (Int) The comuted degree of d(x,y) with respect to y
 %
+% t1_exact : (Int)
 % error: (Float Float Float Float) Contains error.uxy, error.vxy error.wxy and error.dxy
 
 
@@ -195,7 +213,7 @@ function []= PrintToFile(m, n, o, t1, t2, t1_exact, t2_exact, error)
 % Global settings
 global SETTINGS
 
-fullFileName = sprintf('Results/Results_o_gcd_3Polys.txt');
+fullFileName = sprintf('Results/Results_o_gcd_3Polys.dat');
 
 % If file already exists append a line
 if exist(fullFileName, 'file')
@@ -236,12 +254,19 @@ end
             num2str(SETTINGS.LOW_RANK_APPROX_REQ_ITE),...
             SETTINGS.APF_METHOD,...
             num2str(SETTINGS.APF_REQ_ITE),...
-            SETTINGS.SYLVESTER_BUILD_METHOD...
+            SETTINGS.SYLVESTER_MATRIX_VARIANT...
             );
     end
 
     function WriteHeader()
-        fprintf(fileID,'DATE,EX_NUM,m,n,o,t1,t2,t1_exact,t2_exact,ERROR_UXY,ERROR_VXY,ERROR_WXY,ERROR_DX,MEAN_METHOD,BOOL_ALPHA_THETA, EMIN, EMAX, LOW_RANK_APPROX_METHOD,LOW_RANK_ITE, APF_METHOD, APF_ITE,sylvester_build_method \n');
+        
+        strHeader = ['DATE, EX_NUM, m, n, o, t1, t2, t1_exact, t2_exact,'...
+            'ERROR_UXY, ERROR_VXY, ERROR_WXY, ERROR_DX, '...
+            'MEAN_METHOD, BOOL_ALPHA_THETA, EMIN, EMAX, '...
+            'LOW_RANK_APPROX_METHOD, LOW_RANK_ITE, APF_METHOD, '...
+            'APF_ITE, SYLVESTER_MATRIX_VARIANT \n'];
+        
+        fprintf(fileID, strHeader);
     end
 
 

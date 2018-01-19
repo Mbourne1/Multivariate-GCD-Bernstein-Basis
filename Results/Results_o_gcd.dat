@@ -1,0 +1,15 @@
+DATE, EX_NUM, m, n, t1, t2, ERROR_UX, ERROR_VX,ERROR_DX, MEAN_METHOD, BOOL_ALPHA_THETA, EMIN, EMAX,LOW_RANK_APPROX_METHOD, LOW_RANK_ITE, APF_METHOD, APF_ITE,sylvester_matrix_variant, Rank_Revealing_Metric 
+19-Jan-2018 18:40:34,9,20,22,6,6,3.4336e-09,1.0676e-09,1.1381e-09,None,0,1.000000e-12,1.000000e-12,None,0,None,0,DTQ,Normalised Minimum Singular Values 
+19-Jan-2018 18:40:39,9,20,22,6,6,3.4336e-09,1.0676e-09,1.1381e-09,None,0,1.000000e-12,1.000000e-12,None,0,None,0,DTQ,Normalised Minimum Singular Values 
+19-Jan-2018 18:44:06,9,20,22,6,6,3.4356e-11,6.88e-12,7.3038e-12,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-12,None,0,None,0,DTQ,Normalised Minimum Singular Values 
+19-Jan-2018 18:44:17,9,20,22,6,6,3.1423e-11,6.522e-12,4.4544e-12,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-12,None,0,None,0,DTQ,Normalised Minimum Singular Values 
+19-Jan-2018 19:04:20,9,20,22,6,6,2.5517e-07,1.5101e-07,2.1514e-07,Geometric Mean Matlab Method,1,1.000000e-09,1.000000e-09,None,0,None,0,T,Minimum Singular Values 
+19-Jan-2018 19:04:31,9,20,22,6,6,3.2637e-08,8.6603e-09,3.6256e-09,Geometric Mean Matlab Method,1,1.000000e-09,1.000000e-09,None,0,None,0,DT,Minimum Singular Values 
+19-Jan-2018 19:06:22,9,20,22,6,6,2.5517e-07,1.5101e-07,2.1514e-07,Geometric Mean Matlab Method,1,1.000000e-09,1.000000e-09,None,0,None,0,T,Minimum Singular Values 
+19-Jan-2018 19:06:33,9,20,22,6,6,3.2637e-08,8.6603e-09,3.6256e-09,Geometric Mean Matlab Method,1,1.000000e-09,1.000000e-09,None,0,None,0,DT,Minimum Singular Values 
+19-Jan-2018 19:06:44,9,20,22,6,6,3.9442e-07,2.7089e-07,2.791e-07,Geometric Mean Matlab Method,1,1.000000e-09,1.000000e-09,None,0,None,0,TQ,Minimum Singular Values 
+19-Jan-2018 19:06:55,9,20,22,6,6,3.1383e-08,6.5278e-09,4.4839e-09,Geometric Mean Matlab Method,1,1.000000e-09,1.000000e-09,None,0,None,0,DTQ,Minimum Singular Values 
+19-Jan-2018 19:08:45,9,20,22,6,6,4.3599e-07,1.3713e-07,2.9095e-07,None,0,1.000000e-09,1.000000e-09,None,0,None,0,T,Minimum Singular Values 
+19-Jan-2018 19:08:48,9,20,22,6,6,3.7546e-06,1.1714e-06,1.2476e-06,None,0,1.000000e-09,1.000000e-09,None,0,None,0,DT,Minimum Singular Values 
+19-Jan-2018 19:08:52,9,20,22,6,6,4.4323e-07,1.395e-07,2.934e-07,None,0,1.000000e-09,1.000000e-09,None,0,None,0,TQ,Minimum Singular Values 
+19-Jan-2018 19:08:55,9,20,22,6,6,3.4106e-06,1.0603e-06,1.1303e-06,None,0,1.000000e-09,1.000000e-09,None,0,None,0,DTQ,Minimum Singular Values 

@@ -166,7 +166,28 @@ switch SETTINGS.RANK_REVEALING_METRIC
             
             limits_t = limits_k;
             plotSingularValues_1Dimensional(arr_SingularValues, limits_k, limits_t);
-            plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, limits_k, limits_t);
+            
+            
+            
+            
+            if strcmp(str_variable , 'x')
+    
+                % t2 is to be determined
+                txtTitle = "Minimum singular values of S_{}";
+                txtXLabel = "$k_{2}$";
+                txtYLabel = "$\log_{10} \left( \sigma_{t_{1},k_{2}} \right)$";
+                
+            else
+                % t1 is to be determined
+                txtTitle = "Minimum singular values of S_{k1,t2}";
+                txtXLabel = "$k_{1}$";
+                txtYLabel = "$\log_{10}\left(\sigma_{k_{1},t_{2}}\right)$";
+            end
+            
+            
+            plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, ...
+                limits_k, limits_t, ...
+                txtTitle, txtXLabel, txtYLabel);
         end    
         
     case 'R1 Row Norms'

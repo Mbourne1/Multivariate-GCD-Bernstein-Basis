@@ -23,7 +23,7 @@ upperLimit_t1 = limits_t1(2);
 nSubresultants_t1 = upperLimit_k1 - lowerLimit_k1 + 1;
 
 % Plot
-figure_name = sprintf('R1 Row Norms of QR decomposition of %s', SETTINGS.SYLVESTER_BUILD_METHOD);
+figure_name = sprintf('R1 Row Norms of QR decomposition of %s', SETTINGS.SYLVESTER_MATRIX_VARIANT);
 figure('name',figure_name)
 title(figure_name)
 hold on

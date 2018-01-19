@@ -67,7 +67,7 @@ function Sk = BuildSylvesterMatrix(m1, m2, n1, n2, k1, k2, method_name)
     gxy = ones(n1 + 1, n2 + 1);
 
     global SETTINGS
-    SETTINGS.SYLVESTER_BUILD_METHOD = method_name;
+    SETTINGS.SYLVESTER_MATRIX_VARIANT = method_name;
     SETTINGS.VECTORISATION_METHOD = 'Version 1';
     Sk = BuildSubresultant_Bivariate_2Polys(fxy, gxy, k1, k2);
 

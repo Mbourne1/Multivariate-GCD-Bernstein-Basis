@@ -31,7 +31,7 @@ rank_revealing_metric = 'Minimum Singular Values';
 % 'DT'
 % 'TQ'
 % 'DTQ'
-sylvester_build_method = 'DTQ';
+sylvester_matrix_variant = 'DTQ';
 
 % Set preprocessing related variables
 switch bool_preproc
@@ -58,7 +58,7 @@ for i = 1 : 1 : length(low_rank_approx_method_arr)
     
     o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, ...
         bool_alpha_theta, low_rank_approx_method, apf_method, ...
-        sylvester_build_method, factorisation_build_method, ...
+        sylvester_matrix_variant, factorisation_build_method, ...
         rank_revealing_metric)
 end
 

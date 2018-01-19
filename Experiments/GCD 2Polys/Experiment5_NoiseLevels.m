@@ -66,7 +66,7 @@ apf_method = 'None';
 % 'DT'
 % 'TQ'
 % 'DTQ'
-sylvester_build_method = 'DTQ';
+sylvester_matrix_variant = 'DTQ';
 
 % Factorisation Build Method
 % 'HCG'
@@ -107,7 +107,7 @@ for i = 1 : 1 : length(arrNoiseLevels)
     tic;
     degree_method = 'All Subresultants';
     o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta,...
-        low_rank_approx_method, apf_method, sylvester_build_method, ...
+        low_rank_approx_method, apf_method, sylvester_matrix_variant, ...
         factorisation_build_method, rank_revealing_metric, degree_method)
     toc
 end

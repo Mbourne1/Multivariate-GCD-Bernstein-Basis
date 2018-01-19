@@ -34,7 +34,7 @@ parfor i1 = 1:1:length(ex_num_arr)
                         apf_method =  apf_method_elem{1};
                         
                         for sylvester_build_method_elem = arrSylvester_build_method
-                            sylvester_build_method = sylvester_build_method_elem{1};
+                            sylvester_matrix_variant = sylvester_build_method_elem{1};
                             
                             for rank_revealing_metric_elem = arrRank_revealing_metric
                                 rank_revealing_metric = rank_revealing_metric_elem{1};
@@ -46,7 +46,7 @@ parfor i1 = 1:1:length(ex_num_arr)
                                 
                                 try
                                     
-                                    o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, arrFactorisation_build_method, rank_revealing_metric);
+                                    o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_matrix_variant, arrFactorisation_build_method, rank_revealing_metric);
                                     fileId = fopen(filename,'a')
                                     fprintf(fileId,'%s, %s \n',datetime('now'),'success');
                                     fclose(fileId);

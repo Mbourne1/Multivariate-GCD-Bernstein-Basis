@@ -1,6 +1,6 @@
 function [] = SetGlobalVariables_Roots(ex_num, emin, emax, mean_method, ...
     bool_alpha_theta, low_rank_approx_method, apf_method, ...
-    sylvester_build_method, factorisation_build_method, rank_revealing_metric, nEquations )
+    sylvester_matrix_variant, factorisation_build_method, rank_revealing_metric, nEquations )
 %
 % % Inputs
 %
@@ -23,7 +23,7 @@ function [] = SetGlobalVariables_Roots(ex_num, emin, emax, mean_method, ...
 %
 % apf_method : (String)
 %
-% sylvester_build_method : (String)
+% sylvester_matrix_variant : (String)
 %   * R1 Row Norms
 %   * R1 Row Diagonals
 %   * Minimum Singular Values
@@ -54,7 +54,7 @@ SETTINGS.PLOT_GRAPHS = true;
 %
 %
 
-SETTINGS.SYLVESTER_BUILD_METHOD = sylvester_build_method;
+SETTINGS.SYLVESTER_MATRIX_VARIANT = sylvester_matrix_variant;
 SETTINGS.SYLVESTER_MATRIX_3POLY_N_EQUATIONS = nEquations;
 
 % Version 1 - Read antidiagonals

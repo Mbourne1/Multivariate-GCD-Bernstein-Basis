@@ -30,7 +30,7 @@ parfor i1 = 1:1:length(ex_num_arr)
                         apf_method =  apf_method_elem{1};
                         
                         for sylvester_build_method_elem = sylvester_build_method_arr
-                            sylvester_build_method = sylvester_build_method_elem{1};
+                            sylvester_matrix_variant = sylvester_build_method_elem{1};
                             
                             close all; clc;
                             
@@ -38,7 +38,7 @@ parfor i1 = 1:1:length(ex_num_arr)
                             
                             try
                                 
-                                o_gcd_Bivariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method);
+                                o_gcd_Bivariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_matrix_variant);
                                 fileId = fopen(my_filename, 'a')
                                 fprintf(fileId,'%s %s \n',datetime('now'), 'Success');
                                 fclose(fileId);

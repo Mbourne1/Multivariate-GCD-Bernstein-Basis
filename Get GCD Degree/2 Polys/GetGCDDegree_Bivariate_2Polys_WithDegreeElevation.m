@@ -5,29 +5,28 @@ function [t1_possible, t2_possible, alpha, th1, th2] = GetGCDDegree_Bivariate_2P
 %
 % % Inputs
 %
-% fxy : Coefficients of the polynomial f(x,y)
+% fxy : (Matrix) The coefficients of the polynomial f(x,y)
 %
-% gxy : Coefficients of the polynomial g(x,y)
-%
-% m : Total degree of f(x,y)
-%
-% n : Total degree of g(x,y)
-%
-%
-% limits_t :
+% gxy : (Matrix) The coefficients of the polynomial g(x,y)
 %
 % % Outputs
 %
-% t :
+% t1_possible : (Int) Possible value of the degree of the GCD with respect
+% to x
 %
-% th1 :
+% t2_pssible : (Int) Possible value of the degree of the GCD with respect
+% to y
 %
-% th2 :
+% alpha : (Float) Optimal value of \alpha
+%
+% th1 : (Float) Optimal value of \theta_{1}
+%
+% th2 : (Float) Optimal value of \theta_{2}
 
 global SETTINGS
 
 
-% Get degree of f(x,y) and g(x,y)
+% Get the degree of the polynomials f(x,y) and g(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
 [n1, n2] = GetDegree_Bivariate(gxy);
 
@@ -190,8 +189,15 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         % Plot Graphs
         if(SETTINGS.PLOT_GRAPHS)
+            
+            txtTitle = "Computing t star";
+            txtXLabel = "$k$";
+            txtYLabel = "$ \log_{10}\left( \dot{\sigma}_{k} \right) $";
+            
             %plotSingularValues_1Dimensional(arr_SingularValues, limits_k, limits_t);
-            plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, limits_k, limits_t);
+            plotMinimumSingularValues_1Dimensional(vMinimumSingularValues, ...
+                limits_k, limits_t, ...
+                txtTitle, txtXLabel, txtYLabel);
         end
         
         

@@ -27,7 +27,7 @@ upperLimit_t1 = limits_t1(2);
 vec_x = lowerLimit_k1 : 1 : upperLimit_k1;
 
 temp_vec = (vMinRowNorm) ./ (vMaxRowNorm);
-figure_name = sprintf('Plot Max:Min Row Norms of %s',SETTINGS.SYLVESTER_BUILD_METHOD);
+figure_name = sprintf('Plot Max:Min Row Norms of %s',SETTINGS.SYLVESTER_MATRIX_VARIANT);
 figure('name', figure_name)
 hold on
 

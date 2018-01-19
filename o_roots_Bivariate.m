@@ -1,7 +1,8 @@
 function [] = o_roots_Bivariate(ex_num, emin, emax, mean_method,...
     bool_alpha_theta, low_rank_approx_method, apf_method, ...
-    sylvester_build_method, factorisation_build_method, rank_revealing_metric, nEquations)
-% o_roots_Bivariate(ex_num, el, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method)
+    sylvester_matrix_variant, factorisation_build_method, rank_revealing_metric, nEquations)
+% o_roots_Bivariate(ex_num, el, mean_method, bool_alpha_theta, ...
+%   low_rank_approx_method, apf_method, sylvester_matrix_variant, factorisation_build_method)
 %
 % Given an example number and set of parameters, obtain the roots of the
 % example polynomial, where the polynomial is in the Bernstein form.
@@ -32,7 +33,7 @@ function [] = o_roots_Bivariate(ex_num, emin, emax, mean_method,...
 %       'None'
 %       'Standard APF'
 %
-% sylvester_build_method : (String)
+% sylvester_matrix_variant : (String)
 %       'DTQ'
 %       'DT'
 %       'TQ'
@@ -56,12 +57,13 @@ addpath(genpath(pwd));
 
 % Set the global variables
 SetGlobalVariables_Roots(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method, ...
+    low_rank_approx_method, apf_method, sylvester_matrix_variant, ...
     factorisation_build_method, rank_revealing_metric, nEquations)
 
 % Given the example number, return the coefficients of the bivariate
 % polynomial f(x,y)
-[fxy, arr_fxy_exact, arr_hxy_exact, arr_wxy_exact, ~] = Examples_Roots_Bivariate(ex_num);
+[fxy, arr_fxy_exact, arr_hxy_exact, arr_wxy_exact, ~] = ...
+    Examples_Roots_Bivariate(ex_num);
 
 % Add noise to the coefficients of polynomial f(x,y)
 [fxy, ~] = AddVariableNoiseToPoly(fxy, emin, emax);

@@ -34,7 +34,7 @@ apf_method = 'None';
 % 'DT'
 % 'TQ'
 % 'DTQ'
-sylvester_build_method = 'DTQ';
+sylvester_matrix_variant = 'DTQ';
 
 
 factorisation_build_method = 'HCG';
@@ -71,7 +71,7 @@ switch bool_preproc
 end
 
 o_gcd_Bivariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method, ...
+    low_rank_approx_method, apf_method, sylvester_matrix_variant, ...
     factorisation_build_method, rank_revealing_metric, nEquations, ...
     degree_method)
 

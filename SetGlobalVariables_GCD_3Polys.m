@@ -1,24 +1,26 @@
 function [] = SetGlobalVariables_GCD_3Polys(ex_num, emin, emax, mean_method, ...
     bool_alpha_theta, low_rank_approx_method, apf_method, ...
-    sylvester_build_method, factorisation_build_method, rank_revealing_metric, nEquations )
+    sylvester_matrix_variant, factorisation_build_method, rank_revealing_metric, nEquations )
 %
 % % Inputs
 %
-% ex_num
+% ex_num : (String)
 %
-% [emin, emax]
+% emin : (Float)
 %
-% mean_method
+% emax : (Float)
 %
-% bool_alpha_theta
+% mean_method : (String)
 %
-% low_rank_approx_method
+% bool_alpha_theta : (Boolean)
 %
-% apf_method
+% low_rank_approx_method : (String) 
 %
-% sylvester_build_method
+% apf_method : (String)
 %
-% factorisation_build_method
+% sylvester_matrix_variant : (String) 
+%
+% factorisation_build_method : (String)
 %
 % rank_revealing_metric : (String)
 %   * R1 Row Norms
@@ -48,7 +50,7 @@ SETTINGS.PLOT_GRAPHS = true;
 %
 %
 
-SETTINGS.SYLVESTER_BUILD_METHOD = sylvester_build_method;
+SETTINGS.SYLVESTER_MATRIX_VARIANT = sylvester_matrix_variant;
 SETTINGS.SYLVESTER_MATRIX_3POLY_N_EQUATIONS = nEquations;
 
 % Version 1 - Read antidiagonals

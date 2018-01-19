@@ -1,8 +1,10 @@
 function [dxy_calc] = o_gcd_Bivariate_2Polys(ex_num, emin, emax, ...
     mean_method, bool_alpha_theta, low_rank_approx_method, ...
-    apf_method, sylvester_build_method, factorisation_build_method,...
+    apf_method, sylvester_matrix_variant, factorisation_build_method,...
     rank_revealing_metric, degree_method)
-% o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method, rank_revealing_metric)
+% o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
+% low_rank_approx_method, apf_method, sylvester_matrix_method, ...
+% factorisation_build_method, rank_revealing_metric)
 %
 % Given an example number and set of parameters, obtain GCD of the two
 % polynomials f(x,y) and g(x,y) in the given example file.
@@ -35,7 +37,7 @@ function [dxy_calc] = o_gcd_Bivariate_2Polys(ex_num, emin, emax, ...
 %   * 'Standard APF Nonlinear'
 %   * 'Standard APF Linear'
 %
-% sylvester_build_method (String)
+% sylvester_matrix_variant (String)
 %   * 'T'
 %   * 'DT'
 %   * 'DTQ'
@@ -74,7 +76,7 @@ end
 
 % Set global variables
 SetGlobalVariables_GCD_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method, ...
+    low_rank_approx_method, apf_method, sylvester_matrix_variant, ...
     factorisation_build_method, rank_revealing_metric)
 
 % Add subfolders
@@ -90,7 +92,7 @@ fprintf('MEAN METHOD : %s \n', mean_method)
 fprintf('PREPROCESSING : %s \n',num2str(bool_alpha_theta))
 fprintf('LOW RANK METHOD : %s \n',low_rank_approx_method)
 fprintf('APF METHOD : %s \n', apf_method)
-fprintf('SYLVESTER MATRIX FORMAT : %s \n', sylvester_build_method);
+fprintf('SYLVESTER MATRIX VARIANT : %s \n', sylvester_matrix_variant);
 fprintf('RANK REVEALING METRIC : %s \n', rank_revealing_metric);
 fprintf('FACTORISATION MATRIX TYPE : %s \n', factorisation_build_method);
 
@@ -145,7 +147,7 @@ LineBreakLarge()
 
 
 % Output results to file
-%PrintToFile(m, n, t1, t2, myError);
+PrintToFile(m, n, t1, t2, myError);
 
 
 end
@@ -205,7 +207,7 @@ function []= PrintToFile(m, n, t1, t2, myError)
 % Global settings
 global SETTINGS
 
-fullFileName = sprintf('Results/Results_o_gcd.txt');
+fullFileName = sprintf('Results/Results_o_gcd.dat');
 
 
 % If file already exists append a line
@@ -243,13 +245,17 @@ end
             num2str(SETTINGS.LOW_RANK_APPROX_REQ_ITE),...
             SETTINGS.APF_METHOD,...
             num2str(SETTINGS.APF_REQ_ITE),...
-            SETTINGS.SYLVESTER_BUILD_METHOD,...
+            SETTINGS.SYLVESTER_MATRIX_VARIANT,...
             SETTINGS.RANK_REVEALING_METRIC...
             );
     end
 
     function WriteHeader()
-        fprintf(fileID,'DATE,EX_NUM,m,n,t1,t2,ERROR_UX,ERROR_VX,ERROR_DX,MEAN_METHOD,BOOL_ALPHA_THETA, EMIN, EMAX, LOW_RANK_APPROX_METHOD,LOW_RANK_ITE, APF_METHOD, APF_ITE,sylvester_build_method, Rank_Revealing_Metri \n');
+        strHeader = ['DATE, EX_NUM, m, n, t1, t2, ERROR_UX, ERROR_VX,' ...
+            'ERROR_DX, MEAN_METHOD, BOOL_ALPHA_THETA, EMIN, EMAX,'...
+            'LOW_RANK_APPROX_METHOD, LOW_RANK_ITE, APF_METHOD, APF_ITE,' ...
+            'sylvester_matrix_variant, Rank_Revealing_Metric \n'];
+        fprintf(fileID, strHeader);
     end
 
 

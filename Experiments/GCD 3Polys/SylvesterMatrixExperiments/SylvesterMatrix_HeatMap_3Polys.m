@@ -38,12 +38,12 @@ SETTINGS.SYLVESTER_MATRIX_3POLY_N_EQUATIONS = '2';
 for i = 1 : 1 : length(arrSylvesterFormats)
 
     
-    SETTINGS.SYLVESTER_BUILD_METHOD = arrSylvesterFormats{i};
+    SETTINGS.SYLVESTER_MATRIX_VARIANT = arrSylvesterFormats{i};
     
     % Build the k1,k2-th subresultant matrix
     Sk = BuildSubresultant_Bivariate_3Polys(fxy, gxy, hxy, k1, k2);
 
-    figure_name = sprintf('%s : Heat Map', SETTINGS.SYLVESTER_BUILD_METHOD);
+    figure_name = sprintf('%s : Heat Map', SETTINGS.SYLVESTER_MATRIX_VARIANT);
     figure('Name',figure_name)
     
     Sk_rounded = log10(abs(Sk));

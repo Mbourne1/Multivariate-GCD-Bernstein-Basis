@@ -33,7 +33,7 @@ v_i2 = lowerLimit_k2 : 1 : upperLimit_k2;
 
 [X,Y] = meshgrid(v_i1,v_i2);
 
-figure_name = sprintf('Minimum Singular Values of %s', SETTINGS.SYLVESTER_BUILD_METHOD);
+figure_name = sprintf('Minimum Singular Values of %s', SETTINGS.SYLVESTER_MATRIX_VARIANT);
 figure('name',figure_name)
 hold on
 %title('Minimum Singular Values');

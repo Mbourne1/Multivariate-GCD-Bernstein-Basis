@@ -279,7 +279,7 @@ function [] = PrintToResultsFile(ex_num, bool_preproc, noise, arr_DeconvolutionM
 % Get number of deconvolution methods considered
 nMethods = length(arr_DeconvolutionMethod);
 
-fullFileName = sprintf('Deconvolution/Results/Results_o_deconvolutions%s.txt',datetime('today'));
+fullFileName = 'Results/Results_o_deconvolutions.dat';
 
 % If file already exists append a line
 if exist(fullFileName, 'file')

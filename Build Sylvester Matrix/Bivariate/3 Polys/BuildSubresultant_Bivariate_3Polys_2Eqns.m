@@ -22,7 +22,7 @@ function [Sk1k2] = BuildSubresultant_Bivariate_3Polys_2Eqns(fxy, gxy, hxy, k1, k
 global SETTINGS
 
 
-switch SETTINGS.SYLVESTER_BUILD_METHOD
+switch SETTINGS.SYLVESTER_MATRIX_VARIANT
     
     case 'T'
         

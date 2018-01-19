@@ -32,7 +32,7 @@ vec_y = lowerLimit_k2 : 1 : upperLimit_k2;
 
 mat = (mat_MinRowNorm) ./ (mat_MaxRowNorm);
 
-figure_name = sprintf('Plot Max:Min Row Norms of %s',SETTINGS.SYLVESTER_BUILD_METHOD);
+figure_name = sprintf('Plot Max:Min Row Norms of %s',SETTINGS.SYLVESTER_MATRIX_VARIANT);
 figure('name', figure_name)
 hold on
 mesh(X, Y, log10(mat') );

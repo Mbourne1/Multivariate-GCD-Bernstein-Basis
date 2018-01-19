@@ -10,6 +10,13 @@ function [] = plotMinimumSingularValues_1Dimensional( ...
 % limits_k1 : (Int Int) Range of k values
 %
 % limits_t1 : (Int Int) Set of k in which the degree of the GCD (t) lies.
+%
+% txtTitle : (String)
+%
+% txtXLabel : (String)
+%
+% txtYLabel : (String)
+
 
 global SETTINGS
 
@@ -25,7 +32,7 @@ upperLimit_t1 = limits_t(2);
 vec_x = lowerLimit_k1 : 1 : upperLimit_k1;
 
 % Figure Head
-figure_name = sprintf('Minimum Singular Values of %s', SETTINGS.SYLVESTER_BUILD_METHOD);
+figure_name = sprintf('Minimum Singular Values of %s', SETTINGS.SYLVESTER_MATRIX_VARIANT);
 figure('name',figure_name)
 hold on
 title('Minimum Singular Values');
@@ -34,8 +41,8 @@ title('Minimum Singular Values');
 %vline(upperLimit_t1);
 
 title(txtTitle);
-xlabel(txtXLabel);
-ylabel(txtYLabel);
+xlabel(txtXLabel, 'Interpreter', 'latex');
+ylabel(txtYLabel, 'Interpreter', 'latex');
 
 plot(vec_x, log10(vMinimumSingularValues)', '-s');
 hold off

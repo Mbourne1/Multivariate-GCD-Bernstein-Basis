@@ -1,6 +1,6 @@
 function [] = SetGlobalVariables_GCD_2Polys(ex_num, emin, emax, mean_method, ...
     bool_alpha_theta, low_rank_approx_method, apf_method, ...
-    sylvester_build_method, factorisation_build_method, rank_revealing_metric )
+    sylvester_matrix_variant, factorisation_build_method, rank_revealing_metric )
 %
 % % Inputs
 %
@@ -16,7 +16,7 @@ function [] = SetGlobalVariables_GCD_2Polys(ex_num, emin, emax, mean_method, ...
 %
 % apf_method
 %
-% sylvester_build_method
+% sylvester_matrix_variant
 %
 % factorisation_build_method
 %
@@ -50,7 +50,7 @@ SETTINGS.PLOT_GRAPHS_PREPROCESSING = false;
 %
 %
 
-SETTINGS.SYLVESTER_BUILD_METHOD = sylvester_build_method;
+SETTINGS.SYLVESTER_MATRIX_VARIANT = sylvester_matrix_variant;
 
 % Version 1 - Read antidiagonals
 % Version 2 - Read down columns from left to right

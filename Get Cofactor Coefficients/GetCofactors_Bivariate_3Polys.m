@@ -83,7 +83,7 @@ uxy = GetAsMatrix(v_uxy, m1 - t1, m2 - t2);
 vxy = GetAsMatrix(v_vxy, n1 - t1, n2 - t2);
 wxy = GetAsMatrix(v_wxy, o1 - t1, o2 - t2);
 
-switch SETTINGS.SYLVESTER_BUILD_METHOD
+switch SETTINGS.SYLVESTER_MATRIX_VARIANT
     case 'T'
               
         vxy = GetWithoutBinomials_Bivariate(vxy);
@@ -103,7 +103,7 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
     case 'DTQ Denominator Removed'
 
     otherwise
-        error('err %s is not a valid SYLVESTER BUILD METHOD', SETTINGS.SYLVESTER_BUILD_METHOD)
+        error('err %s is not a valid SYLVESTER BUILD METHOD', SETTINGS.SYLVESTER_MATRIX_VARIANT)
 end
 
 end

@@ -83,10 +83,10 @@ for i2 = 1 : 1 : length(ex_num_arr)
     for i = 1 : 1 : length(arrSylvesterFormats)
         
         
-        sylvester_build_method = arrSylvesterFormats{i};
+        sylvester_matrix_variant = arrSylvesterFormats{i};
         
         o_gcd_Bivariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-            low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method, ...
+            low_rank_approx_method, apf_method, sylvester_matrix_variant, factorisation_build_method, ...
             rank_revealing_metric, nEquations)
         
     end
@@ -95,7 +95,7 @@ end
 
 % nEquations = '3';
 % o_gcd_Bivariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-%     low_rank_approx_method, apf_method, sylvester_build_method, factorisation_build_method, ...
+%     low_rank_approx_method, apf_method, sylvester_matrix_variant, factorisation_build_method, ...
 %     rank_revealing_metric, nEquations)
 
 
